@@ -7,7 +7,7 @@ x = x0;
 xold = x0;
 for k = 1:N
     for i = 1:n
-        x(i) = (1-w)*x0(i)' + w*(b(i) - sum(A(i, 1:i-1).*x(1:i-1)') - sum(A(i, i+1:n).*x(i+1:n)'))/A(i,i);
+        x(i) = (1-w)*x(i)' + w*(b(i) - sum(A(i, 1:i-1).*x(1:i-1)') - sum(A(i, i+1:n).*x(i+1:n)'))/A(i,i);
     end
     if norm(x-xold,inf) < TOL
         iter = k;

@@ -9,7 +9,7 @@ M = D+w*L;
 N = (1-w)*D-w*U;
 it = maxit;
 for i = 1:it
-    x = M\(N*x0) + M\b;
+    x = M\(N*x0) + M\(w*b);
     if norm(x-x0, inf) < TOL
         it = i;
         break;
