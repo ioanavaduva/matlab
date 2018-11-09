@@ -8,7 +8,7 @@ r = zeros(length(b),1);
 %xold = x0;
 %r = b';
 for k = 1:maxit
-     r = b' - A * x;
+     r = b - A * x;
      if norm(r, inf) > TOL %want to minimise the norm of r b/c if r is close 
          %to 0 then b'-AX is close to being 0 which satisfies Ax=b (our
          %system that we want to solve)
@@ -20,5 +20,4 @@ for k = 1:maxit
     x0 = x;
     iter = iter + 1;
 end
-disp(iter);
 end

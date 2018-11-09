@@ -6,10 +6,10 @@ k = 0;
 x = x0;
 r = b;
 r0 = b;
-z0 = C^2\r;
+z0 = C\r;
 while norm(r, inf)>TOL
     k = k+1;
-    z = C^2\r;
+    z = C\r;
     if k == 1 
         p = z;
     else
@@ -23,5 +23,4 @@ while norm(r, inf)>TOL
     r = r - alpha*A*p;       
 end
 xdisp = x;
-disp(k);
 end
