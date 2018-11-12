@@ -18,3 +18,8 @@ for k = 1:N
     end
 end
 
+% [~, p] = chol(matrix) gives p=0 is matrix is positive definite and any
+% other value for p if it isn't
+% my cholesky function gives correct matrix A when doing Ch*Ch' for
+% positive definite and semidefinite matrices, otherwise gives irrational
+% entries in the Ch matrix and Ch*Ch' doesn't give back original matrix
