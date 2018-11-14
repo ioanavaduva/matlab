@@ -23,5 +23,5 @@ D1 = diag(diag(C)); %diagonal matrix from C
 L1 = tril(C, -1); %strictly lower triangular matrix from C
 U1 = triu(C, 1); %strictly upper triangular matrix from C
 % not positive definite matrix
-N = [1, 2; 2, 1]
+N = [1, 2; 2, 1];
 
