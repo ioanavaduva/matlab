@@ -18,6 +18,6 @@ for k = 1:maxit
          break;
      end
     x0 = x;
-    iter = iter + 1;
+    iter = iter+1;
 end
 end

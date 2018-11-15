@@ -14,8 +14,7 @@ for i = 1:it
         it = i;
         break;
     end
-    x0 = x;
-    it = it+1;
+    x0=x;
 end
 end
 

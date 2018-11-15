@@ -15,7 +15,6 @@ for i = 1:it
         break;
     end
     x0 = x;
-    it = it+1;
 end
 end
 

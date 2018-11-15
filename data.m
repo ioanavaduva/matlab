@@ -9,7 +9,7 @@ x0 = zeros(length(b_use), 1);
 %tolerance
 TOL = 10^-8;
 %alowed number of iterations
-N = 500;
+maxit = 500;
 %Poisson matrix
 A = poissonmatrix(10); %actual matrix A
 D = diag(diag(A)); %diagonal matrix from A

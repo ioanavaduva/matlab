@@ -1,25 +1,25 @@
-function L = incompleteCh1(A, TOL)
+function L1 = incompleteCh1(A, TOL)
 % incomplete Cholesky factorisation with |lij|<tol
 % N should be column length of A
-% Checked that Ch*Ch' = A
-L = tril(A);
+L1 = tril(A);
 N = length(A);
 for k = 1:N
-    L(k,k) = sqrt(L(k,k));
+    L1(k,k) = sqrt(L1(k,k));
     for i = k+1:N
-        L(i,k) = L(i,k)/L(k,k);
+        L1(i,k) = L1(i,k)/L1(k,k);
     end
     for j = k+1:N
         for i = j:N
-            L(i,j) = L(i,j) - L(i,k)*L(j,k);
+            L1(i,j) = L1(i,j) - L1(i,k)*L1(j,k);
         end
     end
 end
 for i = 1:N 
     for j = 1:N
-        if abs(L(i,j)) < TOL
-            L(i,j) = 0;
+        if abs(L1(i,j)) < TOL
+            L1(i,j) = 0;
         end
     end
+end
 end
 
