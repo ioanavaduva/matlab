@@ -3,6 +3,8 @@ function x = multigrid(w, x0, A, b, TOL, maxit)
 % small number of iterations 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % generate Restriction matrix R
+    rep_vec = [1 2 1];
+            
     R = zeros()
     R = (1/4)*
 % generate Interpolation matrix I
@@ -10,7 +12,7 @@ function x = multigrid(w, x0, A, b, TOL, maxit)
 % pre-smoothing with damped Jacobi    
     x = damped_jacobiM(w, x0, A, b, TOL, maxit);
  % compute residual    
-    res = b - A.*x;
+    res = b - A*x;
  % transfer residual to coarse grid
     res = R*res;
  % solve residual equation for error

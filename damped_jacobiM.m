@@ -1,4 +1,4 @@
-function [it, x] = damped_jacobiM(w, x0, A, b, TOL, maxit) 
+function x = damped_jacobiM(w, x0, A, b, TOL, maxit) 
 M = sparse(diag(diag(A)));
 N = sparse(-(tril(A, -1) + triu(A, 1)));
 it = maxit;
