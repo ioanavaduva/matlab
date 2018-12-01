@@ -9,7 +9,7 @@ b_1d = b(x)';
 T = oned_pois(7);
 
 % pre-smoothing with damped Jacobi (do 50 iterations only)
-x = damped_jacobiM(2/3, zeros(length(b_1d), 1), T, b_1d, 10^-7, 50);
+x = damped_jacobiM(2/3, zeros(length(b_1d), 1), T, b_1d, 10^-7, 30);
 
 % compute the residual
 res = b_1d - T*x;
@@ -26,6 +26,8 @@ for i = 1:N
    RE(i,2*i-1:2*i+1) = [1 2 1]; 
 end
 
+RE = RE/4;
+
 % generate interpolation matrix
 II = 2*RE';
 
@@ -33,7 +35,7 @@ II = 2*RE';
 v = zeros(N, 1);
 
 for i = 1:N
-    v(i) = res(2*i-1) + 2*res(2*i) + res(2*i+1);
+    v(i) = (res(2*i-1) + 2*res(2*i) + res(2*i+1))/4;
 end
 
 % transfer matrix T to coarse grid
@@ -61,4 +63,4 @@ erf(n) = err(length(err));
 x = x + erf;
 
 % post-smoothing Jacobi (50 iterations)
-x = damped_jacobiM(2/3, x, T, b_1d, 10^-7, 50);
+x = damped_jacobiM(2/3, x, T, b_1d, 10^-7, 30);
