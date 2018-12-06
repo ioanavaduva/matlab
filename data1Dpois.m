@@ -25,13 +25,16 @@
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% data for Poisson 1D - 31 unknowns
+% data for Poisson 1D -  unknowns
 
 % create vector b
-    x = [0.1:0.0294:1];
+    x = [0:9.7752e-04:1];
     b = @(x) sin(pi*x).*cos(pi*x);
-    b_1d31 = b(x)';
+    b_1d1023 = b(x)';
     
 % create matrix T of coefficients (fine grid matrix)
-    T31 = oned_pois(31);
+    T1023 = oned_pois(1023);
+    
+    
+    
     

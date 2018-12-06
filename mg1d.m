@@ -2,13 +2,13 @@
 % smoothing
 
 function [x, it] = mg1d(n, b, T, w, maxit, TOL)
-    % n is the number of unknowns
+    % n is the number of unknowns of the form n = 2^k-1
     % T is matrix of coefficients and b is rhs vector
     % w is the damping coefficient for damped_jacobi
     % maxit is the number of iterations to be used in damped_jacobi
     it = 0;
-    x = zeros(length(b),1)
-    for k = 1:maxit
+    x = zeros(length(b),1);
+    for it = 1:maxit
         % pre-smoothing with damped Jacobi (do 3 iterations only)
         x = damped_jacobiM(w, x, T, b, 10^-7, 3);
         
@@ -70,6 +70,7 @@ function [x, it] = mg1d(n, b, T, w, maxit, TOL)
         else
             break;
         end
-    it = k;      
+        it=it+1;     
+    end
 end
 
