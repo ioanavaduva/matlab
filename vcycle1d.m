@@ -1,7 +1,7 @@
 % Multigrid method for 1D Poisson problem with damped Jacobi pre and post
 % smoothing
 
-function [x, it] = vcycle1d(n, b, T, w, maxit, TOL,levels)
+function [x, it] = vcycle1d(n, b, T, w, maxit, TOL, levels)
     % n is the number of unknowns of the form n = 2^k-1
     % T is matrix of coefficients and b is rhs vector
     % w is the damping coefficient for damped_jacobi
@@ -44,13 +44,12 @@ function [x, it] = vcycle1d(n, b, T, w, maxit, TOL,levels)
             TC = RE * T * II;
 
             if levels ~= 1
-           [err, ~] = vcycle1d(N, v, TC, w, maxit, TOL,levels-1);
-            else 
-           
-            % solve residual equation to find error
-            err = TC\v;
-
+                [err, ~] = vcycle1d(N, v, TC, w, maxit, TOL, levels-1);
+            else            
+                % solve residual equation to find error
+                err = TC\v;
             end
+            
             % transfer error to fine grid; r is fine grid error
             erf = zeros(length(b), 1);
 
@@ -74,7 +73,7 @@ function [x, it] = vcycle1d(n, b, T, w, maxit, TOL,levels)
         else
             break;
         end
-        it=it+1;     
+%        it=it+1;     
     end
 end
 
