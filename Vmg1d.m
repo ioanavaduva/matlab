@@ -1,19 +1,22 @@
 % Multigrid method for 1D Poisson problem with damped Jacobi pre and post
 % smoothing; V-cycle with j levels (usually 4)
 
-function x = Vmg1d(n, b, T, w, maxit, TOL)
+function x = Vmg1d(n, b, T, w, maxit, TOL,maxlev)
     % n is the number of unknowns of the form n = 2^k-1
     % T is matrix of coefficients and b is rhs vector
     % w is the damping coefficient for damped_jacobi
     % maxit is the number of iterations to be used in damped_jacobi
     TC = T;
     resC = b;
+    rst{1} = resC;
     N = n;
-    for L = 1:1:4
+    for L = 1:1:maxlev
         x0 = zeros(length(resC),1);
         
         % pre-smoothing with damped Jacobi (do 3 iterations only)
         x = damped_jacobiM(w, x0, TC, resC, 10^-7, 3);
+        xst{L} = x;
+        Tst{L} = TC;
         
         % compute the residual
         res{L} = resC - TC*x;
@@ -43,16 +46,17 @@ function x = Vmg1d(n, b, T, w, maxit, TOL)
         for i = 1:N
             resC(i) = (res{L}(2*i-1) + 2*res{L}(2*i) + res{L}(2*i+1))/4;
         end
+        rst{L+1} = resC;
         
         % resCs{L}= resC;
         n = N;
-        L = L+1;
+%         L = L+1;
     end
     
     % solve residual equation to find error
     err = TC\resC;
     
-    for L = 4:-1:1
+    for L = maxlev:-1:1
         
         N = n;
         k = log2(n+1);
@@ -75,22 +79,24 @@ function x = Vmg1d(n, b, T, w, maxit, TOL)
         
         % correct approximation (initial guess for damped Jacobi)
         
-        x = res{L} + erf
+%         x = res{L} + erf
+        x = erf + xst{L};
+%         disp(x)
         
         % generate restriction matrix
-        RE = zeros(N,n);
-        
-        for i = 1:N
-            RE(i,2*i-1:2*i+1) = [1 2 1]; 
-        end
-        
-        RE = RE/4;
-        
-        % generate interpolation matrix
-        II = 2*RE';
+%         RE = zeros(N,n);
+%         
+%         for i = 1:N
+%             RE(i,2*i-1:2*i+1) = [1 2 1]; 
+%         end
+%         
+%         RE = RE/4;
+%         
+%         % generate interpolation matrix
+%         II = 2*RE';
         
         % transfer matrix T to fine grid
-        TC = II * TC * RE;
+%         TC = II * TC * RE;
         
         %resF = zeros(length(x), 1);
         %resF(1) = err(1)/2;
@@ -104,9 +110,9 @@ function x = Vmg1d(n, b, T, w, maxit, TOL)
         %resF
         
         %post-smoothing Jacobi (3 iterations)
-        x = damped_jacobiM(w, x, TC, res{L}, 10^-7, 3)
+        x = damped_jacobiM(w, x, Tst{L}, rst{L}, 10^-7, 3);
         
         err = x;
-        L = L + 1;
+%         L = L + 1;
     end
 end
