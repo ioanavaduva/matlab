@@ -22,8 +22,9 @@ function [x, iter] = Vmg1d(n, b, T, w, maxit, TOL, maxlev)
         resC = b;
         if norm(r) > TOL
             for L = 1:1:maxlev
+                if L > 1
                 x0 = zeros(length(resC),1);
-
+                end
                 % pre-smoothing with damped Jacobi (do 3 iterations only)
                 x = damped_jacobiM(w, x0, TC, resC, 10^-7, 3);
                 xst{L} = x;

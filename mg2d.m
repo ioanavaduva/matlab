@@ -40,11 +40,12 @@ function [x, it] = mg2d(n, b, A, w, maxit, TOL)
             % transfer residual to coarse grid; v is coarse grid residual
             for i = 1:(n+1)/2-1
                 for j = 1:(n+1)/2-1
-                    v(i, j) = (res(2*i-1, 2*j-1) + res(2*i-1, 2*j+1) + res(2*i+1, 2*j-1) + res(2*i+1, 2*j+1) + 2*(res(2*i, 2*j-1)+res(2*i, 2*j+1) + res(2*i-1, 2*j) + res(2*i+1, 2*j)) + 4*res(2*i, 2*j))\16;
+                    v(i, j) = (res(2*i-1, 2*j-1) + res(2*i-1, 2*j+1) + res(2*i+1, 2*j-1) + res(2*i+1, 2*j+1) + 2*(res(2*i, 2*j-1)+res(2*i, 2*j+1) + res(2*i-1, 2*j) + res(2*i+1, 2*j)) + 4*res(2*i, 2*j))/16;
                 end
             end
+        
+            v = reshape(v, [N^2, 1]);
             
-            v = reshape(v, [N, 1]);
 
             % transfer matrix T to coarse grid
             AC = RE2d*A*II2d;

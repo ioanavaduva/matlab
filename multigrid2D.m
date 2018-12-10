@@ -1,14 +1,17 @@
 % 2D interpolation - bits and pieces
 
-AA = kr_pois(3);
+AA = kr_pois(7);
+A  =AA;
 
-xtemp = [0.1:0.3333:1];
-x = repmat(xtemp, 1, 3);
+n = sqrt(size(A,1));
+
+xtemp = linspace(0,1,n);
+x = repmat(xtemp, 1, n);
 y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
 b = @(x, y) sin(pi*x).*cos(pi*y);
 b_use = b(x, y)';
 
-x0 = zeros(9, 1);
+x0 = zeros(n^2, 1);
 
 res = b_use - AA*x0;
 
@@ -25,7 +28,7 @@ for j = 1:3
     v(:, 2*j+1) = (v(:, j)+ v(:, j+1))/2;
 end
 
-n = 2^3-1;
+
 k = log2(n+1);
 
 N = 2^(k-1)-1;
@@ -48,7 +51,10 @@ RE2d = kron(RE, RE);
 % coarse grid matrix A is 
 A_coarse = RE2d*A*II2d;
 
+res = reshape(res,n,n);
+
 % restriction operation
+v = zeros(N,N);
 for i = 1:n/2-1
     for j = 1:n/2-1
         v (i, j) = (res(2*i-1, 2*j-1) + res(2*i-1, 2*j+1) + res(2*i+1, 2*j-1) + res(2*i+1, 2*j+1) + 2*(res(2*i, 2*j-1)+res(2*i, 2*j+1) + res(2*i-1, 2*j) + res(2*i+1, 2*j)) + 4*res(2*i, 2*j))\16;
