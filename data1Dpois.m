@@ -25,7 +25,7 @@
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% data for Poisson 1D -  unknowns
+% data for Poisson 1D - 1023 unknowns
 
 % create vector b
     x = [0:9.7752e-04:1];
@@ -34,6 +34,8 @@
     
 % create matrix T of coefficients (fine grid matrix)
     T1023 = oned_pois(1023);
+
+   
     
     
     

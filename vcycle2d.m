@@ -79,18 +79,17 @@ function [x, iter] = vcycle2d(n, b, A, w, maxit, TOL, maxlev)
                 erf = zeros(length(xst{L}), 1);
                 
                 erf(1,:) = err(1)/2;
-                for i = 1:n
+                for i = 1:N
                     erf(2*i, :) = err(i, :);
                     erf(2*i+1, :) = (err(i, :)+ err(i+1, :))/2;
                 end
             
                 erf(:, 1) = erf(:, 1)/2;
-                for j = 1:n
+                for j = 1:N
                     erf(:, 2*j) = erf(:, j);
                     erf(:, 2*j+1) = (erf(:, j)+ erf(:, j+1))/2;
                 end
-    size(erf(:,1))
-    size(xst{L})
+    
                 % correct approximation (initial guess for damped Jacobi in post-smoothing)
                 x = erf(:,1) + xst{L};
 
