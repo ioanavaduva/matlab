@@ -6,8 +6,8 @@ function x = vcycle1d(n, x, b, T, w, levels)
     % T is matrix of coefficients and b is rhs vector
     % w is the damping coefficient for damped_jacobi
     % maxit is the number of iterations to be used in damped_jacobi
-    
     % pre-smoothing with damped Jacobi (do 3 iterations only)
+    L = levels;
     x = damped_jacobiM(w, x, T, b, 10^-7, 3);
     
     % compute the residual
@@ -32,38 +32,44 @@ function x = vcycle1d(n, x, b, T, w, levels)
         for i = 1:N
             v(i) = (res(2*i-1) + 2*res(2*i) + res(2*i+1))/4;
         end
+        resC{L} = v;
         
+                
         % transfer matrix T to coarse grid
         TC = RE * T * II;
+        Ts{L} = TC;
+        
         if levels ~= 1
-            err{levels}= vcycle1d(N, zeros(length(v), 1), v, TC, w, levels-1);
+            err{L}= vcycle1d(N, zeros(length(v), 1), v, TC, w, levels-1);
         else
             % solve residual equation to find error
             err{1} = TC\v;
         end
+        size(resC{3})
         
         for L = 1:levels
 
                 N = n;
                 k = log2(n+1);
                 n = 2^(k+1)-1;
-
+                
                 % transfer error to fine grid; erf is fine grid error
-                erf = zeros(length(err), 1);        
-                erf(1) = err(1)/2;        
-                for j = 1:n/2
-                    erf(2*j) = err(j);
+                erf = zeros(length(resC{L}), 1);        
+                erf(1) = err{1}(1)/2;        
+                for j = 1:N/2
+                    erf(2*j) = err{1}(j);
                 end        
-                for j = 1:n/2-1
-                    erf(2*j+1) = (err(j) + err(j+1))/2;
+                for j = 1:N/2-1
+                    erf(2*j+1) = (err{1}(j) + err{1}(j+1))/2;
                 end        
-                erf(n) = err(length(err));
+                erf(N) = err{1}(length(err{1}));
 
                 % correct approximation (initial guess for damped Jacobi in post-smoothing)
-                x = erf + err{levels};
+                x = erf + resC{L};
+                
 
                 %post-smoothing Jacobi (3 iterations)
-                x = damped_jacobiM(w, x, Tst{L}, rst{L}, 10^-7, 3);
+                x = damped_jacobiM(w, x, Ts{L}, resC{L}, 10^-7, 3);
 
                 err = x;                 
             end

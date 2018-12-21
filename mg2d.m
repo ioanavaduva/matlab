@@ -35,28 +35,32 @@ function [x, it] = mg2d(n, b, A, w, maxit, TOL)
             
             RE2d = kron(RE, RE);
             
+            % transfer matrix A to coarse grid
+            AC = RE2d*A*II2d;
+            
             % make vector of residuals into matrix with N columns
             res = reshape(res, [n, n]);
+            
             % transfer residual to coarse grid; v is coarse grid residual
-            for i = 1:(n+1)/2-1
-                for j = 1:(n+1)/2-1
+            v = zeros(N, N);
+            for i = 1:(n+1)/2 - 1
+                for j = 1:(n+1)/2 - 1
                     v(i, j) = (res(2*i-1, 2*j-1) + res(2*i-1, 2*j+1) + res(2*i+1, 2*j-1) + res(2*i+1, 2*j+1) + 2*(res(2*i, 2*j-1)+res(2*i, 2*j+1) + res(2*i-1, 2*j) + res(2*i+1, 2*j)) + 4*res(2*i, 2*j))/16;
                 end
             end
+            
         
             v = reshape(v, [N^2, 1]);
-            
-
-            % transfer matrix T to coarse grid
-            AC = RE2d*A*II2d;
+            %size(v)
+           
 
             % solve residual equation to find error
             err = AC\v;
 
-            % transfer error to fine grid; r is fine grid error
+            % transfer error to fine grid; erf is fine grid error
             erf = zeros(length(b), 1);
 
-            erf(1,:) = err(1)/2;
+            erf(1,:) = err(1, :)/2;
             for i = 1:n
                 erf(2*i, :) = err(i, :);
                 erf(2*i+1, :) = (err(i, :)+ err(i+1, :))/2;
@@ -76,7 +80,6 @@ function [x, it] = mg2d(n, b, A, w, maxit, TOL)
         
         else
             break;
-        end
-        it=it+1;     
+        end    
     end
 end
