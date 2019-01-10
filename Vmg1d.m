@@ -68,7 +68,7 @@ function [x, iter] = Vmg1d(n, b, T, w, maxit, TOL, maxlev)
                 n = 2^(k+1)-1;
 
                 % transfer error to fine grid; erf is fine grid error
-                erf = zeros(length(err), 1);        
+                erf = zeros(length(err), 1); 
                 erf(1) = err(1)/2;        
                 for j = 1:n/2
                     erf(2*j) = err(j);
