@@ -1,11 +1,14 @@
-% Multigrid method for 1D Poisson problem with damped Jacobi pre and post
-% smoothing; V-cycle with j levels (usually 4)
+% Nonrecursive V cycle multigrid method for 1D Poisson problem with damped 
+% Jacobi pre and post smoothing
+
+% n is the number of unknowns of the form n = 2^k-1
+% T is matrix of coefficients and b is rhs vector
+% w is the damping coefficient for damped_jacobi
+% maxit is the number of iterations
+% maxlev is the number of levels we go through
+% TOL is tolerance level for convergenc: 1e-4 is ok here
 
 function [x, iter] = Vmg1d(n, b, T, w, maxit, TOL, maxlev)
-    % n is the number of unknowns of the form n = 2^k-1
-    % T is matrix of coefficients and b is rhs vector
-    % w is the damping coefficient for damped_jacobi
-    % maxit is the number of iterations to be used in damped_jacobi
 
     T_original = T;
     resC = b;
@@ -25,7 +28,7 @@ function [x, iter] = Vmg1d(n, b, T, w, maxit, TOL, maxlev)
                 x0 = zeros(length(resC),1);
                 end
                 % pre-smoothing with damped Jacobi (do 3 iterations only)
-                x = damped_jacobiM(w, x0, TC, resC, 10^-7, 3);
+                x = damped_jacobiM(w, x0, TC, resC, 1e-7, 3);
                 xst{L} = x;
                 Tst{L} = TC;
 
@@ -82,7 +85,7 @@ function [x, iter] = Vmg1d(n, b, T, w, maxit, TOL, maxlev)
                 x = erf + xst{L};
 
                 %post-smoothing Jacobi (3 iterations)
-                x = damped_jacobiM(w, x, Tst{L}, rst{L}, 10^-7, 3);
+                x = damped_jacobiM(w, x, Tst{L}, rst{L}, 1e-7, 3);
 
                 err = x;                 
             end
