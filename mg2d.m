@@ -48,18 +48,14 @@ function [x, it] = mg2d(n, b, A, w, maxit, TOL)
                     v(i, j) = (res(2*i-1, 2*j-1) + res(2*i-1, 2*j+1) + res(2*i+1, 2*j-1) + res(2*i+1, 2*j+1) + 2*(res(2*i, 2*j-1)+res(2*i, 2*j+1) + res(2*i-1, 2*j) + res(2*i+1, 2*j)) + 4*res(2*i, 2*j))/16;
                 end
             end
-            
-        
+
             v = reshape(v, [N^2, 1]);
-            %size(v)
-           
 
             % solve residual equation to find error
             err = AC\v;
 
             % transfer error to fine grid; erf is fine grid error
             erf = zeros(length(b), 1);
-
             erf(1,:) = err(1, :)/2;
             for i = 1:n
                 erf(2*i, :) = err(i, :);
@@ -76,7 +72,7 @@ function [x, it] = mg2d(n, b, A, w, maxit, TOL)
             x = x + erf(:, 1);
 
             % post-smoothing Jacobi (3 iterations)
-            x = damped_jacobiM(w, x, A, b, 10^-7, 3);
+            x = damped_jacobiM(w, x, A, b, 1e-7, 3);
         
         else
             break;

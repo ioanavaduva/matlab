@@ -26,14 +26,16 @@ function [x, iter] = Vmg2d(n, b, A, w, maxit, TOL, maxlev)
                 end
                 % pre-smoothing with damped Jacobi (do 3 iterations only)
                 x = damped_jacobiM(w, x0, AC, resC, 1e-7, 3);
+             
                 xst{L} = x;
                 Ast{L} = AC;
 
                 % compute the residual
                 res{L} = resC - AC*x;
-                    
+                
                 % generate restriction matrix
                 k = log2(n+1);
+                
                 N = 2^(k-1)-1;
 
                 RE = zeros(N,n);        
@@ -62,6 +64,7 @@ function [x, iter] = Vmg2d(n, b, A, w, maxit, TOL, maxlev)
                     end
                 end      
                 resC = reshape(resC, [N^2,1]);
+                
                 rst{L+1} = resC;
                 n = N;
             end
@@ -76,20 +79,32 @@ function [x, iter] = Vmg2d(n, b, A, w, maxit, TOL, maxlev)
                 n = 2^(k+1)-1;
 
                 % transfer error to fine grid; erf is fine grid error
-                erf = zeros(length(xst{L}), 1);
+                err = reshape(err, [N, N]);
+                erf = zeros(n, n);
                 
-                erf(1,:) = err(1)/2;
-                for i = 1:N
-                    erf(2*i, :) = err(i, :);
-                    erf(2*i+1, :) = (err(i, :)+ err(i+1, :))/2;
+                for i = 1:n/2
+                    for j = 1:n/2
+                        erf(2*i, 2*j) = err(i, j);
+                    end
                 end
-            
-                erf(:, 1) = erf(:, 1)/2;
-                for j = 1:N
-                    erf(:, 2*j) = erf(:, j);
-                    erf(:, 2*j+1) = (erf(:, j)+ erf(:, j+1))/2;
+                for i = 1:n/2-1
+                    for j = 1: n/2
+                        erf(2*i+1, 2*j) = (err(i, j) + err(i+1, j))/2;
+                    end
                 end
-    
+                for i = 1:n/2
+                    for j =1: n/2-1
+                        erf(2*i, 2*j+1) = (err(i, j) + err(i, j+1))/2;
+                    end
+                end
+                for i = 1:n/2-1
+                    for j =1: n/2-1
+                         erf(2*i+1, 2*j+1) = (err(i, j) + err(i+1, j) + err(i, j+1) + err(i+1, j+1))/4;
+                    end
+                end
+                 
+                erf = reshape(erf, [n^2, 1])
+                
                 % correct approximation (initial guess for damped Jacobi in post-smoothing)
                 x = erf(:,1) + xst{L};
 
