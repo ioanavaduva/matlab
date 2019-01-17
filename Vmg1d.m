@@ -23,6 +23,7 @@ function [x, iter] = Vmg1d(n, b, T, w, maxit, TOL, maxlev)
         x0 = x;
         resC = b;
         if norm(r) > TOL
+            
             for L = 1:1:maxlev
                 if L > 1
                 x0 = zeros(length(resC),1);
@@ -31,9 +32,10 @@ function [x, iter] = Vmg1d(n, b, T, w, maxit, TOL, maxlev)
                 x = damped_jacobiM(w, x0, TC, resC, 1e-7, 3);
                 xst{L} = x;
                 Tst{L} = TC;
-
+                
                 % compute the residual
                 res{L} = resC - TC*x;
+                
                     
                 % generate restriction matrix
                 k = log2(n+1);
@@ -47,7 +49,6 @@ function [x, iter] = Vmg1d(n, b, T, w, maxit, TOL, maxlev)
 
                 % generate interpolation matrix
                 II = 2*RE';
-%                disp(size(TC))
 
                 % transfer matrix T to coarse grid
                 TC = RE * TC * II; 
@@ -59,19 +60,23 @@ function [x, iter] = Vmg1d(n, b, T, w, maxit, TOL, maxlev)
                 end        
                 rst{L+1} = resC;
                 n = N;
+            
             end
+            
            
             % solve residual equation to find error
             err = TC\resC;
             
+           
             for L = maxlev:-1:1
 
                 N = n;
                 k = log2(n+1);
                 n = 2^(k+1)-1;
+                
 
                 % transfer error to fine grid; erf is fine grid error
-                erf = zeros(length(err), 1); 
+                erf = zeros(n, 1); 
                 erf(1) = err(1)/2;        
                 for j = 1:n/2
                     erf(2*j) = err(j);
@@ -79,13 +84,17 @@ function [x, iter] = Vmg1d(n, b, T, w, maxit, TOL, maxlev)
                 for j = 1:n/2-1
                     erf(2*j+1) = (err(j) + err(j+1))/2;
                 end        
-                erf(n) = err(length(err));
+                erf(n) = err(length(err))/2;
+                
+
 
                 % correct approximation (initial guess for damped Jacobi in post-smoothing)
                 x = erf + xst{L};
 
+
                 %post-smoothing Jacobi (3 iterations)
                 x = damped_jacobiM(w, x, Tst{L}, rst{L}, 1e-7, 3);
+                
 
                 err = x;                 
             end
