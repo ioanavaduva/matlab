@@ -53,20 +53,24 @@ function [x, it] = mg2d(n, b, A, w, maxit, TOL)
 
             % solve residual equation to find error
             err = AC\v;
-
+            
             % transfer error to fine grid; erf is fine grid error
-            erf = zeros(length(b), 1);
+            erf = zeros(n, n);
             erf(1,:) = err(1, :)/2;
-            for i = 1:n
+            for i = 1:(n-1)/2
                 erf(2*i, :) = err(i, :);
                 erf(2*i+1, :) = (err(i, :)+ err(i+1, :))/2;
             end
             
             erf(:, 1) = erf(:, 1)/2;
-            for j = 1:n
+            
+            for j = 1:(n-1)/2
                 erf(:, 2*j) = erf(:, j);
                 erf(:, 2*j+1) = (erf(:, j)+ erf(:, j+1))/2;
             end
+            size(erf)
+            erf = reshape(erf, [n^2, 1]);
+            disp(erf(:,1))
 
             % correct approximation (initial guess for damped Jacobi)
             x = x + erf(:, 1);

@@ -79,31 +79,89 @@ function [x, iter] = Vmg2d(n, b, A, w, maxit, TOL, maxlev)
                 n = 2^(k+1)-1;
 
                 % transfer error to fine grid; erf is fine grid error
+                erf = zeros(n^2, 1);
+          
+                erf = reshape(erf, [n,n]);
                 err = reshape(err, [N, N]);
-                erf = zeros(n, n);
+                
+                %first entry
+                erf(1, 1) = err(1, 1)/4; 
+                
+                %(1, even) entries
+                for j = 1:n/2
+                    erf(1, 2*j) = err(1, j)/2;
+                end
+                
+                %(even, 1) entries
+                for i = 1:n/2
+                    erf(2*i, 1) = err(i, 1)/2;
+                end
+                
+                %(1,odd) entries
+                for j = 1:n/2-1
+                    erf(1, 2*j+1) = (err(1, j) + err(1, j+1))/4;
+                end
+                
+                %(odd, 1) entries
+                for i = 1:n/2-1
+                    erf(2*i+1,1) = (err(i, 1) + err(i+1,1))/4;
+                end
+                
+                %last entry
+                erf(n, n) = err(N,N)/4;
+                
+                %(n, even) entries
+                for j = 1:n/2
+                    erf(n, 2*j) = err(N, j)/2;
+                end
+                
+                %(even, n) entries
+                for i = 1:n/2
+                    erf(2*i, n) = err(i, N)/2;
+                end
+                
+                %(n, odd) entries
+                for j = 1:n/2-1
+                    erf(n, 2*j+1) = (err(N, j) + err(N, j+1))/4;
+                end
+                
+                %(odd, n) entries
+                for i = 1:n/2-1
+                    erf(2*i+1, n) = (err(i, N) + err(i+1,N))/4;
+                end
+                
+                %(n, 1) entry
+                erf(n, 1) = err(N, 1)/4;
+                
+                %(1, n) entry
+                erf(1, n) = err(1, N)/4;
                 
                 for i = 1:n/2
                     for j = 1:n/2
-                        erf(2*i, 2*j) = err(i, j);
+                        erf(2*i, 2*j) = err(i,j);
                     end
                 end
+                
                 for i = 1:n/2-1
                     for j = 1: n/2
                         erf(2*i+1, 2*j) = (err(i, j) + err(i+1, j))/2;
                     end
                 end
+                
                 for i = 1:n/2
                     for j =1: n/2-1
                         erf(2*i, 2*j+1) = (err(i, j) + err(i, j+1))/2;
                     end
                 end
+                
+                
                 for i = 1:n/2-1
                     for j =1: n/2-1
                          erf(2*i+1, 2*j+1) = (err(i, j) + err(i+1, j) + err(i, j+1) + err(i+1, j+1))/4;
                     end
                 end
-                 
-                erf = reshape(erf, [n^2, 1])
+                
+                erf = reshape(erf, [n^2, 1]);
                 
                 % correct approximation (initial guess for damped Jacobi in post-smoothing)
                 x = erf(:,1) + xst{L};
