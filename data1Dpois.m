@@ -34,8 +34,18 @@
     
 % create matrix T of coefficients (fine grid matrix)
     T1023 = oned_pois(1023);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   
+% data for Poisson 1D - 
+  
+% create vector b
+    x = [0:2.4421e-04:1];
+    b = @(x) sin(pi*x).*cos(pi*x);
+    b_1d4095 = b(x)';
+    
+% create matrix T of coefficients (fine grid matrix)
+    T4095 = oned_pois(4095);  
+    
     
     
     
