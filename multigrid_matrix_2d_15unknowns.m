@@ -2,10 +2,10 @@
 % unknowns 2D Poisson problem
 
 %original matrix
-A = kr_pois(15); 
+A = kr_pois(31); 
 
 %restriction (RE) and prolongation (II)
-n = 15; 
+n = 31; 
 k = log2(n+1);
 N = 2^(k-1)-1;
 RE = zeros(N,n);
