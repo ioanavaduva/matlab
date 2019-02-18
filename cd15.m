@@ -1,5 +1,6 @@
 % 2D convection - diffusion problem with 15 unknowns
 n = 15;
+h = 1/n;
 
 % Poisson Matrix (needs multiplied by an epsilon between 0 and 1).
 A = kr_pois(n);
@@ -30,6 +31,6 @@ Psi2 = sparse(diag(ps2(y)));
 
 % Get final matrix C-D for epsilon = 0.0333
 eps = 0.0333;
-CD = eps*A + Phi1*B*Psi1 + Phi2*B'*Psi2;
+CD = eps*A/(h^2) + Phi1*B*Psi1/(2*h) + Phi2*B'*Psi2/(2*h);
 
 
