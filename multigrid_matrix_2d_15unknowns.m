@@ -24,4 +24,4 @@ Q = -(A - D); % negative remaining matrix of A
 H = inv(D)*Q;
 R = (H^2)*inv(D) + H*inv(D) + inv(D);
 
-M = (H^3)*R + R + (H^3)*P*AA*T*(H')^3;
+M = (H^3)*R + R + (H^3)*P*inv(AA)*T*(H')^3;
