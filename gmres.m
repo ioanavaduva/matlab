@@ -1,4 +1,4 @@
-function [x, error, flag] = gmres( A, x, b, restrt, tol )
+function [x, error, i, flag] = gmres( A, x, b, restrt, tol )
 
 %  -- Iterative template routine --
 %     Univ. of Tennessee and Oak Ridge National Laboratory
@@ -28,7 +28,7 @@ function [x, error, flag] = gmres( A, x, b, restrt, tol )
 %         flag     INTEGER: 0 = solution found to tolerance
 %                           1 = no convergence given max_it
 
-   %iter = 0;                                         % initialization
+   i = 0;                                         % initialization
    flag = 0;
 
    bnrm2 = norm( b );
@@ -46,48 +46,46 @@ function [x, error, flag] = gmres( A, x, b, restrt, tol )
    sn(1:m) = zeros(m,1);
    e1    = zeros(n,1);
    e1(1) = 1.0;
-
- %  for iter = 1:max_it,                              % begin iteration
-
-      r = ( b-A*x );
-      V(:,1) = r / norm( r );
-      s = norm( r )*e1;
-      for i = 1:m,                                   % construct orthonormal
-	 w = (A*V(:,i));                         % basis using Gram-Schmidt
-	 for k = 1:i,
-	   H(k,i)= w'*V(:,k);
-	   w = w - H(k,i)*V(:,k);
-	 end
-	 H(i+1,i) = norm( w );
-	 V(:,i+1) = w / H(i+1,i);
-	 for k = 1:i-1,                              % apply Givens rotation
-            temp     =  cs(k)*H(k,i) + sn(k)*H(k+1,i);
-            H(k+1,i) = -sn(k)*H(k,i) + cs(k)*H(k+1,i);
-            H(k,i)   = temp;
-	 end
-	 [cs(i),sn(i)] = rotmat( H(i,i), H(i+1,i) ); % form i-th rotation matrix
-         temp   = cs(i)*s(i);                        % approximate residual norm
-         s(i+1) = -sn(i)*s(i);
-	 s(i)   = temp;
-         H(i,i) = cs(i)*H(i,i) + sn(i)*H(i+1,i);
-         H(i+1,i) = 0.0;
-	 error  = abs(s(i+1)) / bnrm2;
-	 if ( error <= tol ),                        % update approximation
-	    y = H(1:i,1:i) \ s(1:i);                 % and exit
-            x = x + V(:,1:i)*y;
-	    break;
-	 end
-      end
-
-      if ( error <= tol ), return, end
-      y = H(1:m,1:m) \ s(1:m);
-      x = x + V(:,1:m)*y;                            % update approximation
-      r = ( b-A*x )                              % compute residual
-      s(i+1) = norm(r);
-      error = s(i+1) / bnrm2;                        % check convergence
-      if ( error <= tol ), return, end;
-  % end
-
-   if ( error > tol ) flag = 1; end;                 % converged
+   
+    if (error >= tol) 
+        r = ( b-A*x );
+        V(:,1) = r / norm( r );
+        s = norm( r )*e1;
+        for i = 1:m                                   % construct orthonormal
+            w = (A*V(:,i));                         % basis using Gram-Schmidt
+            for k = 1:i
+                H(k,i)= w'*V(:,k);
+                w = w - H(k,i)*V(:,k);
+            end
+            H(i+1,i) = norm( w );
+            V(:,i+1) = w / H(i+1,i);
+            for k = 1:i-1                              % apply Givens rotation
+                temp     =  cs(k)*H(k,i) + sn(k)*H(k+1,i);
+                H(k+1,i) = -sn(k)*H(k,i) + cs(k)*H(k+1,i);
+                H(k,i)   = temp;
+            end
+            [cs(i),sn(i)] = rotmat( H(i,i), H(i+1,i) ); % form i-th rotation matrix
+            temp   = cs(i)*s(i);                        % approximate residual norm
+            s(i+1) = -sn(i)*s(i);
+            s(i)   = temp;
+            H(i,i) = cs(i)*H(i,i) + sn(i)*H(i+1,i);
+            H(i+1,i) = 0.0;
+            error  = abs(s(i+1)) / bnrm2;
+            if ( error <= tol )                       % update approximation
+                y = H(1:i,1:i) \ s(1:i);                 % and exit
+                x = x + V(:,1:i)*y;
+                break;
+            end
+        end
+        r = b-A*x;
+        s(i+1) = norm(r);
+        error = s(i+1) / bnrm2; 
+    else
+        y = H(1:m,1:m) \ s(1:m);
+        x = x + V(:,1:m)*y;                            % update approximation
+    end
+    
+    if ( error <= tol ), return, end;
+    if ( error > tol ) flag = 1; end;                 % converged
 
 % END of gmres.m
