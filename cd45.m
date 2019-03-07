@@ -1,16 +1,16 @@
 % 2D convection - diffusion problem with 15 unknowns
-n = 15;
+n = 45;
 h = 1/n;
 
 % Poisson Matrix (needs multiplied by an epsilon between 0 and 1).
 A = kr_pois(n);
 
 % Right hand side vector b coming from function b(x, y)= sin(pi*x)*cos(pi*y)
-xtemp = [0:0.0667:1];
+xtemp = [0:0.0223:1];
 x = repmat(xtemp, 1, n);
 y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
 b = @(x, y) sin(pi*x).*cos(pi*y);
-b15 = b(x, y)';
+b45 = b(x, y)';
 
 % Create B matrix for convection part of the equation
 B = zeros(n^2, n^2);
@@ -30,5 +30,7 @@ Psi1 = sparse(diag(ps1(y)));
 Psi2 = sparse(diag(ps2(y)));
 
 % Get final matrix C-D for epsilon = 0.0333
-eps = 0.0083;
+eps = 0.0666;
 CD = eps*A/(h^2) + Phi1*B*Psi1/(2*h) + Phi2*B'*Psi2/(2*h);
+
+
