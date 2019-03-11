@@ -51,7 +51,9 @@ function [x, error, i, flag] = gmres( A, x, b, restrt, tol )
         r = ( b-A*x );
         V(:,1) = r / norm( r );
         s = norm( r )*e1;
-        for i = 1:m                                   % construct orthonormal
+        for i = 1:m                                 % construct orthonormal
+            it(i) = i;
+            er(i) = error;
             w = (A*V(:,i));                         % basis using Gram-Schmidt
             for k = 1:i
                 H(k,i)= w'*V(:,k);
@@ -84,6 +86,11 @@ function [x, error, i, flag] = gmres( A, x, b, restrt, tol )
         y = H(1:m,1:m) \ s(1:m);
         x = x + V(:,1:m)*y;                            % update approximation
     end
+    
+    plot(it, er, '-o');
+    xlabel('Number of iterations performed');
+    ylabel('Errors');
+    title('Errors versus number of iterations');
     
     if ( error <= tol ), return, end;
     if ( error > tol ) flag = 1; end;                 % converged
