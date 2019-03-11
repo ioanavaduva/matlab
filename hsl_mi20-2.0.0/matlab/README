@@ -1,0 +1,394 @@
+-----------------------------------------------------------------
+Contents
+-----------------------------------------------------------------
+
+(1) Introduction
+(2) Requirements
+(3) Installation
+(4) Using the Matlab interface 
+    (a) Simplified interface
+        (i)  Example
+        (ii) Multiple instances
+    (b) Extended interface
+        (i)  Example
+(5) Control structure
+(6) Information structure
+
+(A) Old-style interface
+
+-----------------------------------------------------------------
+1. Introduction
+-----------------------------------------------------------------
+
+Given an n by n matrix A and an n-vector z, HSL_MI20 computes the vector x=Mz,
+where M is an algebraic multigrid (AMG) v-cycle preconditioner for A. A 
+classical AMG method is used, as described in [1]. During the multigrid 
+coarsening process, positive off-diagonal entries are ignored and, when 
+calculating the interpolation weights, positive off-diagonal entries are added 
+to the diagonal.
+
+Assumptions:
+- A must have positive diagonal entries
+- A can be either symmetric or unsymmetric
+- (most of) the off-diagonal entries should be non-positive (each diagonal 
+  entry should be large compared to the sum of the off-diagonals in its row)
+
+[1] K. Stuben. An Introduction to Algebraic Multigrid. In U. Trottenberg, C. 
+    Oosterlee, A. Schuller, eds, 'Multigrid', Academic Press, 2001, pp 413-532.
+
+[2] J. Boyle, M. D. Mihajlovic and J. A. Scott. HSL_MI20: an efficient AMG 
+    preconditioner, Rutherford Appleton Technical Report RAL-TR-2007-021, 2007. 
+
+-----------------------------------------------------------------
+2. Requirements
+-----------------------------------------------------------------
+
+These instructions are for linux-based systems (both 32-bit and 64-bit machines 
+are supported).
+
+Requirements: 
+ - Matlab 2007a or more recent version
+ - The g95 compiler
+ - The MATLAB environment variable must point to your system matlab directory
+   (see INSTALL for further details)
+
+-----------------------------------------------------------------
+3. Installation
+-----------------------------------------------------------------
+
+Instructions for installing the Matlab Interface for HSL_MI20 are located in 
+INSTALL.
+
+
+-----------------------------------------------------------------
+4. Using the Matlab interface
+-----------------------------------------------------------------
+
+We provide two different approaches for using HSL_MI20 under Matlab. The first 
+offers the user a simplified interface to HSL_MI20 and hides the underlying 
+data structures that are passed between the procedures. The second 
+approach uses an extended interface and that allows the user to explicitly pass 
+the data structures between the procedures: this may be preferable if the user 
+wishes to have multiple instances of HSL_MI20 available at once.
+
+-----------------------------------------------------------------
+4(a). Using the Matlab interface: simplified interface
+-----------------------------------------------------------------
+
+- If not already in the search paths, add the directory where you installed the 
+  interface to the search paths, e.g.
+  >> addpath('mi20_matlab')
+  >> javaaddpath('mi20_matlab')
+  where mi20_matlab is the directory.
+  [ You can add these paths permanently (see 'help pathtool')]
+
+- Before setting up the preconditioner, a control structure is
+  required. This may be initialized using hsl_mi20_control:
+  >> control = hsl_mi20_control()
+  The values of the components of the control structure may be
+  altered, see Section 5.
+
+- The AMG preconditioner for a matrix A is setup using hsl_mi20_setup:
+  >> inform = hsl_mi20_setup(A,control)
+  The function returns an information structure inform. For details on the
+  components of the information structure, see Section 6.
+
+- The preconditioner is applied to a vector z and a vector x returned
+  using hsl_mi20_precondition:
+  >> [x,inform] = hsl_mi20_precondition(z)
+  The function also returns an (optional) information structure inform.  For 
+  details on the components of the information structure, see Section 6.
+  hsl_mi20_precondition can be called multiple times after the preconditioner
+  has been setup.
+
+- After the user has finished using the interface, hsl_mi20_finalize should be 
+  called to remove the global variables and release memory associated with the
+  preconditioner:
+  >> hsl_mi20_finalize
+
+-----------------------------------------------------------------
+4(a)(i). Using the Matlab interface: simplified interface: example
+-----------------------------------------------------------------
+
+Below is an example of using the Matlab interface with default
+controls:
+
+>> hsl_mi20_startup
+>> A = gallery('poisson',20,20);
+>> b = ones(length(A),1);
+>> control = hsl_mi20_control;
+>> inform = hsl_mi20_setup(A,control);
+>> x =  hsl_mi20_precondition(b);
+>> hsl_mi20_finalize;
+
+The interface may also be used in conjunction with iterative solvers:
+
+>> A = gallery('poisson',20,20);
+>> b = ones(length(A),1);
+>> hsl_mi20_startup
+>> control = hsl_mi20_control;
+>> inform = hsl_mi20_setup(A,control);
+>> x = pcg(A,b,1e-8,100,'hsl_mi20_precondition');
+>> hsl_mi20_finalize;
+
+-----------------------------------------------------------------
+4(a)(ii). Using the Matlab interface: simplified interface: multiple instances
+-----------------------------------------------------------------
+
+- A second instance of a preconditioner can be formed by calling
+  >> inform = hsl_mi20_setup(A,control,2);
+
+  This can then be applied by calling:
+  >> x = hsl_mi20_precondition(b,2);
+  
+  It is then finalized by calling:
+  >> hsl_mi20_finalize(2);
+
+  Further instances are formed similarly.  
+
+- If we call the setup routine by 
+  >> hsl_mi20_setup(A,control) 
+  (without the optional index), then this is equivalent to calling
+  >> hsl_mi20_setup(A,control,1)
+
+  Subsequent solves (and finalizes) may therefore be performed with
+  or without an appended index '1'.
+
+- The call 
+  >> hsl_mi20_finalize
+  without any arguments destroys *all* instances of amg, whereas the call
+  >> hsl_mi20_finalize(k)
+  will only destroy the instance corresponding with the integer 'k'.
+
+EXAMPLE
+>> A = gallery('poisson',20,20); b = A*ones(length(A,1));
+>> B = gallery('poisson',40,40); f = B*ones(length(B,1));
+>> control = hsl_mi20_control;
+>> inform = hsl_mi20_setup(A,control,1);
+>> inform = hsl_mi20_setup(B,control,2);
+>> x1 = hsl_mi20_precondition(b,1); % apply the preconditioner for A
+>> x2 = hsl_mi20_precondition(f,2); % apply the preconditioner for B
+>> hsl_mi20_finalize; 
+
+-----------------------------------------------------------------
+4(b). Using the Matlab interface: extended interface
+-----------------------------------------------------------------
+
+- If not already in the search paths, add the directory where you installed the 
+  interface to the search paths, e.g.
+  >> addpath('mi20_matlab')
+  >> javaaddpath('mi20_matlab')
+  where mi20_matlab is the directory.
+  [ You can add these paths permanently (see 'help pathtool')]
+
+- Before setting up the preconditioner, a control structure is
+  required. This may be initialized by calling hsl_mi20 as follows.
+  >> control = hsl_mi20('control')
+  The values of the components of the control structure may be
+  altered, see 'Control structure' section.
+
+- The preconditioner for a matrix A is setup by calling hsl_mi20 as follows.
+  >> [inform,handle] = hsl_mi20('setup',A,control)
+  The input argument control is a control structure.
+  On successful execution, hsl_mi20 returns:
+  inform - an information structure, see 'Information structure' section.
+  handle - an integer by which the preconditioner may be referenced in future
+       calls to hsl_mi20('precondition',...). 
+
+- The preconditioner is applied to a vector z and a vector x returned as 
+  follows.
+  >> [x,inform] = hsl_mi20('precondition',z,handle)
+  It can be called multiple times after the preconditioner has been setup.
+  The input arguments are:
+  z - vector to which the preconditioner is applied
+  handle - an integer referencing a preconditioner previously established by
+       a call to hsl_mi20('setup',...)
+On successful execution, hsl_mi20 returns:
+  inform - an information structure, see 'Information structure' section.
+
+- Freeing memory associated with a preconditioner may be achieved with a call
+  as follows.
+  >> hsl_mi20('destroy',handle)
+
+-----------------------------------------------------------------
+4(b)(i). Using the Matlab interface: extended interface: example
+-----------------------------------------------------------------
+
+Below is an example of using the Matlab interface with default
+controls:
+
+>> A = gallery('poisson',20,20);
+>> z = ones(length(A),1);
+>> control = hsl_mi20('control');
+>> [inform,handle]=hsl_mi20('setup',A,control);
+>> [x,inform] =  hsl_mi20('precondition',z,handle);
+
+The interface may also be used in conjunction with iterative solvers by 
+globalizing the variable handle and forming a new function of the form:
+
+------------------
+function x = hsl_mi20_precond(z)
+global handle;
+[x,inform] =  hsl_mi20( 'precondition',z,handle);
+---------------------------------------
+
+We can now use the interface in conjunction with an iterative solver.
+>> A = gallery('poisson',20,20);
+>> b = ones(length(A),1);
+>> global handle;
+>> control = hsl_mi20('control');
+>> [inform,handle]=hsl_mi20('setup',A,control);
+>> x = pcg(A,b,1e-8,100,'hsl_mi20_precond');
+
+
+-----------------------------------------------------------------
+5. Control structure
+-----------------------------------------------------------------
+
+The control structure is passed as an argument to the setup procedure. The 
+components of the control structure can be altered by the user to change the 
+settings of the AMG preconditioner. Each component is automatically given 
+default values when mi20_control/hsl_mi20('control') is called. The components 
+are as follows.
+           
+aggressive: is an integer that controls the coarsening used. If aggressive=1, 
+  normal (non-aggressive) coarsening is used. For values greater than 1, 
+  aggressive coarsening is used, and the value determines the number of 
+  coarsening steps that are applied between levels. The default is 1. 
+  Restriction: aggressive >= 1.
+
+c_fail: is an integer that controls the coarsening failure criteria. A value of
+  1 indicates that coarsening terminates if ANY row in a coarse level matrix 
+  has at least one strictly positive entry but no negative off-diagonal entries.
+  A value of 2 indicates that coarsening terminates if ALL the rows in a coarse
+  level matrix have at least one strictly positive entry and no negative off-
+  diagonal entries or if the lack of a negative off-diagonal causes coarsening 
+  to fail. The default is 1. Restriction: c_fail = 1 or 2.
+
+max_levels: is an integer that holds the maximum number of coarse levels in the
+  multigrid structure that is generated. The default is 100.
+  Restriction: max_levels >= 1.
+
+max_points: is an integer. Coarsening terminates if either the number of coarse
+  levels is max_levels or the number of points in a coarse level is less than 
+  or equal to max_points. The default is 1. Restriction: max_points > 0.
+
+one_pass_coarsen: is a logical value with default false. If set to true, one
+  pass coarsening is used. This reduces the time required at each level to
+  construct coarse and fine points (and can significantly reduce the time
+  required to compute the preconditioner) but it may result in a poorer
+  quality preconditioner.
+
+reduction: is a real value. If two successive levels have n_c and n_f points,
+  respectively, coarsening continues while n_c <= n_f*reduction. reduction must
+  be at least 0.5 and at most 1. The default value is 0.8.
+
+st_method: is an integer that controls the method used to find strong transpose
+  connections. If st_method=1, they are found as they are required; if
+  st_method=2, they are found before coarsening starts and stored. If the
+  matrix has an unsymmetric sparsity pattern, method 2 is always used. The 
+  default is 2. Restriction> st_method = 1 or 2.
+
+st_parameter: is a real value that is used in determining whether connections
+  are strong or weak. The default is 0.25 but for some applications (especially
+  in 3D), it can be advantageous to use a larger value.
+  Restriction: 0.0 <= st_parameter <= 1.0.
+
+coarse_solver: is an integer that controls which solver is used on the coarsest
+  level. Possible values are:
+     1: damped Jacobi (with damping factor damping)
+     2: Gauss-Seidel
+     3: sparse direct solver HSL_MA48
+     4: LAPACK dense direct solver _GETRF
+  The default is 3 but note that it may be faster to use an iterative solver
+  (coarse_solver = 1 or 2). Restriction: coarse_solver = 1, 2, 3 or 4. 
+
+coarse_solver_its: is an integer that controls the number of
+  iterations used by the iterative solver on the coarsest level
+  (control.coarse_solver = 1 or 2 only). If control.coarse_solver = 2, one
+  iteration comprises a forward and backward Gauss-Seidel sweep. The default is
+  10. Restriction: coarse_solver_its > 0.
+
+damping: is a real value. If damped Jacobi is used (control.smoother = 1), it
+  holds the damping factor. The default is 0.8. 
+  Restriction: 0.0 < damping <= 1.0.
+
+err_tol: is a real value that determines the failure criterion of 
+  mi20_precondition/hsl_mi20('precondition',...). If 
+      ||x||_2 > control.err_tol*||z||_2,
+  where x = M z and M is the action of the preconditioner applied to z, the 
+  procedure exits with an error. The default is 1.0e+10. 
+  Restriction: err_tol > 0.
+
+levels: is an integer that controls the maximum number of coarse levels used
+  before the coarse level solve is performed. A value < 0 indicates that the
+  maximum number of available coarse levels should be used. The default is -1.
+
+pre_smoothing: is an integer that holds the number of pre_smoothing iterations
+  that are performed during each v-cycle. The default is 2. 
+  Restriction: pre_smoothing >= 0 and pre_smoothing + post_smoothing \neq 0.
+
+post_smoothing: is an integer that holds the number of post smoothing iterations
+  that are performed. If control.smoother = 2, the Gauss-Seidel sweep direction
+  is reversed for the post smoothing and, in this case, if A is symmetric,
+  post_smoothing should be set to be equal to pre_smoothing. The default is 2.
+  Restriction: post_smoothing >= 0 and pre_smoothing + post_smoothing > 0.
+
+smoother: is an integer that controls which smoother is used during each
+  v-cycle. If smoother = 1, damped Jacobi is used; if smoother = 2, symmetric
+  Gauss-Seidel is used (that is, the Gauss-Seidel sweep direction is reversed
+  on the post-smoothing iterations). The default is 2. 
+  Restriction: smoother = 1 or 2.
+
+v_iterations: is an integer that controls the number of v-cycle iterations to
+  be performed. The default is 1. Restriction: v_iterations >= 1.
+
+
+-----------------------------------------------------------------
+6. The information structure
+-----------------------------------------------------------------
+
+The information structure is passed as an output variable from the setup and 
+precondition procedures. If the setup/precondition procedure has been executed 
+with no error, then the components of the information structure provide the 
+user with information about the execution. The components are as follows.
+
+flag: is an integer that is used as a warning flag. Possible values for the 
+  setup routine are:
+     0: No warnings
+     1: Method used to find strong transpose connections changed from method 1 
+        to method 2 (see control.st_method in Section 4)
+    10: Coarsening terminated because of an allocation error
+    11: Coarsening terminated because of a deallocation error
+    12: Coarsening terminated. This is because one or more rows of the coarse 
+        level matrix had at least one strictly positive entry but no negative 
+        off-diagonal entries (control.c_fail = 1) or because all the rows had  
+        at least one strictly positive entry but no negative off-diagonal 
+        entries (control.c_fail = 2). The coarsening may also terminate if 
+        there are one or more rows with negative off-diagonal entries (that is,
+        rows with strong connections) that are connected to rows with no 
+        negative off-diagonals (that is, to rows with no connections).
+    13: Coarsening terminated because the requirement that the number of points
+        n_c and n_f on two successive levels should satisfy 
+        n_c <= n_f * control.reduction was not met.
+  There are no warnings from the precondition routine.
+    
+clevels: is an integer that contains the number of coarse levels generated.
+
+cpoints: is an integer that contains the order of the matrix on the coarsest
+  level.
+
+cnnz: is an integer that contains the number of nonzeros in the matrix on the
+  coarsest level.
+
+-----------------------------------------------------------------
+A. Old-style interface
+-----------------------------------------------------------------
+The expert interface detailed in this document was implemented
+starting at version 1.4.0.
+
+The old-style interface, which has the form:
+>> [inform,cdata1,cdata2,keep1,keep2,keep3] = hsl_mi20('setup',A,control)
+>> [x,inform,keep1,keep2,keep3] =  ...
+   hsl_mi20('precondition',z,cdata1,cdata2,keep1,keep2,keep3)
+has been discontinued, and should be replaced by the interface described above.

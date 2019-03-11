@@ -1,0 +1,57 @@
+2015-05-15 Tyrone Rees
+Version 2.0.0
+ * Added support for using hsl_mi20 as a solver by including the mi20_solve
+   routine.
+ * Moved to new interfaces for different data types: mi20_setup_csr,
+   mi20_setup_csc, mi20_setup_coord. Old mi20_setup interface still more
+   efficient (in Fortran, not in C), but future plans will see this change.
+ * MATLAB support improved to allow more than one instance of the
+   preconditioner to be used at a time. The old pre 1.4.0 interface interface
+   (previously deprecated) has now been removed entirely.
+
+2013-04-10  Jonathan Hogg
+Version 1.6.0 Fix several undefined variable issues detected by nagfor.
+
+2012-11-08  Jonthan Hogg
+Version 1.5.1 Fix Matlab installer bug so it now works with version 2012b.
+
+2011-12-05  Jonathan Hogg
+Version 1.5.0 Add C interface.
+
+2011-10-24  Jonathan Hogg
+Version 1.4.0 Update matlab interface to use handles.
+Old matlab interface would require significant revision each time HSL_MA48
+changed internal data formats, new one doesn't.
+Also migrate to new hsl_matlab to make it possible to use gfortran and both
+integer*4 and integer*8.
+Also remove a stray non-conforming tab character from main source file.
+
+2010-04-08
+Version 1.3.1
+Work around potential compiler bug by replacing array slice notation
+with do loops for several large copies.
+
+2010-03-19
+Version 1.3.0 Bug fixed in MI20_precondition
+(several copies did not specify part of array to copy so could try
+and copy unassigned entries)
+
+2010-02-08
+Version 1.2.0
+Components of mi20_keep made public for use within hsl_mi20 matlab interface
+
+2008-03-04
+Version 1.1.2  Several lines > 80 reflowed with &s
+
+2007-11-01
+Version 1.1.1. Changed default for control%damping to 0.8
+(on advice from Milan).
+
+2007-10-17
+Version 1.1.0
+Added additional parameter control%reduction that allows the
+coarsening to terminate if the reduction in size of successive
+grids is too small.
+
+2007-09-18
+Version 1.0.0
