@@ -70,7 +70,7 @@ hsl_mi20.F90            Fortran code for Matlab interface
 
     hsl_mi20_install(TEST) installs hsl_mi20 and its Matlab Interface and
        optionally runs the test example. It is assumed that the BLAS and LAPACK
-       routines provided with the interface are used, and mex is configured to
+       routines provided with the interface are help gmresused, and mex is configured to
        use your preferred compiler.
        If TEST <= 0, the test example is not run;
        if TEST > 0, the test example is run and the user can compare the output
