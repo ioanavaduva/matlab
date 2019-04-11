@@ -1,3 +1,7 @@
+% Convection-diffusion problem with wind as in example 3 in D.Pallita & V.
+% Simoncini -- Matrix -equation-based strategies for convection-diffusion
+% equation, with zero Dirichlet boundary conditions
+
 % 2D convection - diffusion problem with 15 unknowns
 n = 100;
 h = 1/n;
@@ -30,7 +34,7 @@ Psi1 = sparse(diag(ps1(y)));
 Psi2 = sparse(diag(ps2(y)));
 
 % Get final matrix C-D for epsilon = 0.0333
-eps = 0.0083;
+eps = 0.0666;
 CD = eps*A/(h^2) + Phi1*B*Psi1/(2*h) + Phi2*B'*Psi2/(2*h);
 
 
