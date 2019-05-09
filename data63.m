@@ -1,6 +1,6 @@
 % data for Poisson 2D problem with 31 unknowns
 % function b
-xtemp = [0:0.0159:1];
+xtemp = linspace(0,1,63);
 x = repmat(xtemp, 1, 63);
 y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
 b = @(x, y) sin(pi*x).*cos(pi*y);
