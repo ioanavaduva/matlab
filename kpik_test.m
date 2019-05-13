@@ -1,5 +1,5 @@
 %  Code to run kpik.m for Poisson with 63 unknowns
-nh = 63;
+nh = 100;
 A = -kr_pois(nh); 
 n = nh^2;
 E = spdiags(rand(n,1),0,n,n);
