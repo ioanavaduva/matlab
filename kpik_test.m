@@ -2,13 +2,13 @@
 nh = 100;
 A = -kr_pois(nh); 
 n = nh^2;
-E = spdiags(rand(n,1),0,n,n);
+E = eye(n);
 LE = chol(E,'lower');
 
 xtemp = linspace(0,1,nh);
 x = repmat(xtemp, 1, nh);
 y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
-b = @(x, y) sin(pi*x).*cos(pi*y);
+b = @(x, y) sin(pi.*x).*cos(pi.*y);
 B = b(x, y)';
 
 m = 100;
