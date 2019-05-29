@@ -1,7 +1,7 @@
-nh=100;
+nh=50;
 T=diag(2*ones(nh,1))+diag(-ones(nh-1,1),1)+diag(-ones(nh-1,1),-1);
 I=speye(nh);
-A=-(kron(T,I)+kron(I,T));
+A=-T;
 
 n=nh^2;
 
@@ -10,13 +10,11 @@ B=A;
 [LA,UA]=lu(A);
 [LB,UB]=lu(B);
 
-xtemp = linspace(0,1,nh);
-x = repmat(xtemp, 1, nh);
-y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
+x = linspace(0,1,nh);
+y = linspace(1, 0, nh);
 b = @(x, y) sin(pi.*x).*cos(pi.*y);
 rhs1 = b(x, y)';
-
-rhs2=I(:);
+rhs2=rhs1;
 
 m=100;
 tol=1e-9;
