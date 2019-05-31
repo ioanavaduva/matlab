@@ -1,13 +1,15 @@
 %  Code to run kpik.m for Poisson with 63 unknowns
-n = 50;
-T = -(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1));
+n = 500;
+h = 1/n;
+T = (-(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1)))/h^2;
 E = eye(n);
 LE = chol(E,'lower');
 
-x = linspace(0,1,n);
-y = linspace(1, 0, n);
-b = @(x, y) sin(pi.*x).*cos(pi.*y);
-B = b(x, y)';
+%x = linspace(0,1,n);
+%y = linspace(1, 0, n);
+%b = @(x, y) sin(pi.*x).*cos(pi.*y);
+%B = b(x, y)';
+B = ones(n, 1);
 
 m = 100;
 tol = 1e-9;
