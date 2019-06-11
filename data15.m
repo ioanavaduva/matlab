@@ -1,6 +1,6 @@
 % data for Poisson 2D problem with 15 unknowns
 % function b
-n = 127;
+n = 3;
 xtemp = linspace(0,1,n);
 x = repmat(xtemp, 1, n);
 y = reshape(repmat(xtemp, length(xtemp), 1), 1, n^2);
