@@ -14,8 +14,8 @@ b = @(x, y) sin(pi*x).*cos(pi*y);
 b20 = b(x, y)';
 
 % Create B matrix for convection part of the equation
-v = ones(n^2, 1);
-B = spdiags([v -v], [1, -1], n^2, n^2);
+v = ones(n, 1);
+B = spdiags([v -v], [1, -1], n, n);
 
 % Generate convection vector w=(w1, w2), where w1(x, y) = ph1(x)*ps1(y) &
 % w2 (x, y) = ph2(x)*ps2(y)
@@ -29,11 +29,11 @@ px1 = ph1(x);
 px2 = ph2(x); 
 py1 = ones(1, n^2); 
 py2 = ps2(y);
-Phi1 = spdiags(px1(:), 0, n^2, n^2);
-Phi2 = spdiags(px2(:), 0, n^2, n^2);
-Psi1 = spdiags(py1(:), 0, n^2, n^2);
-Psi2 = spdiags(py2(:), 0, n^2, n^2);
+Phi1 = spdiags(px1(:), 0, n, n);
+Phi2 = spdiags(px2(:), 0, n, n);
+Psi1 = spdiags(py1(:), 0, n, n);
+Psi2 = spdiags(py2(:), 0, n, n);
 
 % Get final matrix C-D for epsilon = 0.0333
 eps = 0.0333;
-CD = eps*A/(h^2) + Phi1*B*Psi1/(2*h) + Phi2*B'*Psi2/(2*h);
+CD = eps*A/(h^2) + (kron(Psi1, Phi1*B) + kron((B'*Psi2)', Phi2))/(2*h);
