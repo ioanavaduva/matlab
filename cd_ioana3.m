@@ -8,7 +8,7 @@ A = kr_pois(n);
 
 % Right hand side vector b coming from function b(x, y)= sin(pi*x)*cos(pi*y)
 xtemp = linspace(0,1,n);
-x = repmat(xtemp, 1, n);
+x = repmat(xtemp, 1, n/2);
 y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
 b = @(x, y) sin(pi*x).*cos(pi*y);
 b100 = b(x, y)';

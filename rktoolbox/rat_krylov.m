@@ -7,7 +7,7 @@ function [V, K, H, param] = rat_krylov(varargin)
 %   (II)  extend a (block) rational Arnoldi decomposition (RAD);
 %   (III) rerun recursion given by an RAD [2].
 %
-% Each of the functionalities can be invoked for:
+% Each of the funct ionalities can be invoked for:
 %   (i)   a single matrix A;
 %   (ii)  a matrix pencil (A, B);
 %   (iii) a matrix pencil (A, B) represented by a structure AB.
