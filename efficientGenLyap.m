@@ -47,7 +47,7 @@ for k=1:maxit.outer     % Outer iteration
 			innerTol=tol.inexact;
 		end
 		if isfield(tol,'trunc')
-			truncTol=tol.trunc;
+			truncTol=tol.trunc;  
 		else
 			truncTol=tol.inexact;
 		end
