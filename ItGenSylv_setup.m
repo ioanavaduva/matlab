@@ -5,11 +5,11 @@
 % Here, A and B are the matrices coming from the finite differences
 % discretisation of the Poisson equation
 
-n = 2000; 
+n = 100; 
 h = 1/n;
 
 % A and B
-eps = 0.0083;
+eps = 0.0333;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 B = A;
 
@@ -22,7 +22,7 @@ ps1 = @(y) 2*y;
 ps2 = @(y) 1-y.^2;
 
 v = ones(n, 1);
-B2 = spdiags([v -v], [1, -1], n, n);
+B2 = spdiags([v -v], [1, -1], n, n)/(2*h);
 
 % Create diagonal matrices
 px1 = ph1(x);
@@ -44,10 +44,16 @@ M = {M1, M2};
 N = {N1, N2};
 
 % rhs set up
+xtemp = linspace(0,1,n);
+x = repmat(xtemp, 1, n);
+y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
 b = @(x, y) sin(pi*x).*cos(pi*y);
-rhs1 = b(x, y)';
-rhs2 = rhs1;
-C = rhs1*rhs2';
+rhs = b(x, y);
+C = reshape(rhs, n, n);
 
 % X0 initial guess
 X0 = zeros(n, n);
+
+% kronecker product form of matrix eq
+I = speye(n);
+AA  = kron(A, I) + kron(I, A) + kron(N1, M1) + kron(N2, M2);
