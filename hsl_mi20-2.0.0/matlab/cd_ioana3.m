@@ -1,6 +1,6 @@
 % 2D convection - diffusion problem for example 3 in paper
 
-n = 1600;
+n = 400;
 h = 1/n;
 
 % Poisson Matrix (needs multiplied by an epsilon between 0 and 1).
@@ -35,5 +35,5 @@ Psi1 = spdiags(py1(:), 0, n, n);
 Psi2 = spdiags(py2(:), 0, n, n);
 
 % Get final matrix C-D for epsilon = 0.0333
-eps = 0.0333;
+eps = 0.001;
 CD = eps*A/(h^2) + (kron(Psi1, Phi1*B) + kron((B'*Psi2)', Phi2))/(2*h);
