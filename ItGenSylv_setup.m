@@ -5,7 +5,7 @@
 % Here, A and B are the matrices coming from the finite differences
 % discretisation of the Poisson equation
 
-n = 100; 
+n = 200; 
 h = 1/n;
 
 % A and B
