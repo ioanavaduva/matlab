@@ -48,7 +48,7 @@ xtemp = linspace(0,1,n);
 x = repmat(xtemp, 1, n);
 y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
 b = @(x, y) sin(pi*x).*cos(pi*y);
-rhs = b(x, y);
+rhs = b(x, y)';
 C = reshape(rhs, n, n);
 
 % X0 initial guess
