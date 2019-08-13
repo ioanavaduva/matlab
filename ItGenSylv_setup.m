@@ -5,7 +5,7 @@
 % Here, A and B are the matrices coming from the finite differences
 % discretisation of the Poisson equation
 
-n = 200; 
+n = 100; 
 h = 1/n;
 
 % A and B
@@ -35,13 +35,12 @@ Phi2 = spdiags(px2(:), 0, n, n);
 Psi1 = spdiags(py1(:), 0, n, n);
 Psi2 = spdiags(py2(:), 0, n, n);
 
-M1 = Phi1 * B2;
-M2 = Phi2;
-N1 = Psi1;
-N2 = B2' * Psi2;
+%M1 = Phi1 * B2; M2 = Phi2; N1 = Psi1; N2 = B2' * Psi2;
+
+M1 = zeros(n, n); M2 = M1; 
 
 M = {M1, M2};
-N = {N1, N2};
+%N = {N1, N2};
 
 % rhs set up
 xtemp = linspace(0,1,n);
@@ -56,4 +55,6 @@ X0 = zeros(n, n);
 
 % kronecker product form of matrix eq
 I = speye(n);
-AA  = kron(A, I) + kron(I, A) + kron(N1, M1) + kron(N2, M2);
+%AA  = kron(A', I) + kron(I, A) + kron(N1', M1) + kron(N2', M2);
+
+AB = kron(A, I) + kron(I, B);
