@@ -5,7 +5,6 @@ function [x, maxit] = kronGenSylv(n, A, B, M1, M2, N1, N2, rhs, x0, tol, maxit)
         x = (kron(A, eye(n)) + kron(eye(n), B))\Mx;
         Nx = (- kron(N1', M1) - kron(N2', M2))*x;
         R = (kron(A, eye(n)) + kron(eye(n), B))*x - Nx - rhs;
-        norm(R)
         if norm(R) < tol
             maxit = i;
             return

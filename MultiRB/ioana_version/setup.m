@@ -1,17 +1,15 @@
-% Set-up for running ItGenSylv.m code. 
+% Setup for MultiRB. 
 % We want to solve a problem of the form 
-%       AX + XB + M1XN1 + M2XN2 + ... = C, 
-% with N = [N1, N2, ...] and M = [M1, M2, ...].
-% Here, A and B are the matrices coming from the finite differences
-% discretisation of the Poisson equation
+%       AXI + M0XN0 + M1XN1 + M2XN2 = C, 
+% with N = [I, N0, N1, N2] and M = [A, M0, M1, M2].
 
-n = 16; 
+n = 5; 
 h = 1/n;
 
 % A and B
-eps = 0.5;
+eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
-B = A;
+I = speye(n);
 
 % for N and M
 x = linspace(0,1,n);
@@ -35,12 +33,10 @@ Phi2 = spdiags(px2(:), 0, n, n);
 Psi1 = spdiags(py1(:), 0, n, n);
 Psi2 = spdiags(py2(:), 0, n, n);
 
-M1 = Phi1 * B2; M2 = Phi2; N1 = Psi1; N2 = B2' * Psi2;
+M0 = I; N0 = A; M1 = Phi1 * B2; M2 = Phi2; N1 = Psi1; N2 = B2' * Psi2; 
 
-%M1 = zeros(n, n); M2 = M1; 
-
-M = {M1, M2};
-N = {N1, N2};
+M = {N0, M0, M1, M2};
+N = {M0, N0, N1, N2};
 
 % rhs set up
 xtemp = linspace(0,1,n);
@@ -48,14 +44,14 @@ x = repmat(xtemp, 1, n);
 y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
 b = @(x, y) sin(pi*x).*cos(pi*y);
 rhs = b(x, y)';
-C = reshape(rhs, n, n);
+rhs1 = reshape(rhs, n, n);
+rhs2 = I;
 
-% X0 initial guess
-X0 = zeros(n, n);
-x0 = zeros(n^2, 1);
+% preconditioner
+P1 = speye(n); 
+P = P1*P1';
 
 % kronecker product form of matrix eq
-I = speye(n);
-AA  = kron(A', I) + kron(I, A) + kron(N1', M1) + kron(N2', M2);
+AA  = kron(A', I) + kron(I', A) + kron(N1', M1) + kron(N2', M2);
 
 %AB = kron(A, I) + kron(I, B);
