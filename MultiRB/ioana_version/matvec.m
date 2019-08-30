@@ -1,4 +1,4 @@
-function Y = stoch_matvec_m(X,G,K)
+function Y = matvec(X,G,K)
 %STOCH_MATVEC efficient matvec for sum of kronecker product matrices
 %   y = stoch_matvec(x,G,K);
 %   input:
@@ -20,7 +20,7 @@ Y=zeros(size(X));
 %
 % loop over the number of matrices
 for dim = 1:dimk
-Y = Y + K{dim}*X*G{dim};
+Y = Y + K{dim}*X*G{dim}';
 end
 %
 return

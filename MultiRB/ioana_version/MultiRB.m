@@ -133,12 +133,12 @@ while (i < mmax & nrmres_noprec>tol)
         rhs2m=rhs2;
 %         Y = (kron(Nm{1}', Mm{1}) + kron(Nm{2}', Mm{2}) + kron(Nm{3}', Mm{3}) + kron(Nm{4}', Mm{4}))\(kron(rhs2m', rhs1m));
        
-        tol_inner=nrmres_noprec*1e-3;
+        tol_inner=nrmres_noprec*1e-5;
         y0=zeros(iv,iw);
         if (nofirst) 
             y0(1:size(Y,1),1:size(Y,2))=Y;
         end
-        [Y,iteraY]=cgkron_m(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner,iv,iw); % inner solver: cg
+        [Y,iteraY]=cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner,iv,iw); % inner solver: cg
         tot_inner=[tot_inner,iteraY];
         nofirst=1;
         
