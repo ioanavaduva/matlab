@@ -142,12 +142,12 @@ while (i < mmax & nrmres_noprec>tol)
     % Periodically compute the approx solution and residual
     if (rem(tot_it,compute_period)==0)
         rhs2m=rhs2;
-%         tol_inner=nrmres_noprec*1e-3;
-%         y0=zeros(iv,iw);
-%         if (nofirst)
-%             y0(1:size(Y,1),1:size(Y,2))=Y;
-%         end
-%         [Y,iteraY]=cgkron_m(Km,Gm,rhs1m*rhs2m',y0,iv*iw,tol_inner,iv,iw); % inner solver: cg
+        tol_inner=nrmres_noprec*1e-3;
+        y0=zeros(iv,iw);
+        if (nofirst)
+            y0(1:size(Y,1),1:size(Y,2))=Y;
+        end
+        [Y,iteraY]=cgkron_m(Km,Gm,rhs1m*rhs2m',y0,iv*iw,tol_inner,iv,iw); % inner solver: cg
         tot_inner=[tot_inner,iteraY];
         nofirst=1;
         % Compute relative variation in the solution

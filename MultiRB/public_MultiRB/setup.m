@@ -39,8 +39,8 @@ Psi2 = spdiags(py2(:), 0, n, n);
 
 M0 = I; N0 = A; M1 = Phi1 * B2; M2 = Phi2; N1 = Psi1; N2 = B2' * Psi2; 
 
-M = {N0, M0, M1, M2};
-N = {M0, N0, N1, N2};
+K = {N0, M0, M1, M2};
+G = {M0, N0, N1, N2};
 
 % rhs set up
 xtemp = linspace(0,1,n);

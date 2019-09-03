@@ -94,23 +94,24 @@ while (i < mmax & nrmres_noprec>tol)
 
     v = v - V*(V'*v); v = v - V*(V'*v);
     
-    % Deselect new basis vectors
+    % Deselect new basis vectors (TRUNCATE)
     [uu,ss,vv]=svd(v,0);
     ss=diag(ss);
     iv=size(V,2);
     iv_vec(i)=iv;
     if ss(1,1)>1e-12
-        addv=1;
-        l=cumsum(ss)/sum(ss); il=find(l>=tol_drop,1);
+        addv=1; 
+        l=cumsum(ss)/sum(ss); il=find(l>=tol_drop,1); 
         vnew=uu(:,1:il);
         Pvnew=P1'\vnew;
-        V(1:n,iv+1:iv+il)=vnew;  
+        V(1:n,iv+1:iv+il)=vnew; % increase the space V
     else
        addv=0;
     end
 
     iv=size(V,2);
     iw=size(W,2);
+  
     vector_length=iv*iw;
     
     % Expand projected matrices
@@ -120,7 +121,7 @@ while (i < mmax & nrmres_noprec>tol)
     for ind=2:nterm
         wrk=M{ind}*Pvnew;
         Pwrk=P1\wrk;
-        newk=V(1:n,1:(iv-ivnew))'*Pwrk;
+        newk=V(1:n,1:(iv-ivnew))'*Pwrk; 
         Mm{ind}(1:iv-ivnew,iv-ivnew+1:iv)=newk;  
         Mm{ind}(iv-ivnew+1:iv,1:iv-ivnew)=newk';
         Mm{ind}(iv-ivnew+1:iv,iv-ivnew+1:iv)=Pwrk'*V(:,iv-ivnew+1:iv);
@@ -131,19 +132,21 @@ while (i < mmax & nrmres_noprec>tol)
     % Periodically compute the approx solution and residual
     if (rem(tot_it,compute_period)==0)
         rhs2m=rhs2;
-%         Y = (kron(Nm{1}', Mm{1}) + kron(Nm{2}', Mm{2}) + kron(Nm{3}', Mm{3}) + kron(Nm{4}', Mm{4}))\(kron(rhs2m', rhs1m));
-       
+%         Yk = (kron(Nm{1}', Mm{1}) + kron(Nm{2}', Mm{2}) + kron(Nm{3}', Mm{3}) + kron(Nm{4}', Mm{4}))\(kron(rhs2m', rhs1m));
         tol_inner=nrmres_noprec*1e-5;
         y0=zeros(iv,iw);
         if (nofirst) 
             y0(1:size(Y,1),1:size(Y,2))=Y;
         end
-        [Y,iteraY]=cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner,iv,iw); % inner solver: cg
+%         size(Mm{1})
+%         size(Nm{1})
+        [Y,iteraY]=cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner);  %,iv,iw); % inner solver: cg
+        size(Y)
+        % resulting Y is correct size
         tot_inner=[tot_inner,iteraY];
         nofirst=1;
-        
         % Compute relative variation in the solution
-        Yer=Y; [n0,m0]=size(Y0); Yer(1:n0,1:m0)=Yer(1:n0,1:m0)-Y0;
+        Yer=Y; [n0,m0]=size(Y0); Yer(1:n0,1:m0)=Yer(1:n0,1:m0)-Y0; 
         ErrY=norm(Yer,'fro'); %/normR0;
         nrmres_noprec=ErrY/norm(Y,'fro'); nrmres=nrmres_noprec;
         Y0=Y;

@@ -1,4 +1,4 @@
-function [X,itera]=cgkron(K,G,B,X0,maxit,tol,nn,mm)
+function [X,itera]=cgkron(K,G,B,X0,maxit,tol) %,nn,mm)
 %function X=cgkron_m(K,G,b,x0,maxit,tol)
 % conjugate gradients for hermitian matrices
 
