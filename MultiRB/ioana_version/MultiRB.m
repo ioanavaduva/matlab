@@ -46,9 +46,9 @@ V = (Prhs1)/normPrhs1;   % Include rhs in the basis.
 tot_inner=[];
 W=speye(size(N{1}));
 rhs1m=V'*Prhs1;
-% rhs2m=W'*rhs2;
-% normR0=norm(Prhs1)*norm(rhs2);
-% normR0_noprec=norm(rhs1)*norm(rhs2);
+rhs2m=W'*rhs2;
+normR0=norm(full(Prhs1))*norm(full(rhs2));
+normR0_noprec=norm(full(rhs1))*norm(full(rhs2));
 nrmres=1;
 nrmres_noprec=1;
 error_vec(1)=nrmres_noprec;
@@ -97,6 +97,7 @@ while (i < mmax & nrmres_noprec>tol)
     % Deselect new basis vectors (TRUNCATE)
     [uu,ss,vv]=svd(v,0);
     ss=diag(ss);
+    
     iv=size(V,2);
     iv_vec(i)=iv;
     if ss(1,1)>1e-12
@@ -104,7 +105,7 @@ while (i < mmax & nrmres_noprec>tol)
         l=cumsum(ss)/sum(ss); il=find(l>=tol_drop,1); 
         vnew=uu(:,1:il);
         Pvnew=P1'\vnew;
-        V(1:n,iv+1:iv+il)=vnew; % increase the space V
+        V(1:n,iv+1:iv+il)=vnew; % increase the space V        
     else
        addv=0;
     end
