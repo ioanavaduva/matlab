@@ -3,7 +3,7 @@
 %       AXI + M0XN0 + M1XN1 + M2XN2 = C, 
 % with N = [I, N0, N1, N2] and M = [A, M0, M1, M2].
 
-n = 5; 
+n = 50; 
 h = 1/n;
 
 % A and B
@@ -39,17 +39,19 @@ Psi2 = spdiags(py2(:), 0, n, n);
 
 M0 = I; N0 = A; M1 = Phi1 * B2; M2 = Phi2; N1 = Psi1; N2 = B2' * Psi2; 
 
-M = {N0, M0, M1, M2};
-N = {M0, N0, N1, N2};
+M = {M0, N0, M1, M2};
+N = {N0, M0, N1, N2};
 
 % rhs set up
-xtemp = linspace(0,1,n);
-x = repmat(xtemp, 1, n);
-y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
-b = @(x, y) sin(pi*x).*cos(pi*y);
-rhs = b(x, y)';
-rhs1 = reshape(rhs, n, n);
-rhs2 = I;
+% xtemp = linspace(0,1,n);
+% x = repmat(xtemp, 1, n);
+% y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
+% b = @(x, y) sin(pi*x).*cos(pi*y);
+% rhs = b(x, y)';
+% rhs11 = reshape(rhs, n, n); rhs1 = rhs11(:,1);
+% rhs22 = I; rhs2 = rhs22(:, 1);
+rhs1 = ones(n,1);
+rhs2=rhs1; rhs=ones(n^2,1);
 
 % preconditioner
 P1 = speye(n); 
