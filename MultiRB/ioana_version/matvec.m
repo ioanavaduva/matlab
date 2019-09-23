@@ -11,7 +11,8 @@ function Y = matvec(X,G,K)
 % SIFISS function: DJS; 19 January 2013.
 % Copyright (c) 2013 A. Bespalov, C.E. Powell, D.J. Silvester
 
-dimk=length(K); dimg=length(G);
+dimk=length(K);
+dimg=length(G);
 if dimk ~= dimg, error('incompatible cell dimensions'), end
 % get dimensions
 [n, dummy] = size(K{1});
@@ -20,7 +21,7 @@ Y=zeros(size(X));
 %
 % loop over the number of matrices
 for dim = 1:dimk
-Y = Y + K{dim}*X*G{dim}';
+    Y = Y + full(K{dim})*X*full(G{dim})';
 end
 %
 return

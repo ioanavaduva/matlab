@@ -3,7 +3,7 @@ function [X,itera]=cgkron(K,G,B,X0,maxit,tol) %,nn,mm)
 % conjugate gradients for hermitian matrices
 
 [n,m]=size(B);
-X=X0;
+X=X0; 
 
 Ax0=matvec(X0,G,K); %AP = a*P; 
 R = B-Ax0; 

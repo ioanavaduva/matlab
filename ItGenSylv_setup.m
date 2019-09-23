@@ -5,11 +5,11 @@
 % Here, A and B are the matrices coming from the finite differences
 % discretisation of the Poisson equation
 
-n = 16; 
+n = 64; 
 h = 1/n;
 
 % A and B
-eps = 0.5;
+eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 B = A;
 
@@ -57,5 +57,8 @@ x0 = zeros(n^2, 1);
 % kronecker product form of matrix eq
 I = speye(n);
 AA  = kron(A', I) + kron(I, A) + kron(N1', M1) + kron(N2', M2);
+
+m = inv(kron(A', I) + kron(I, A)) * (kron(N1', M1) + kron(N2', M2));
+norm(full(m), 2)
 
 %AB = kron(A, I) + kron(I, B);

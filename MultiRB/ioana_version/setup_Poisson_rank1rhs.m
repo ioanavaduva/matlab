@@ -3,7 +3,7 @@
 %       AXI + M0XN0 + M1XN1 + M2XN2 = C, 
 % with N = [I, N0, N1, N2] and M = [A, M0, M1, M2].
 
-n = 50; 
+n = 5; 
 h = 1/n;
 
 % A and B
