@@ -1,4 +1,4 @@
-function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB(M,N,rhs1,rhs2,P,P1,param,snew)
+function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_2side(M,N,rhs1,rhs2,P,P1,param,snew)
 %
 % ---------------------- MultiRB solver -----------------------------------
 %

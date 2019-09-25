@@ -1,13 +1,13 @@
 % Setup for MultiRB. 
 % We want to solve a problem of the form 
-%       AXI + M0XN0 + M1XN1 + M2XN2 = C, 
-% with N = [I, N0, N1, N2] and M = [A, M0, M1, M2].
+%       IXN0 + M1XN1 + M2XN2 + M3XN3 = C, 
+% with N = [N0, N1, N2, N3] and M = [I, M1, M2, M3].
 
-n = 5; 
+n = 500; 
 h = 1/n;
 
 % A and B
-eps = 1;
+eps = 0.0333;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 I = speye(n);
 

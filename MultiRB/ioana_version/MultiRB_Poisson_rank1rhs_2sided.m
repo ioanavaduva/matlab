@@ -44,11 +44,13 @@ Prhs2 = P1\rhs2;
 normPrhs1=norm(Prhs1); normPrhs2 = norm(Prhs2);
 % Include rhs in the basis.
 V = (Prhs1)/normPrhs1;   
-W = (Prhs2)/normPrhs2;
+W = (Prhs2)/normPrhs2; 
+% at this stage V and W are the same
 
 tot_inner=[];
 rhs1m=V'*Prhs1;
 rhs2m=W'*Prhs2;
+% here rhs1m=rhs2m
 normR0=norm(full(Prhs1))*norm(full(Prhs2));
 normR0_noprec=norm(full(rhs1))*norm(full(rhs2));
 nrmres=1;
@@ -63,15 +65,16 @@ s_nodes=length(snew);  % number of 's' parameters.
 I=speye(size(M{1},1));
 wrk1 = P1'\V;
 wrk2 = P1'\W;
+% here wrk1=wrk2
 
 % Projected matrices -- M
 for ind=1:nterm
-    Mm{ind}=wrk1'*(M{ind}*wrk1); 
+    Mm{ind}=wrk2'*(M{ind}*wrk1); 
 end
 
 % Projected matrices -- N
 for ind=1:nterm
-    Nm{ind}=wrk2'*(N{ind}*wrk2);
+    Nm{ind}=wrk2'*(N{ind}*wrk1);
 end
 
 m=size(N{1},1); n=size(M{1},1);
@@ -94,7 +97,7 @@ while (i < mmax & nrmres_noprec>tol)
             
             wrk2 = P1*W(1:m,i);
             for kk = 2:nterm
-               v2(1:m,kk) = (N{kk}+snew(ir)*N{1})\wrk2;
+               v2(1:m,kk) = (M{kk}+snew(ir)*M{1})\wrk2;
             end
             v2 = P1'*v2;
 
@@ -131,7 +134,10 @@ while (i < mmax & nrmres_noprec>tol)
     else
        addv=0;
     end
-
+% V
+% W
+% W'*V
+% V'*V
     iv=size(V,2);
     iw=size(W,2);
   
