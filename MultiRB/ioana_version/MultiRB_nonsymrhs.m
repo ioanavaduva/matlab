@@ -1,4 +1,4 @@
-function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_2side(M,N,rhs1,rhs2,P,P1,param,snew)
+function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,P,P1,param,snew)
 %
 % ---------------------- MultiRB solver -----------------------------------
 %
@@ -39,15 +39,17 @@ tol=1e-5;       % Outer stopping tolerance (change if desired)
 tol_drop=.99;  % controls how many basis vectors to add at each iteration
 nofirst=0;
 Y=0;
-Prhs1=P1\rhs1;
-normPrhs1=norm(Prhs1);
-V = (Prhs1)/normPrhs1;   % Include rhs in the basis.
+Prhs1 = P1\rhs1; 
+Prhs2 = P1\rhs2; 
+normPrhs1=norm(Prhs1); normPrhs2 = norm(Prhs2);
+% Include rhs in the basis.
+V = (Prhs1)/normPrhs1;   
+W = (Prhs2)/normPrhs2; 
 
 tot_inner=[];
-W = V;
 rhs1m=V'*Prhs1;
-rhs2m=W'*rhs2;
-normR0=norm(full(Prhs1))*norm(full(rhs2));
+rhs2m=W'*Prhs2;
+normR0=norm(full(Prhs1))*norm(full(Prhs2));
 normR0_noprec=norm(full(rhs1))*norm(full(rhs2));
 nrmres=1;
 nrmres_noprec=1;
@@ -59,53 +61,75 @@ s_nodes=length(snew);  % number of 's' parameters.
 
 % rat_space=1;
 I=speye(size(M{1},1));
-wrk=P1'\V;
+wrk1 = P1'\V;
+wrk2 = P1'\W;
+% here wrk1=wrk2
 
-% Projected matrix
+% Projected matrices -- M
 for ind=1:nterm
-    Mm{ind} = wrk' * (M{ind} * wrk); 
-    Nm{ind} = wrk' * (N{ind} * wrk);
+    Mm{ind}=wrk2'*(M{ind}*wrk1); 
+end
+
+% Projected matrices -- N
+for ind=1:nterm
+    Nm{ind}=wrk2'*(N{ind}*wrk1);
 end
 
 m=size(N{1},1); n=size(M{1},1);
 i=0; tot_it=0; ir=0; Y=[];
 
-fprintf('      no.its      n_k       G_dim    error (rel diff)   no.inner its\n')
+fprintf('      no.its      n_k       N_dim    error (rel diff)   no.inner its\n')
 
 % main iteration
 while (i < mmax & nrmres_noprec>tol) 
-    i=i+1;
-    tot_it=tot_it+1;
+    i = i+1;
+    tot_it = tot_it+1;
     if (i > size(V,2)), fprintf('exausted approx space\n'),end
-    % Get new basis vectors
-
-%    if (rat_space)                % rational space
-         ir=ir+1; if (ir>s_nodes),ir=1;end
-         % direct solver for solving all systems simultaneously
-            wrk=P1*V(1:n,i);
-            for kk=2:nterm
-               v(1:n,kk)=(M{kk}+snew(ir)*M{1})\wrk;
+    % Get new basis vectors - direct solver for solving all systems simultaneously
+         ir = ir+1; if (ir>s_nodes),ir=1;end
+            wrk1 = P1*V(1:n,i);
+            for kk = 2:nterm
+               v1(1:n,kk) = (M{kk}+snew(ir)*M{1})\wrk1;
             end
-            v=P1'*v;
+            v1 = P1'*v1;
+            
+            wrk2 = P1*W(1:m,i);
+            for kk = 2:nterm
+               v2(1:m,kk) = (N{kk}+snew(ir)*N{1})\wrk2;
+            end
+            v2 = P1'*v2;
 
-%    else   % polynomial space
-%        v=multi_matvec(K,M1,M1',V(:,i));
-%    end
-
-    v = v - V*(V'*v); v = v - V*(V'*v);
+    v1 = v1 - V*(V'*v1); v1 = v1 - V*(V'*v1);
+    v2 = v2 - W*(W'*v2); v2 = v2 - W*(W'*v2);
     
     % Deselect new basis vectors (TRUNCATE)
-    [uu,ss,vv]=svd(v,0);
-    ss=diag(ss);
+    [uu1,ss1,vv1]=svd(v1,0);
+    ss1=diag(ss1);
+    
+    [uu2,ss2,vv2]=svd(v2,0);
+    ss2=diag(ss2);
     
     iv=size(V,2);
     iv_vec(i)=iv;
-    if ss(1,1)>1e-12
+   
+    if ss1(1,1)>1e-12 % ss1(1,1)  = 7.9603 e-17 for n=5
         addv=1; 
-        l=cumsum(ss)/sum(ss); il=find(l>=tol_drop,1); 
-        vnew=uu(:,1:il);
-        Pvnew=P1'\vnew;
-        V(1:n,iv+1:iv+il)=vnew; % increase the space V        
+        l1=cumsum(ss1)/sum(ss1); il1=find(l1>=tol_drop,1); 
+        vnew1=uu1(:,1:il1);
+        Pvnew1=P1'\vnew1;
+        V(1:n,iv+1:iv+il1)=vnew1; % increase the space V        
+    else
+       addv=0;
+    end
+    
+    iw=size(W,2);
+    iw_vec(i)=iw;
+    if ss2(1,1)>1e-12
+        addv=1; 
+        l2=cumsum(ss2)/sum(ss2); il2=find(l2>=tol_drop,1); 
+        vnew2=uu2(:,1:il2);
+        Pvnew2=P1'\vnew2;
+        W(1:m,iw+1:iw+il2)=vnew2; % increase the space W       
     else
        addv=0;
     end
@@ -115,41 +139,47 @@ while (i < mmax & nrmres_noprec>tol)
   
     vector_length=iv*iw;
     
-    % Expand projected matrices
+    % Expand projected matrices -- M
     Mm{1}=speye(iv);
-    Nm{1}=speye(iv);
-    ivnew=size(vnew,2);
+    ivnew=size(vnew1,2);
+
     for ind=2:nterm
-        wrk1=M{ind}*Pvnew;
+        wrk1=M{ind}*Pvnew1;
         Pwrk1=P1\wrk1;
-        newk1=V(1:n,1:(iv-ivnew))'*Pwrk1;
+        newk1=V(1:n,1:(iv-ivnew))'*Pwrk1; 
         Mm{ind}(1:iv-ivnew,iv-ivnew+1:iv)=newk1;  
         Mm{ind}(iv-ivnew+1:iv,1:iv-ivnew)=newk1';
         Mm{ind}(iv-ivnew+1:iv,iv-ivnew+1:iv)=Pwrk1'*V(:,iv-ivnew+1:iv);
-
-        wrk2 = N{ind}*Pvnew; 
-        Pwrk2 = P1\wrk2;
-        newk2 = V(1:n,1:(iv-ivnew))'*Pwrk2 ;
-        Nm{ind}(1:iv-ivnew,iv-ivnew+1:iv) = newk2;
-        Nm{ind}(iv-ivnew+1:iv,1:iv-ivnew) = newk2'; 
-        Nm{ind}(iv-ivnew+1:iv,iv-ivnew+1:iv) = Pwrk2'*V(:,iv-ivnew+1:iv); 
     end
 
-    if addv, rhs1m=[rhs1m; vnew'*Prhs1];end
+    if addv, rhs1m=[rhs1m; vnew1'*Prhs1];end
+
+    % Expand projected matrices -- N
+%     Nm{1}=speye(iv);
+    iwnew=size(vnew2,2);
+
+    for ind=1:nterm
+        wrk2=N{ind}*Pvnew2;
+        Pwrk2=P1\wrk2;
+        newk2=V(1:m,1:(iw-iwnew))'*Pwrk2; 
+        Nm{ind}(1:iw-iwnew,iw-iwnew+1:iw)=newk2;  
+        Nm{ind}(iw-iwnew+1:iw,1:iw-iwnew)=newk2';
+        Nm{ind}(iw-iwnew+1:iw,iw-iwnew+1:iw)=Pwrk2'*W(:,iw-iwnew+1:iw);
+    end
+
+    if addv, rhs2m=[rhs2m; vnew2'*Prhs2];end
 
     % Periodically compute the approx solution and residual
     if (rem(tot_it,compute_period)==0)
-
 %         Yk = (kron(Nm{1}', Mm{1}) + kron(Nm{2}', Mm{2}) + kron(Nm{3}', Mm{3}) + kron(Nm{4}', Mm{4}))\(kron(rhs2m', rhs1m));
         tol_inner=nrmres_noprec*1e-5;
-        y0=zeros(iv,iw); 
+        y0=zeros(iv,iw);
         if (nofirst) 
             y0(1:size(Y,1),1:size(Y,2))=Y;
         end
-%          size(y0);
+
         [Y,iteraY]=cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner);  %,iv,iw); % inner solver: cg
-        size(Y)
-        % resulting Y is correct size
+
         tot_inner=[tot_inner,iteraY];
         nofirst=1;
         % Compute relative variation in the solution
@@ -187,3 +217,4 @@ else
 end
 
 dimV=size(V,2); final_err=nrmres; avg_inner=mean(tot_inner);
+

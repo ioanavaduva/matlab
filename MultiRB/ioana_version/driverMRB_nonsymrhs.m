@@ -2,7 +2,7 @@
 
 clear all
 
-setup_Poisson_rank1rhs;
+setup_nonsymrhs;
 
 fprintf('\n Dim_M = %d,  Dim_N = %d, no. terms = %d  \n', size(M{1},1),size(N{1},1),length(M))
 fprintf('\n No. equations (Ax=b): %d  \n', size(M{1},1)*size(N{1},1))
@@ -47,7 +47,7 @@ param.res_method=res_method;
 tic;
 fprintf('\n -------------------- MultiRB Solve ------------------------\n \n')
 
-[X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_2side(M,N,rhs1,rhs2,P,P1,param,s_parameter);
+[X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_nonsymrhs(M,N,rhs1,rhs2,P,P1,param,s_parameter);
 %X1(psort,:)=X1;
 etoc=toc; 
 fprintf('\n Total execution time: %9.4e seconds \n',etoc)
@@ -55,3 +55,4 @@ fprintf('\n ----------------------------------------------------------\n \n')
 fprintf('no_terms   dim_M   dim_N   n_k   Rank    final_err   avg_inner  time(s)  \n')
 fprintf('\n  %2d       %3d   %d    %3d    %2d    %9.4e    %4.2f     %9.4e  \n \n', [4, n, m, dimV, size(X1,2), final_err, avg_inner, etoc])
 fprintf('----------------------------------------------------------\n \n')
+
