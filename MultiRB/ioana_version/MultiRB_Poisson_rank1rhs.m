@@ -1,4 +1,4 @@
-function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB(M,N,rhs1,rhs2,P,P1,param,snew)
+function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_Poisson_rank1rhs(M,N,rhs1,rhs2,P,P1,param,snew)
 %
 % ---------------------- MultiRB solver -----------------------------------
 %
@@ -34,7 +34,7 @@ rat_solve=param.rat_solve;
 res_method=param.res_method;
 mmax=param.max_space_dim;
 nterm=size(N,2);
-tol=1e-5;       % Outer stopping tolerance (change if desired) 
+tol=1e-10;       % Outer stopping tolerance (change if desired) 
 
 tol_drop=.99;  % controls how many basis vectors to add at each iteration
 nofirst=0;
@@ -142,7 +142,7 @@ while (i < mmax & nrmres_noprec>tol)
 %         size(Mm{1})
 %         size(Nm{1})
         [Y,iteraY]=cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner);  %,iv,iw); % inner solver: cg
-        size(Y)
+%         size(Y)
         % resulting Y is correct size
         tot_inner=[tot_inner,iteraY];
         nofirst=1;
@@ -179,6 +179,7 @@ else
    X1=P1'\(V*(uu(:,1:ns)*ss(1:ns,1:ns))); 
    X2=W*vv(:,1:ns);
 end
+
 
 dimV=size(V,2); final_err=nrmres; avg_inner=mean(tot_inner);
 

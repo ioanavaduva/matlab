@@ -3,11 +3,11 @@
 %       IXN0 + M1XN1 + M2XN2 + M3XN3 = C, 
 % with N = [N0, N1, N2, N3] and M = [I, M1, M2, M3].
 
-n = 500; 
+n = 800; 
 h = 1/n;
 
 % A and B
-eps = 0.0333;
+eps = 0.001;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 I = speye(n);
 
