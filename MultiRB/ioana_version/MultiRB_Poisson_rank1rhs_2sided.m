@@ -34,7 +34,7 @@ rat_solve=param.rat_solve;
 res_method=param.res_method;
 mmax=param.max_space_dim;
 nterm=size(N,2);
-tol=1e-5;       % Outer stopping tolerance (change if desired) 
+tol=1e-10;       % Outer stopping tolerance (change if desired) 
 
 tol_drop=.99;  % controls how many basis vectors to add at each iteration
 nofirst=0;
@@ -111,8 +111,9 @@ while (i < mmax & nrmres_noprec>tol)
     [uu2,ss2,vv2]=svd(v2,0);
     ss2=diag(ss2);
     
-    iv=size(V,2);
+    iv=size(V,2); 
     iv_vec(i)=iv;
+  
     if ss1(1,1)>1e-12
         addv=1; 
         l1=cumsum(ss1)/sum(ss1); il1=find(l1>=tol_drop,1); 
@@ -123,8 +124,9 @@ while (i < mmax & nrmres_noprec>tol)
        addv=0;
     end
     
-    iw=size(W,2);
+    iw=size(W,2); 
     iw_vec(i)=iw;
+    ss2(1,1)
     if ss2(1,1)>1e-12
         addv=1; 
         l2=cumsum(ss2)/sum(ss2); il2=find(l2>=tol_drop,1); 
@@ -134,8 +136,9 @@ while (i < mmax & nrmres_noprec>tol)
     else
        addv=0;
     end
-% V
-% W
+    
+%  V
+%  W
 % W'*V
 % V'*V
     iv=size(V,2);
@@ -146,6 +149,7 @@ while (i < mmax & nrmres_noprec>tol)
     % Expand projected matrices -- M
     Mm{1}=speye(iv);
     ivnew=size(vnew1,2);
+
 
     for ind=2:nterm
         wrk1=M{ind}*Pvnew1;
@@ -161,6 +165,7 @@ while (i < mmax & nrmres_noprec>tol)
     % Expand projected matrices -- N
 %     Nm{1}=speye(iv);
     iwnew=size(vnew2,2);
+
 
     for ind=1:nterm
         wrk2=N{ind}*Pvnew2;
@@ -181,7 +186,8 @@ while (i < mmax & nrmres_noprec>tol)
         if (nofirst) 
             y0(1:size(Y,1),1:size(Y,2))=Y;
         end
-
+Mm
+Nm
         [Y,iteraY]=cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner);  %,iv,iw); % inner solver: cg
 
         tot_inner=[tot_inner,iteraY];

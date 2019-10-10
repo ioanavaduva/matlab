@@ -14,7 +14,7 @@ opts.tol=1e-4;  % NB: 'eigs' is VERY sensitive to this.
 
 % This could be done more cheaply with data from a COARSER problem
 % min and max eigs of hat{K}_{1} - 1st term could be strictly positive
-emin2=eigs(M{2},M{1},1,'SA',opts);
+emin2 = 0; %emin2=eigs(M{2},M{1},1,'SA',opts);
 emax2=eigs(M{2},M{1},1,'LA',opts);
 n_m=size(M,2);
 emean=mean([(emin2),abs(emax2)]);
@@ -24,11 +24,11 @@ alphas(2:n_m)=(1)*ones(n_m-1,1);        % center all other spectra around 1
 %shifts = alphas'                       % Uncomment to print to screen
 
 % Modify the orginal Ms and Ns (apply shifts) 
- for k=2:size(M,2)
-     M{k}=M{k}+alphas(k-1)*M{1};
-     N{1}=N{1}-alphas(k-1)*N{k};
- end
- 
+%  for k=2:size(M,2)
+%      M{k}=M{k}+alphas(k-1)*M{1};
+%      N{1}=N{1}-alphas(k-1)*N{k};
+%  end
+%  
 % --------------Choose parameters s for MultiRB -------------------
 
 % 'parameter-free version' for above alphas;

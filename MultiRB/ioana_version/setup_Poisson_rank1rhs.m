@@ -3,11 +3,11 @@
 %       IXN0 + M1XN1 + M2XN2 + M3XN3 = C, 
 % with N = [N0, N1, N2, N3] and M = [I, M1, M2, M3].
 
-n = 800; 
+n = 5; 
 h = 1/n;
 
 % A and B
-eps = 0.001;
+eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 I = speye(n);
 
@@ -43,6 +43,7 @@ M = {M0, N0, M1, M2};
 N = {N0, M0, N1, N2};
 
 % rhs set up
+
 % xtemp = linspace(0,1,n);
 % x = repmat(xtemp, 1, n);
 % y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
@@ -50,9 +51,22 @@ N = {N0, M0, N1, N2};
 % rhs = b(x, y)';
 % rhs11 = reshape(rhs, n, n); rhs1 = rhs11(:,1);
 % rhs22 = I; rhs2 = rhs22(:, 1);
-rhs1 = ones(n,1);
-rhs2=rhs1; 
-rhs=ones(n^2,1);
+
+% rank-one symmetric rhs
+% rhs1 = ones(n,1);
+% rhs2=rhs1; 
+% rhs=ones(n^2,1);
+
+% rank-one nonsymmetric rhs
+rhs1 = ones(n, 1);
+NNn = 0.0001;
+rhs2 = NNn*randn(n, 1) + ones(n, 1);
+rhs = rhs1*rhs2';
+
+% rhs1 = cos(2*n*pi*x)';
+% rhs2 = sin(2*n*pi*y)';
+% rhs = rhs1*rhs2';
+% rhs_vec = rhs(:);
 
 % preconditioner
 P1 = speye(n); 

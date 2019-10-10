@@ -23,5 +23,6 @@ Y=zeros(size(X));
 for dim = 1:dimk
     Y = Y + full(K{dim})*X*full(G{dim})';
 end
+
 %
 return

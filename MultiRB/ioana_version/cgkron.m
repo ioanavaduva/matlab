@@ -5,7 +5,9 @@ function [X,itera]=cgkron(K,G,B,X0,maxit,tol) %,nn,mm)
 [n,m]=size(B);
 X=X0; 
 
-Ax0=matvec(X0,G,K); %AP = a*P; 
+Ax0=matvec(X0,G,K);%AP = a*P;
+% size(Ax0)
+% size(B)
 R = B-Ax0; 
 norma=norm(R,'fro');
 res_init=norma;
