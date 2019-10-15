@@ -126,7 +126,7 @@ while (i < mmax & nrmres_noprec>tol)
     
     iw=size(W,2); 
     iw_vec(i)=iw;
-    ss2(1,1)
+%     ss2(1,1)
     if ss2(1,1)>1e-12
         addv=1; 
         l2=cumsum(ss2)/sum(ss2); il2=find(l2>=tol_drop,1); 
@@ -186,8 +186,8 @@ while (i < mmax & nrmres_noprec>tol)
         if (nofirst) 
             y0(1:size(Y,1),1:size(Y,2))=Y;
         end
-Mm
-Nm
+% Mm
+% Nm
         [Y,iteraY]=cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner);  %,iv,iw); % inner solver: cg
 
         tot_inner=[tot_inner,iteraY];
