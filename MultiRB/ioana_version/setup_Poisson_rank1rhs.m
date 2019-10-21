@@ -3,7 +3,7 @@
 %       IXN0 + M1XN1 + M2XN2 + M3XN3 = C, 
 % with N = [N0, N1, N2, N3] and M = [I, M1, M2, M3].
 
-n = 400; 
+n = 1600; 
 h = 1/n;
 
 % A and B
@@ -39,8 +39,8 @@ Psi2 = spdiags(py2(:), 0, n, n);
 
 M0 = I; N0 = A; M1 = Phi1 * B2; M2 = Phi2; N1 = Psi1; N2 = B2' * Psi2; 
 
-M = {M0, N0, M1, M2};
-N = {N0, M0, N1, N2};
+M = {M0, N0}; %, M1, M2};
+N = {N0, M0}; %, N1, N2};
 
 % rhs set up
 
@@ -73,6 +73,6 @@ P1 = speye(n);
 P = P1*P1';
 
 % kronecker product form of matrix eq
-AA  = kron(A', I) + kron(I', A) + kron(N1', M1) + kron(N2', M2);
+AA  = kron(A', I) + kron(I', A); % + kron(N1', M1) + kron(N2', M2);
 
 %AB = kron(A, I) + kron(I, B);
