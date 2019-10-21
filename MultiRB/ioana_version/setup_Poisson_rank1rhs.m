@@ -3,7 +3,7 @@
 %       IXN0 + M1XN1 + M2XN2 + M3XN3 = C, 
 % with N = [N0, N1, N2, N3] and M = [I, M1, M2, M3].
 
-n = 1600; 
+n = 800; 
 h = 1/n;
 
 % A and B
@@ -53,15 +53,15 @@ N = {N0, M0}; %, N1, N2};
 % rhs22 = I; rhs2 = rhs22(:, 1);
 
 % rank-one symmetric rhs
-rhs1 = ones(n,1);
-rhs2=rhs1; 
-rhs=ones(n^2,1);
+% rhs1 = ones(n,1);
+% rhs2=rhs1; 
+% rhs=ones(n^2,1);
 
 % rank-one nonsymmetric rhs
-% rhs1 = ones(n, 1);
-% NNn = 0.0001;
-% rhs2 = NNn*randn(n, 1) + ones(n, 1);
-% rhs = rhs1*rhs2';
+rhs1 = ones(n, 1);
+NNn = 0.0001;
+rhs2 = NNn*randn(n, 1) + ones(n, 1);
+rhs = rhs1*rhs2'; rhss = rhs(:);
 
 % rhs1 = cos(2*n*pi*x)';
 % rhs2 = sin(2*n*pi*y)';

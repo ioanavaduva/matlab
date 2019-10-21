@@ -34,7 +34,7 @@ rat_solve=param.rat_solve;
 res_method=param.res_method;
 mmax=param.max_space_dim;
 nterm=size(N,2);
-tol=1e-10;       % Outer stopping tolerance (change if desired) 
+tol=1e-7;       % Outer stopping tolerance (change if desired) 
 
 tol_drop=.99;  % controls how many basis vectors to add at each iteration
 nofirst=0;
@@ -111,30 +111,52 @@ while (i < mmax & nrmres_noprec>tol)
     [uu2,ss2,vv2]=svd(v2,0);
     ss2=diag(ss2);
     
+% separate computations
+%     iv=size(V,2); 
+%     iv_vec(i)=iv;
+%  
+%     if ss1(1,1)>1e-12
+%         addv=1; 
+%         l1=cumsum(ss1)/sum(ss1); il1=find(l1>=tol_drop,1); 
+%         vnew1=uu1(:,1:il1);
+%         Pvnew1=P1'\vnew1;
+%         V(1:n,iv+1:iv+il1)=vnew1; % increase the space V        
+%     else
+%        addv=0;
+%     end
+%     
+%     iw=size(W,2); 
+%     iw_vec(i)=iw;
+%     
+%     if ss2(1,1)>1e-12
+%         addv=1; 
+%         l2=cumsum(ss2)/sum(ss2); il2=find(l2>=tol_drop,1); 
+%         vnew2=uu2(:,1:il2);
+%         Pvnew2=P1'\vnew2;
+%         W(1:m,iw+1:iw+il2)=vnew2; % increase the space W       
+%     else
+%        addv=0;
+%     end
+
+% combined if's >1e-12
     iv=size(V,2); 
     iv_vec(i)=iv;
-  
-    if ss1(1,1)>1e-12
+    iw=size(W,2); 
+    iw_vec(i)=iw;
+%     ss1(1,1)
+%     ss2(1,1)
+    if ss1(1,1)>1e-12 && ss2(1,1)>1e-12
         addv=1; 
         l1=cumsum(ss1)/sum(ss1); il1=find(l1>=tol_drop,1); 
         vnew1=uu1(:,1:il1);
         Pvnew1=P1'\vnew1;
-        V(1:n,iv+1:iv+il1)=vnew1; % increase the space V        
-    else
-       addv=0;
-    end
-    
-    iw=size(W,2); 
-    iw_vec(i)=iw;
-%     ss2(1,1)
-    if ss2(1,1)>1e-12
-        addv=1; 
+        V(1:n,iv+1:iv+il1)=vnew1;
         l2=cumsum(ss2)/sum(ss2); il2=find(l2>=tol_drop,1); 
         vnew2=uu2(:,1:il2);
         Pvnew2=P1'\vnew2;
-        W(1:m,iw+1:iw+il2)=vnew2; % increase the space W       
+        W(1:m,iw+1:iw+il2)=vnew2;
     else
-       addv=0;
+        addv=0;
     end
     
 %  V
