@@ -138,13 +138,13 @@ while (i < mmax & nrmres_noprec>tol)
 %        addv=0;
 %     end
 
-% combined if's >1e-12
+% combined if ss >1e-12
     iv=size(V,2); 
     iv_vec(i)=iv;
     iw=size(W,2); 
     iw_vec(i)=iw;
-%     ss1(1,1)
-%     ss2(1,1)
+    ss1(1,1)
+    ss2(1,1)
     if ss1(1,1)>1e-12 && ss2(1,1)>1e-12
         addv=1; 
         l1=cumsum(ss1)/sum(ss1); il1=find(l1>=tol_drop,1); 

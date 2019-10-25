@@ -18,4 +18,5 @@ kk=1-(m/M)^2;
 [K,E]=ellipke(kk);
 t = (2*(1:ell)-1)*K/(2*ell);
 [sn,cn,dn]=ellipj(t,kk);
-omega = logspace(log10(m),log10(M),ell)';
+omega =sort(dn*M)';
+% omega = logspace(log10(m),log10(M),ell)';

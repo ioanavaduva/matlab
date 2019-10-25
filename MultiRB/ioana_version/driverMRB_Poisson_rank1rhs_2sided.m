@@ -34,7 +34,7 @@ alphas(2:n_m)=(1)*ones(n_m-1,1);        % center all other spectra around 1
 % 'parameter-free version' for above alphas;
     s_parameter(1)=2-alphas(1);
     s_parameter(2)=1;
-%     %s_parameter                             % Uncomment to print to screen
+%     s_parameter                             % Uncomment to print to screen
 
 % multiple parameter strategy - [lambda_min (M), lambda_max(M), k); using
 % elliptic functions
@@ -43,7 +43,7 @@ alphas(2:n_m)=(1)*ones(n_m-1,1);        % center all other spectra around 1
 % S_interval=[aa,bb];
 % s_nodes = 5;                           % Choose 2 nodes (could vary)
 % snew = get_nodes2(aa,bb,s_nodes);      % Use interval for A_1;
-% s_parameter=snew;
+% s_parameter=snew
 
 
 % ------------ Options for MultiRB --------------------------------
