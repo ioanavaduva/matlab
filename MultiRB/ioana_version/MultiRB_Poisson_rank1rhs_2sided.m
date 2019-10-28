@@ -34,7 +34,7 @@ rat_solve=param.rat_solve;
 res_method=param.res_method;
 mmax=param.max_space_dim;
 nterm=size(N,2);
-tol=1e-10;       % Outer stopping tolerance (change if desired) 
+tol=1e-5;       % Outer stopping tolerance (change if desired) 
 
 tol_drop=.99;  % controls how many basis vectors to add at each iteration
 nofirst=0;
@@ -95,14 +95,16 @@ while (i < mmax & nrmres_noprec>tol)
             end
             v1 = P1'*v1;
             
-            wrk2 = P1*W(1:m,i);
+            wrk2 = wrk1;
+%             wrk2 = P1*W(1:m,i)
             for kk = 2:nterm
                v2(1:m,kk) = (M{kk}+snew(ir)*M{1})\wrk2;
             end
             v2 = P1'*v2;
 
     v1 = v1 - V*(V'*v1); v1 = v1 - V*(V'*v1);
-    v2 = v2 - W*(W'*v2); v2 = v2 - W*(W'*v2);
+    v2=v1;
+%     v2 = v2 - W*(W'*v2); v2 = v2 - W*(W'*v2)
     
     % Deselect new basis vectors (TRUNCATE)
     [uu1,ss1,vv1]=svd(v1,0);
@@ -143,8 +145,8 @@ while (i < mmax & nrmres_noprec>tol)
     iv_vec(i)=iv;
     iw=size(W,2); 
     iw_vec(i)=iw;
-    ss1(1,1)
-    ss2(1,1)
+%     sone=ss1(1,1);
+%     stwo=ss2(1,1);
     if ss1(1,1)>1e-12 && ss2(1,1)>1e-12
         addv=1; 
         l1=cumsum(ss1)/sum(ss1); il1=find(l1>=tol_drop,1); 
@@ -154,7 +156,8 @@ while (i < mmax & nrmres_noprec>tol)
         l2=cumsum(ss2)/sum(ss2); il2=find(l2>=tol_drop,1); 
         vnew2=uu2(:,1:il2);
         Pvnew2=P1'\vnew2;
-        W(1:m,iw+1:iw+il2)=vnew2;
+%         W(1:m,iw+1:iw+il2)=vnew2;
+        W=V;
     else
         addv=0;
     end
@@ -196,7 +199,7 @@ while (i < mmax & nrmres_noprec>tol)
         Nm{ind}(1:iw-iwnew,iw-iwnew+1:iw)=newk2;  
         Nm{ind}(iw-iwnew+1:iw,1:iw-iwnew)=newk2';
         Nm{ind}(iw-iwnew+1:iw,iw-iwnew+1:iw)=Pwrk2'*W(:,iw-iwnew+1:iw);
-    end
+    end % 28/10/19 Nm{2} should stay identity? for 5x5 pb now fist entry is -0.8944
 
     if addv, rhs2m=[rhs2m; vnew2'*Prhs2];end
 
