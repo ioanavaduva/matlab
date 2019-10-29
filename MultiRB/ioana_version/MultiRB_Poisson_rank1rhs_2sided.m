@@ -34,7 +34,7 @@ rat_solve=param.rat_solve;
 res_method=param.res_method;
 mmax=param.max_space_dim;
 nterm=size(N,2);
-tol=1e-5;       % Outer stopping tolerance (change if desired) 
+tol=1e-10;       % Outer stopping tolerance (change if desired) 
 
 tol_drop=.99;  % controls how many basis vectors to add at each iteration
 nofirst=0;
