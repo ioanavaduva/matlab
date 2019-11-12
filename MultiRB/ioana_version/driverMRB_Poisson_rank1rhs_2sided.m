@@ -32,20 +32,34 @@ alphas(2:n_m)=(1)*ones(n_m-1,1);        % center all other spectra around 1
 %  
 % --------------Choose parameters s for MultiRB -------------------
 
+% Shifts given by 2 + 2cos(j*pi/(k+1))
+% for j = 1:6
+%     shifts(j) = 2 + 2*cos((j-1)*pi/6);
+% end
+% s_parameter = shifts
+
+% Shifts that are the exact eigenvalues
+% mm = round(linspace(1, n, 6));
+% ei = sort(eig(A));
+% for i = 1:6
+%     shifts(i) = ei(mm(i));   
+% end
+% s_parameter = shifts;
+
 % 'parameter-free version' for above alphas;
-%     s_parameter(1)=2-alphas(1);
-%     s_parameter(2)=1;
+    s_parameter(1)=2-alphas(1);
+    s_parameter(2)=1;
 %     s_parameter                             % Uncomment to print to screen
 
 % multiple parameter strategy - [lambda_min (M), lambda_max(M), k); using
 % elliptic functions
-
-aa=emin2;%+alphas(1); 
-bb=emax2;%+alphas(1);
-S_interval=[aa,bb];
-s_nodes = 4;                           % Choose 2 nodes (could vary)
-snew = get_nodes2(aa,bb,s_nodes);      % Use interval for A_1;
-s_parameter=snew
+% 
+% aa=emin2;%+alphas(1); 
+% bb=emax2;%+alphas(1);
+% S_interval=[aa,bb];
+% s_nodes = 6;                           % Choose 2 nodes (could vary)
+% snew = get_nodes2(aa,bb,s_nodes);      % Use interval for A_1;
+% s_parameter=snew;
 
 
 % ------------ Options for MultiRB --------------------------------
@@ -65,5 +79,5 @@ fprintf('\n Total execution time: %9.4e seconds \n',etoc)
 fprintf('\n ----------------------------------------------------------\n \n')
 fprintf('no_terms   dim_M   dim_N   n_k   Rank    final_err   avg_inner  time(s)  \n')
 fprintf('\n  %2d       %3d   %d    %3d    %2d    %9.4e    %4.2f     %9.4e  \n \n', [2, n, m, dimV, size(X1,2), final_err, avg_inner, etoc])
-fprintf('----------------------------------------------------------\n \n')
+fprintf('\n----------------------------------------------------------\n \n')
 
