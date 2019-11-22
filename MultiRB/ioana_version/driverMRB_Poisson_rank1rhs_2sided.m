@@ -62,6 +62,7 @@ snew = get_nodes2(aa,bb,s_nodes);      % Use interval for A_1;
 s_parameter=snew
 
 
+
 % ------------ Options for MultiRB --------------------------------
 res_method='4';                  % can't change this
 rat_solve='1'; mmax=200;         % can change
