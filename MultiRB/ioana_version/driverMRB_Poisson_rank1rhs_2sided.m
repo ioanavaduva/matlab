@@ -59,7 +59,7 @@ bb=emax2;%+alphas(1);
 S_interval=[aa,bb];
 s_nodes = 6;                           % Choose 2 nodes (could vary)
 snew = get_nodes2(aa,bb,s_nodes);      % Use interval for A_1;
-s_parameter=snew
+s_parameter=snew;
 
 
 

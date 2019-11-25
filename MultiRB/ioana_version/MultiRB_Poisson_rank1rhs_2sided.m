@@ -219,12 +219,16 @@ while (i < mmax & nrmres_noprec>tol)
         nofirst=1;
         % Compute relative variation in the solution
         Yer=Y; [n0,m0]=size(Y0); Yer(1:n0,1:m0)=Yer(1:n0,1:m0)-Y0; 
-        ErrY=norm(Yer,'fro'); %/normR0;
-        nrmres_noprec=ErrY/norm(Y,'fro'); nrmres=nrmres_noprec;
+        X_hat = V*Y*W';
+%         ErrY=norm(Yer,'fro'); %/normR0;
+        ErrY = norm(M{1}*X_hat*M{2} + M{2}*X_hat*M{1} - rhs1*rhs2', 'fro');
+%         nrmres_noprec=ErrY/norm(Y,'fro'); nrmres=nrmres_noprec;
+        nrm_rhs = norm(rhs1*rhs2', 'fro');
+        nrmres_noprec = ErrY/nrm_rhs;
         Y0=Y;
         
         % Print progress to screen
-         fprintf('\n        %2d        %3d       %d      %8.6e         %2d \n', [i,iv,iw,nrmres,iteraY])
+         fprintf('\n        %2d        %3d       %d      %8.6e         %2d \n', [i,iv,iw,nrmres_noprec,iteraY])
     end
 
    error_vec(i+1)=nrmres_noprec;
@@ -251,5 +255,5 @@ else
    X2=W*vv(:,1:ns);
 end
 
-dimV=size(V,2); final_err=nrmres; avg_inner=mean(tot_inner);
+dimV=size(V,2); final_err=nrmres_noprec; avg_inner=mean(tot_inner);
 
