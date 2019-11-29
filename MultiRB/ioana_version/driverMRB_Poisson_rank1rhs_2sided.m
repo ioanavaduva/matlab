@@ -18,9 +18,9 @@ opts.tol=1e-4;  % NB: 'eigs' is VERY sensitive to this.
 emin2 = 1e-6; %emin2=eigs(M{2},M{1},1,'SA',opts);
 emax2=eigs(M{2},M{1},1,'LA',opts);
 n_m=size(M,2);
-emean=mean([(emin2),abs(emax2)]);
-alphas(1)=1-emean;
-alphas(2:n_m)=(1)*ones(n_m-1,1);        % center all other spectra around 1
+% emean=mean([(emin2),abs(emax2)]);
+% alphas(1)=1-emean;
+% alphas(2:n_m)=(1)*ones(n_m-1,1);        % center all other spectra around 1
     
 %shifts = alphas'                       % Uncomment to print to screen
 
@@ -56,10 +56,11 @@ alphas(2:n_m)=(1)*ones(n_m-1,1);        % center all other spectra around 1
 % 
 aa=emin2;%+alphas(1); 
 bb=emax2;%+alphas(1);
-S_interval=[aa,bb];
-s_nodes = 6;                           % Choose 2 nodes (could vary)
-snew = get_nodes2(aa,bb,s_nodes);      % Use interval for A_1;
-s_parameter=snew;
+s_parameter = logspace(log10(aa),log10(bb),6)';
+% S_interval=[aa,bb];
+% s_nodes = 6;                           % Choose 2 nodes (could vary)
+% snew = get_nodes2(aa,bb,s_nodes);      % Use interval for A_1;
+% s_parameter=snew;
 
 
 
@@ -73,7 +74,8 @@ param.res_method=res_method;
 tic;
 fprintf('\n -------------------- MultiRB Solve ------------------------\n \n')
 
-[X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,P,P1,param,s_parameter);
+% [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,P,P1,param,s_parameter);
+[X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_noprec_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,param,s_parameter);
 %X1(psort,:)=X1;
 etoc=toc; 
 fprintf('\n Total execution time: %9.4e seconds \n',etoc)
