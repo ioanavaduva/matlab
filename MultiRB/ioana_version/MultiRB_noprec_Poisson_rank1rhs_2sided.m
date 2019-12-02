@@ -196,34 +196,83 @@ v2=v1;
         Nm{ind}(iw-iwnew+1:iw,1:iw-iwnew) = newk2';
         Nm{ind}(iw-iwnew+1:iw,iw-iwnew+1:iw) = Pwrk2'*W(:,iw-iwnew+1:iw);
     end % 28/10/19 Nm{2} should stay identity? for 5x5 pb now fist entry is -0.8944
-
+    
     if addv, rhs2m = [rhs2m; vnew2'*rhs2];end
+%     size(rhs1m*rhs2m')
+%     size(kron(Nm{1}', Mm{1}))
 
     % Periodically compute the approx solution and residual
     if (rem(tot_it,compute_period)==0)
-%         Yk = (kron(Nm{1}', Mm{1}) + kron(Nm{2}', Mm{2}) + kron(Nm{3}', Mm{3}) + kron(Nm{4}', Mm{4}))\(kron(rhs2m', rhs1m));
+        rhsm = rhs1m*rhs2m';
+        rhsmm = rhsm(:);
+%         Y = lyap(Nm{1}, rhsm);
+%         Y = (kron(Nm{1}', Mm{1}) + kron(Nm{2}', Mm{2}))\rhsmm; %+ kron(Nm{3}', Mm{3}) + kron(Nm{4}', Mm{4}))\(kron(rhs2m', rhs1m));
         tol_inner = nrmres_noprec*1e-1;
         y0 = zeros(iv,iw);
         if (nofirst) 
             y0(1:size(Y,1),1:size(Y,2)) = Y;
         end
-% Mm
-% Nm
-        [Y,iteraY] = cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner);  %,iv,iw); % inner solver: cg
+%         size(Mm{1})
+%         size(Mm{2})
+%         size(rhs1m*rhs2m')
+       [Y,iteraY] = cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner); % inner solver: cg
 
-% Y = lyap(Mm{2}, Nm{1}, rhs1m*rhs2m');
-% iteraY = 1;
+%  Y = lyap(Mm{2}, rhs1m*rhs2m');
+%         iteraY = 1;
         tot_inner = [tot_inner,iteraY];
-        nofirst = 1;
-        % Compute relative variation in the solution
+%         nofirst = 1;
+        
+% Compute the residual - exactly
         Yer = Y; [n0,m0] = size(Y0); Yer(1:n0,1:m0) = Yer(1:n0,1:m0)-Y0; 
+% size(V)
+% size(Y)
+% size(W')
         X_hat = V*Y*W';
-%         ErrY=norm(Yer,'fro'); %/normR0;
+% %         ErrY=norm(Yer,'fro'); %/normR0;
         ErrY = norm(X_hat*M{2} + M{2}*X_hat - rhs1*rhs2', 'fro');
-%         nrmres_noprec=ErrY/norm(Y,'fro'); nrmres=nrmres_noprec;
+% %         nrmres_noprec=ErrY/norm(Y,'fro'); nrmres=nrmres_noprec;
         nrm_rhs = norm(rhs1*rhs2', 'fro');
         nrmres_noprec = ErrY/nrm_rhs;
-        Y0 = Y;
+%         Y0 = Y;
+
+% Compute the residual - as in Druskin, Simoncini
+% % computed residual   (exact, in exact arithmetic)
+%      u1=newAv-VV(1:n,1:js)*g;
+%      d=-VV(1:n,1:js)*(Y*(H(1:ih*p,1:ih*p)'\[sparse(p*(ih-1),p);I])*H(p*ih+1:p*ih1,p*ih-p+1:p*ih)');
+%      U=[-V*s(end),  d u1 ];
+%      rr=qr(full(U),0); rr=triu(rr(1:size(rr,2),:));
+%      nrmres=norm(rr*sparse([O I O; I O I; O I O ])*rr','fro')/(nrmb+singE*nrma*nrmx);
+%      nrmrestot=[nrmrestot,nrmres];
+% 
+%      disp([i,nrmres]) 
+%      if (nrmres<tol), break,end
+
+% Compute the residual - as in Kirsten, Simoncini
+
+% % computed residual   (exact, in exact arithmetic) cheaper computation possible
+%      u1=newAv-VV*g;
+%      d=-VV*(Y*(H(1:ih*p,1:ih*p)'\[sparse(p*(ih-1),p);I])*H(p*ih+1:p*ih1,p*ih-p+1:p*ih)');
+%      U=full([-V*s(end),  d u1 ]);
+%      rr=qr(U,0); rr=triu(rr(1:size(rr,2),:));
+%      
+% 
+% %backward error
+%      nrmres = norm(rr*sparse([O I O; I O I; O I O ])*rr','fro');
+% 
+% % relative residual norm
+%      nrmresnew = (nrmres)/nrmb;
+%  
+%      nrmrestotnew = [nrmrestotnew, nrmresnew];
+% 
+%      dim = size(VV,2);
+%      dim1 = [dim1,dim];
+% 
+%      disp([i,nrmresnew])
+% 
+%      if (nrmresnew<tol), 
+%         break
+%      end
+%   end 
         
         % Print progress to screen
          fprintf('\n        %2d        %3d       %d      %8.6e         %2d \n', [i,iv,iw,nrmres_noprec,iteraY])
