@@ -75,7 +75,7 @@ tic;
 fprintf('\n -------------------- MultiRB Solve ------------------------\n \n')
 
 % [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,P,P1,param,s_parameter);
-[X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_noprec_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,param,s_parameter);
+[X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_with_functions(M,N,rhs1,rhs2,param,s_parameter);
 %X1(psort,:)=X1;
 etoc=toc; 
 fprintf('\n Total execution time: %9.4e seconds \n',etoc)

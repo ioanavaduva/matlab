@@ -1,4 +1,4 @@
-function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_noprec_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,param,snew)
+function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_with_functions(M,N,rhs1,rhs2,param,snew)
 %
 % ---------------------- MultiRB solver -----------------------------------
 %
@@ -29,8 +29,8 @@ function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_noprec_Poisso
 % avg_inner     average no. inner iterations to solve projected problem
 
 compute_period = param.period;
-rat_solve = param.rat_solve;
-res_method = param.res_method;
+% rat_solve = param.rat_solve;
+% res_method = param.res_method;
 mmax = param.max_space_dim;
 nterm = size(N,2);
 tol = 1e-9;       % Outer stopping tolerance (change if desired) 
@@ -71,7 +71,7 @@ i = 0; tot_it = 0; ir = 0; Y = [];
 fprintf('      no.its      n_k       N_dim    error (rel diff)   no.inner its\n')
 
 % main iteration
-while (i < mmax & nrmresc>tol) 
+while (i < mmax && nrmresc>tol) 
     i = i+1;
     tot_it = tot_it+1;
     if (i > size(V,2)), fprintf('exausted approx space\n'),end
@@ -87,10 +87,10 @@ while (i < mmax & nrmresc>tol)
     v2 = v1;
     
     % Deselect new basis vectors (TRUNCATE)
-    [uu1,ss1,vv1] = svd(v1,0);
+    [uu1,ss1,~] = svd(v1,0);
     ss1 = diag(ss1);
     
-    [uu2,ss2,vv2] = svd(v2,0);
+    [uu2,ss2,~] = svd(v2,0);
     ss2 = diag(ss2);
 
 % combined if ss >1e-12
@@ -121,62 +121,43 @@ while (i < mmax & nrmresc>tol)
     vector_length = iv*iw;
     
     % Expand projected matrices -- M
+    Mm = project(M, Mm, Pvnew1, V, W, nterm, m, vnew1, iv);
     Mm{1} = speye(iv);
-    ivnew = size(vnew1,2);
-
-
-    for ind = 2:nterm
-        wrk1 = M{ind}*Pvnew1;
-        Pwrk1 = wrk1;
-        newk1 = V(1:m,1:(iv-ivnew))'*Pwrk1; 
-        Mm{ind}(1:iv-ivnew,iv-ivnew+1:iv) = newk1;  
-        Mm{ind}(iv-ivnew+1:iv,1:iv-ivnew) = newk1';
-        Mm{ind}(iv-ivnew+1:iv,iv-ivnew+1:iv) = Pwrk1'*V(:,iv-ivnew+1:iv);
-    end
-
     if addv, rhs1m = [rhs1m; vnew1'*rhs1];end
-
-    % Expand projected matrices -- N
-    iwnew = size(vnew2,2);
     
-    for ind = 1:nterm
-        wrk2 = N{ind}*Pvnew2;
-        Pwrk2 = wrk2;
-        newk2 = V(1:n,1:(iw-iwnew))'*Pwrk2; 
-        Nm{ind}(1:iw-iwnew,iw-iwnew+1:iw) = newk2;  
-        Nm{ind}(iw-iwnew+1:iw,1:iw-iwnew) = newk2';
-        Nm{ind}(iw-iwnew+1:iw,iw-iwnew+1:iw) = Pwrk2'*W(:,iw-iwnew+1:iw);
-    end
-    
+    Nm = project(N, Nm, Pvnew2, V, W, nterm, n, vnew2, iw);
     if addv, rhs2m = [rhs2m; vnew2'*rhs2];end
 
     % Periodically compute the approx solution and residual
     if (rem(tot_it,compute_period)==0)
-%         rhsm = rhs1m*rhs2m';
-%         rhsmm = rhsm(:);
+        rhsm = rhs1m*rhs2m';
+        rhsmm = rhsm(:);
+%         size(kron(Nm{1}', Mm{1}) + kron(Nm{2}', Mm{2}))
 %         Y = lyap(Nm{1}, rhsm);
-%         Y = (kron(Nm{1}', Mm{1}) + kron(Nm{2}', Mm{2}))\rhsmm; %+ kron(Nm{3}', Mm{3}) + kron(Nm{4}', Mm{4}))\(kron(rhs2m', rhs1m));
-        tol_inner = nrmresc*1e-1;
-        y0 = zeros(iv,iw);
-        if (nofirst) 
-            y0(1:size(Y,1),1:size(Y,2)) = Y;
-        end
+        Y = (kron(Nm{1}', Mm{1}) + kron(Nm{2}', Mm{2}))\rhsmm; %+ kron(Nm{3}', Mm{3}) + kron(Nm{4}', Mm{4}))\(kron(rhs2m', rhs1m));
+%         tol_inner = nrmresc*1e-1;
+%         y0 = zeros(iv,iw);
+%         if (nofirst) 
+%             y0(1:size(Y,1),1:size(Y,2)) = Y;
+%         end
 %         size(Mm{1})
 %         size(Mm{2})
 %         size(rhs1m*rhs2m')
-       [Y,iteraY] = cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner); % inner solver: cg
+%        [Y,iteraY] = cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner); % inner solver: cg
 
 %  Y = lyap(Mm{2}, rhs1m*rhs2m');
-%         iteraY = 1;
-        tot_inner = [tot_inner,iteraY];
+        iteraY = 1;
+%         tot_inner = [tot_inner,iteraY];
 %         nofirst = 1;
         
 % Compute the residual - exactly
-        Yer = Y; [n0,m0] = size(Y0); Yer(1:n0,1:m0) = Yer(1:n0,1:m0)-Y0; 
+%         Yer = Y; [n0,m0] = size(Y0); Yer(1:n0,1:m0) = Yer(1:n0,1:m0)-Y0; 
 % size(V)
 % size(Y)
 % size(W')
-        X_hat = V*Y*W';
+
+        YY = reshape(Y, sqrt(length(Y)), sqrt(length(Y)));
+        X_hat = V*YY*W';
 % %         ErrY=norm(Yer,'fro'); %/normR0;
         ErrY = norm(X_hat*M{2} + M{2}*X_hat - rhs1*rhs2', 'fro');
 % %         nrmres_noprec=ErrY/norm(Y,'fro'); nrmres=nrmres_noprec;
@@ -239,7 +220,7 @@ fprintf('\n Total iterations: %d \n\n', i)
 %-----------------------------------------------
 
 % Y = reshape(Y, n, n);
-[uu,ss,vv] = svd(Y,0);
+[uu,ss,vv] = svd(YY,0);
 ns = sum(diag(ss)/ss(1,1)>tol/iv);
 
 % Determine the solution factors
