@@ -203,8 +203,8 @@ v2=v1;
 
     % Periodically compute the approx solution and residual
     if (rem(tot_it,compute_period)==0)
-        rhsm = rhs1m*rhs2m';
-        rhsmm = rhsm(:);
+%         rhsm = rhs1m*rhs2m';
+%         rhsmm = rhsm(:);
 %         Y = lyap(Nm{1}, rhsm);
 %         Y = (kron(Nm{1}', Mm{1}) + kron(Nm{2}', Mm{2}))\rhsmm; %+ kron(Nm{3}', Mm{3}) + kron(Nm{4}', Mm{4}))\(kron(rhs2m', rhs1m));
         tol_inner = nrmres_noprec*1e-1;

@@ -185,7 +185,7 @@ while i < m
 % computed residual   (exact, in exact arithmetic) cheaper computation possible
      u1=newAv-VV*g;
      d=-VV*(Y*(H(1:ih*p,1:ih*p)'\[sparse(p*(ih-1),p);I])*H(p*ih+1:p*ih1,p*ih-p+1:p*ih)');
-     U=full([-V*s(end),  d u1 ]);
+     U=full([-V*s(end),  d u1 ]); keyboard
      rr=qr(U,0); rr=triu(rr(1:size(rr,2),:));
      
 
