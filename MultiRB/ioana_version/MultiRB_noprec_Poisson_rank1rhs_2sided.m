@@ -151,25 +151,25 @@ while (i < mmax & nrmresc>tol)
     if addv, rhs2m = [rhs2m; vnew2'*rhs2];end
 
     % Periodically compute the approx solution and residual
-%     if (rem(tot_it,compute_period)==0)
+    if (rem(tot_it,compute_period)==0)
 %         rhsm = rhs1m*rhs2m';
 %         rhsmm = rhsm(:);
 %         Y = lyap(Nm{1}, rhsm);
 %         Y = (kron(Nm{1}', Mm{1}) + kron(Nm{2}', Mm{2}))\rhsmm; %+ kron(Nm{3}', Mm{3}) + kron(Nm{4}', Mm{4}))\(kron(rhs2m', rhs1m));
-%         tol_inner = nrmresc*1e-1;
-%         y0 = zeros(iv,iw);
-%         if (nofirst) 
-%             y0(1:size(Y,1),1:size(Y,2)) = Y;
-%         end
+        tol_inner = nrmresc*1e-1;
+        y0 = zeros(iv,iw);
+        if (nofirst) 
+            y0(1:size(Y,1),1:size(Y,2)) = Y;
+        end
 %         size(Mm{1})
 %         size(Mm{2})
 %         size(rhs1m*rhs2m')
-%        [Y,iteraY] = cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner); % inner solver: cg
+       [Y,iteraY] = cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner); % inner solver: cg
 
- Y = lyap(-Mm{2}, -Nm{1}, rhs1m*rhs2m');
-        iteraY = 1;
+%  Y = lyap(-Mm{2}, -Nm{1}, rhs1m*rhs2m');
+%         iteraY = 1;
         tot_inner = [tot_inner,iteraY];
-%         nofirst = 1;
+        nofirst = 1;
         
 % Compute the residual - exactly
 %         Yer = Y; [n0,m0] = size(Y0); Yer(1:n0,1:m0) = Yer(1:n0,1:m0)-Y0; 
@@ -228,7 +228,7 @@ while (i < mmax & nrmresc>tol)
     end
 
    error_vec(i+1)=nrmresc;
-% end
+end
 
 fprintf('\n Total iterations: %d \n\n', i)
 

@@ -56,6 +56,7 @@ n_m=size(M,2);
 % 
 aa=emin2;%+alphas(1); 
 bb=emax2;%+alphas(1);
+% s_parameter = sqrt(aa*bb);
 s_parameter = logspace(log10(aa),log10(bb),6)';
 % S_interval=[aa,bb];
 % s_nodes = 6;                           % Choose 2 nodes (could vary)
