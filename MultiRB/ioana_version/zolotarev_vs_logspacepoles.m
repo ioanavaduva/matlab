@@ -10,7 +10,7 @@ emax2=eigs(M{2},M{1},1,'LA',opts);
 aa=emin2;
 bb=emax2;
 
-s_parameter = logspace(log10(aa),log10(bb),6)';
+s_parameter = logspace(log10(aa),log10(bb),6);
 
 %setup for Zolotarev shifts
 k = 6;      % rational degree
