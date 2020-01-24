@@ -4,7 +4,7 @@
 % 
 %   N = [N0, N1, N2, N3] and M = [I, M1, M2, M3].
 
-n = 20; 
+n = 5; 
 h = 1/n;
 
 % A and B
