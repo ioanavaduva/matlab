@@ -1,6 +1,11 @@
 % rktoolbox Zolotarev third problem vs logspace poles
 clear all
 
+<<<<<<< HEAD
+=======
+addpath(genpath('../../rktoolbox'));
+addpath(genpath('../../MultiRB'));
+>>>>>>> e9e9e940414b878cf60142e344cb47e53a9d8290
 % setup for logspace shifts
 setup_Poisson_rank1rhs;
 
@@ -10,6 +15,7 @@ emax2 = eigs(M{2},M{1},1,'LA',opts);
 
 bb = emax2 - emin2 + 1;
 
+<<<<<<< HEAD
 s_parameter = logspace(log10(1), log10(bb), 6);
 
 %setup for Zolotarev shifts
@@ -27,6 +33,18 @@ set(gca, 'YScale', 'log');
 
 
 % % Extrema for [-1,-1/b]\cup [1/b,1]:
+=======
+
+
+%setup for Zolotarev shifts
+k = 12;      % rational degree
+b = emax2-emin2+1;     % sign function on [-10,-1]\cup [1,10]
+r = rkfun.gallery('sign', k/2, b);
+
+s_parameter = logspace(log10(1),log10(b),6);
+
+% Extrema for [-1,-1/b]\cup [1/b,1]:
+>>>>>>> e9e9e940414b878cf60142e344cb47e53a9d8290
 % K = ellipke(1-1/b^2);
 % [sn, cn, dn] = ellipj((0:k)*K/k, 1-1/b^2);
 % extrema = b*dn;   % Transplant to [-b,-1]\cup [1,b]
