@@ -85,3 +85,10 @@ fprintf('no_terms   dim_M   dim_N   n_k   Rank    final_err   avg_inner  time(s)
 fprintf('\n  %2d       %3d   %d    %3d    %2d    %9.4e    %4.2f     %9.4e  \n \n', [2, n, m, dimV, size(X1,2), final_err, avg_inner, etoc])
 fprintf('\n----------------------------------------------------------\n \n')
 
+% plot residual against iterations on semilogy plot
+it = linspace(1, dimV, dimV);
+semilogy(it, error_vec, 'o');
+xlabel('Iterations');
+ylabel('Log of the residual');hold on;
+upperbound_beckermann;
+plot(upper_bound, 'x'); hold off;
