@@ -15,7 +15,8 @@ opts.tol=1e-4;  % NB: 'eigs' is VERY sensitive to this.
 
 % This could be done more cheaply with data from a COARSER problem
 % min and max eigs of hat{K}_{1} - 1st term could be strictly positive
-emin2 = 1e-6; %emin2=eigs(M{2},M{1},1,'SA',opts);
+% emin2 = 1e-6; 
+emin2=eigs(M{2},M{1},1,'SA',opts);
 emax2=eigs(M{2},M{1},1,'LA',opts);
 n_m=size(M,2);
 % emean=mean([(emin2),abs(emax2)]);
