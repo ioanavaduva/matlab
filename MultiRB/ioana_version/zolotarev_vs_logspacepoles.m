@@ -7,9 +7,9 @@ addpath(genpath('../../MultiRB'));
 % setup for logspace shifts
 setup_Poisson_rank1rhs;
 
-opts.tol=1e-4;
-emin2 = 1e-6; 
-emax2 = eigs(M{2},M{1},1,'LA',opts);
+e = sort(eig(M{2}));
+emin2 = e(1); % min eigenvalue
+emax2 = e(length(e)); %max eigenvalue
 
 bb = emax2 - emin2 + 1;
 
