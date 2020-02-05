@@ -16,9 +16,9 @@ bb = emax2 - emin2 + 1;
 s_parameter = logspace(log10(1), log10(bb), 6);
 
 %setup for Zolotarev shifts
-k = 12;      % rational degree
+k = 6;      % rational degree
 b = bb;     % sign function on [-10,-1]\cup [1,10]
-r = rkfun.gallery('sign', k/2, b);
+r = rkfun.gallery('sign', k, b);
 
 po = imag(poles(r));
 
