@@ -20,6 +20,7 @@ k = 6;      % rational degree
 b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 
+s_parameter = poles(r);
 po = imag(poles(r));
 
 poles_positive = po(po>=0 );

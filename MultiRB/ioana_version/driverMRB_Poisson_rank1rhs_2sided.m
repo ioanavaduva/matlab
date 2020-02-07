@@ -16,7 +16,7 @@ opts.tol=1e-4;  % NB: 'eigs' is VERY sensitive to this.
 % This could be done more cheaply with data from a COARSER problem
 % min and max eigs of hat{K}_{1} - 1st term could be strictly positive
 % emin2 = 1e-6; 
-emin2=eigs(M{2},M{1},1,'SA',opts);
+emin2=1e-16; % eigs(M{2},M{1},1,'SA',opts); - for n>800 eigs doesnt work
 emax2=eigs(M{2},M{1},1,'LA',opts);
 n_m=size(M,2);
 % emean=mean([(emin2),abs(emax2)]);
@@ -57,10 +57,22 @@ n_m=size(M,2);
 % 
 aa=emin2;%+alphas(1); 
 bb=emax2;%+alphas(1);
+
+% ZOLOTAREV POSITIVE IMAGINARY PARTS POLES
+k = 4;      % rational degree
+b = bb;     % sign function on [-10,-1]\cup [1,10]
+r = rkfun.gallery('sign', k, b);
+po = imag(poles(r));
+s_parameter = po(po>=0 )
+
+% OTHER POLES
 % s_parameter = sqrt(aa*bb);
-s_parameter = logspace(log10(aa),log10(bb),6)';
+% s_parameter = complex(zeros(1, 6), logspace(log10(aa), log10(bb), 6));
+% s_parameter = logspace(log10(aa),log10(bb),4)';
+
+% GET_NODES2 POLES (SABINO THESIS)
 % S_interval=[aa,bb];
-% s_nodes = 6;                           % Choose 2 nodes (could vary)
+% s_nodes = 4;                           % Choose 2 nodes (could vary)
 % snew = get_nodes2(aa,bb,s_nodes);      % Use interval for A_1;
 % s_parameter=snew;
 
@@ -88,8 +100,8 @@ fprintf('\n----------------------------------------------------------\n \n')
 
 % plot residual against iterations on semilogy plot
 it = linspace(1, dimV, dimV);
-semilogy(it, error_vec, 'o');
+semilogy(it, error_vec, 'x');
 xlabel('Iterations');
 ylabel('Log of the residual');hold on;
-upperbound_beckermann;
-plot(upper_bound, 'x'); hold off;
+% upperbound_beckermann;
+% plot(upper_bound, 'x'); hold off;
