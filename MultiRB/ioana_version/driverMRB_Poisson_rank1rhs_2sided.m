@@ -1,6 +1,7 @@
 % Driver for MultiRB.m code, version 1
 
 clear all
+addpath(genpath('../../rktoolbox'));
 
 setup_Poisson_rank1rhs;
 %setup_nonsym;
@@ -63,7 +64,7 @@ k = 4;      % rational degree
 b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 po = imag(poles(r));
-s_parameter = po(po>=0 )
+s_parameter = po(po>=0 );
 
 % OTHER POLES
 % s_parameter = sqrt(aa*bb);
