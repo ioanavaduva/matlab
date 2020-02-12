@@ -2,6 +2,7 @@ function [X_hat, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, rh
 % Rational Krylov Subspace solver using the Petrov-Galerkin orthogonality
 % condition. We currently solve Lyapunov equation XA + AX = rhs1*rhs2 with
 % plan to extend to convection-diffusion matrix equation.
+
     inner_it = 0;
     i = 0; 
     res = 1; 
