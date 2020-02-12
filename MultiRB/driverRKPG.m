@@ -1,5 +1,6 @@
 % Driver for RKPG
 clear all;
+addpath(genpath('../rktoolbox'));
 % Setup
 n = 5; % size of matrix A
 h = 1/n; eps = 1;
