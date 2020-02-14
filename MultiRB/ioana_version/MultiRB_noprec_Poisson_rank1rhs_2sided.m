@@ -164,10 +164,10 @@ while (i < mmax & nrmresc>tol)
 %         size(Mm{1})
 %         size(Mm{2})
 %         size(rhs1m*rhs2m')
-       [Y,iteraY] = cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner); % inner solver: cg
+%        [Y,iteraY] = cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner); % inner solver: cg
 
-%  Y = lyap(-Mm{2}, -Nm{1}, rhs1m*rhs2m');
-%         iteraY = 1;
+ Y = lyap(-Mm{2}, -Nm{1}, rhs1m*rhs2m'); keyboard
+        iteraY = 1;
         tot_inner = [tot_inner,iteraY];
         nofirst = 1;
         
