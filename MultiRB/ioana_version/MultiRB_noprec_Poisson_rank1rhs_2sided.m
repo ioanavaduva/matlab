@@ -1,4 +1,4 @@
-function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_noprec_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,param,snew)
+function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec, upper_vec]=MultiRB_noprec_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,param,snew)
 %
 % ---------------------- MultiRB solver -----------------------------------
 %
@@ -34,6 +34,10 @@ res_method = param.res_method;
 mmax = param.max_space_dim;
 nterm = size(N,2);
 tol = 1e-9;       % Outer stopping tolerance (change if desired) 
+const = 4 + 4*sqrt(2*cond(M{2}));
+opts.tol=1e-4;
+emin2= 1e-6; % min eigenvalue
+emax2=eigs(M{2},M{1},1,'LA',opts); % max eigenvalue
 
 tol_drop = .99;  % controls how many basis vectors to add at each iteration
 nofirst = 0;
@@ -50,6 +54,7 @@ rhs1m = V'*rhs1;
 rhs2m = W'*rhs2;
 nrmresc = 1;
 error_vec(1) = nrmresc;
+upper_vec(1) = 1;
 
 Y0 = [];
 
@@ -76,14 +81,21 @@ while (i < mmax & nrmresc>tol)
     tot_it = tot_it+1;
     if (i > size(V,2)), fprintf('exausted approx space\n'),end
     % Get new basis vectors - direct solver for solving all systems simultaneously
-         ir = ir+1; if (ir>s_nodes),ir=1;end
+        ir = ir+1; if (ir>s_nodes),ir=1;end
+         
+        val =  -fminbnd(@(z) u_out(z, snew(ir)), -emax2, -emin2);
+        fval = u_out(val, snew(ir));
+        upper_bound = const*fval;
+        upper_vec(i+1) = upper_bound;
+        
             wrk1 = V(1:m,i);
             for kk = 2:nterm
                v1(1:m,kk) = (M{kk}+snew(ir)*M{1})\wrk1;
             end
             wrk2 = wrk1;
 
-    v1 = v1 - V*(V'*v1); v1 = v1 - V*(V'*v1);
+    v1 = v1 - V*(V'*v1);
+    v1 = v1 - V*(V'*v1);
     v2 = v1;
     
     % Deselect new basis vectors (TRUNCATE)
@@ -166,7 +178,7 @@ while (i < mmax & nrmresc>tol)
 %         size(rhs1m*rhs2m')
 %        [Y,iteraY] = cgkron(Mm,Nm,rhs1m*rhs2m',y0,iv*iw,tol_inner); % inner solver: cg
 
- Y = lyap(-Mm{2}, -Nm{1}, rhs1m*rhs2m'); keyboard
+ Y = lyap(-Mm{2}, -Nm{1}, rhs1m*rhs2m'); 
         iteraY = 1;
         tot_inner = [tot_inner,iteraY];
         nofirst = 1;

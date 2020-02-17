@@ -11,8 +11,10 @@ eig_max = e(length(e)); %max eigenvalue
 
 s = logspace(log10(eig_min),log10(eig_max), 6); % might need to change to take in the Zolotarev poles 
 
-gamma =  -fminbnd(@u_out, -eig_max, -eig_min);
+val =  -fminbnd(@(z) u_out (z, s(1)), -eig_max, -eig_min);
 
 const = 4 + 4*sqrt(2*cond(M{2}));
 
-upper_bound = const*gamma;
+fval = u_out(val, s(1));
+
+upper_bound = const*fval;

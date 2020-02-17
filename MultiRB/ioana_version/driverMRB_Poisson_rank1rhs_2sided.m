@@ -20,6 +20,8 @@ opts.tol=1e-4;  % NB: 'eigs' is VERY sensitive to this.
 emin2=1e-16; % eigs(M{2},M{1},1,'SA',opts); - for n>800 eigs doesnt work
 emax2=eigs(M{2},M{1},1,'LA',opts);
 n_m=size(M,2);
+
+
 % emean=mean([(emin2),abs(emax2)]);
 % alphas(1)=1-emean;
 % alphas(2:n_m)=(1)*ones(n_m-1,1);        % center all other spectra around 1
@@ -64,7 +66,7 @@ k = 4;      % rational degree
 b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 po = imag(poles(r));
-s_parameter = po(po>=0 );
+s_parameter = po(po >=0 );
 
 % OTHER POLES
 % s_parameter = sqrt(aa*bb);
@@ -90,7 +92,7 @@ tic;
 fprintf('\n -------------------- MultiRB Solve ------------------------\n \n')
 
 % [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,P,P1,param,s_parameter);
-[X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_noprec_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,param,s_parameter);
+[X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec, upper_vec]=MultiRB_noprec_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,param,s_parameter);
 %X1(psort,:)=X1;
 etoc=toc; 
 fprintf('\n Total execution time: %9.4e seconds \n',etoc)
@@ -101,8 +103,9 @@ fprintf('\n----------------------------------------------------------\n \n')
 
 % plot residual against iterations on semilogy plot
 it = linspace(1, dimV, dimV);
-semilogy(it, error_vec, 'x');
+semilogy(it, error_vec, 'x'); hold on;
+semilogy(it, upper_vec, 'o'); hold off
 xlabel('Iterations');
-ylabel('Log of the residual');hold on;
+
 % upperbound_beckermann;
 % plot(upper_bound, 'x'); hold off;

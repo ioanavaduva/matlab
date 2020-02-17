@@ -3,12 +3,16 @@ function [V, W] = get_rk_basis(A, poles, V, W)
     
     nV = size(V);
     I = eye(size(A));
-    W = (A + poles*I)\W;
-    VW = [V, W(:)];
-    if size(VW) == nV
+    W
+    W = (A + poles*I)\W 
+    keyboard
+    VW = [V, W(:)];  
+  
+    s = svd(VW);
+    
+    V = orth(VW);
+    if size(V) == nV
         warning('Size of space does not increase');
     end
-    V = orth(VW);
-    
 end
 

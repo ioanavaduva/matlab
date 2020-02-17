@@ -89,7 +89,8 @@ while (i < mmax & nrmres_noprec>tol)
     if (i > size(V,2)), fprintf('exausted approx space\n'),end
     % Get new basis vectors - direct solver for solving all systems simultaneously
          ir = ir+1; if (ir>s_nodes),ir=1;end
-            wrk1 = P1*V(1:n,i);
+            wrk1 = P1*V(1:n,i) 
+            keyboard
             for kk = 2:nterm
                v1(1:n,kk) = (M{kk}+snew(ir)*M{1})\wrk1;
             end

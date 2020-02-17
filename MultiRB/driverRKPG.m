@@ -11,7 +11,7 @@ rhs1 = ones(n,1);
 rhs2 = rhs1;
 
 tol = 1e-10;
-maxit = 200;
+maxit = 20;
 
 % Get smallest and largest eigenvalues
 emin = 1e-6; 
@@ -28,7 +28,7 @@ k = 4;      % rational degree
 b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 po = imag(poles(r));
-poles_Zolo = po(po>=0 );
+poles_Zolo = po(po >= 0);
 
 % time & solve using RKPG
 tic;

@@ -18,7 +18,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
         if i > length(poles) % cycle through poles
             i = 1; 
         end
-        [V, W] = get_rk_basis(A, poles(i), V, W); % generate the basis
+        [V, W] = get_rk_basis(A, poles(i), V, W); %keyboard % generate the basis
      
         % project matrix A and rhs1/2
         Ap = V'*A*V;
