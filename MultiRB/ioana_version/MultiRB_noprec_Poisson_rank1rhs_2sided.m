@@ -91,7 +91,7 @@ while (i < mmax & nrmresc>tol)
         
             wrk1 = V(1:m,i);
             for kk = 2:nterm
-               v1(1:m,kk) = (M{kk}+snew(ir)*M{1})\wrk1; keyboard
+               v1(1:m,kk) = (M{kk}+snew(ir)*M{1})\wrk1; 
             end
             wrk2 = wrk1;
 
@@ -118,7 +118,7 @@ while (i < mmax & nrmresc>tol)
         il1 = find(l1>=tol_drop,1); 
         vnew1 = uu1(:,1:il1);
         Pvnew1 = vnew1;
-        V(1:m,iv+1:iv+il1) = vnew1; keyboard
+        V(1:m,iv+1:iv+il1) = vnew1; 
         l2 = cumsum(ss2)/sum(ss2); 
         il2 = find(l2>=tol_drop,1); 
         vnew2 = uu2(:,1:il2);

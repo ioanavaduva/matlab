@@ -1,17 +1,16 @@
-function [V, W] = get_rk_basis(A, poles, V, W)
+function V = get_rk_basis(A, poles, V)
 % Function that generates a Rational Krylov basis 
     
     nV = size(V);
     I = eye(size(A));
     
-    W = (A + poles*I)\W; 
-%     K = [zeros(length(W)), W];
-    KK = orth(W); keyboard
-    VW = [V, KK(:)]; 
-  
-%     s = svd(VW);
-    
-    V = orth(VW);
+    w = V(:, end);
+    w = (A + poles*I)\w; 
+    w = w - V*(V'*w); w = w - V*(V'*w);
+    w = w/norm(w);
+
+    V = [V, w(:)]; 
+
     if size(V) == nV
         warning('Space dimension does not increase');
     end
