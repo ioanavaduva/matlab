@@ -6,7 +6,7 @@ function [V, W] = get_rk_basis(A, poles, V, W)
     
     W = (A + poles*I)\W; 
 %     K = [zeros(length(W)), W];
-    KK = orth(W);
+    KK = orth(W); keyboard
     VW = [V, KK(:)]; 
   
 %     s = svd(VW);
