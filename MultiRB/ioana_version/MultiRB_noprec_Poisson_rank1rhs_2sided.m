@@ -82,7 +82,8 @@ while (i < mmax & nrmresc>tol)
     if (i > size(V,2)), fprintf('exausted approx space\n'),end
     % Get new basis vectors - direct solver for solving all systems simultaneously
         ir = ir+1; if (ir>s_nodes),ir=1;end
-         
+        
+        % compute the upper bound -- very costly timewise
         val =  -fminbnd(@(z) u_out(z, snew(ir)), -emax2, -emin2);
         fval = u_out(val, snew(ir));
         upper_bound = const*fval;
@@ -90,7 +91,7 @@ while (i < mmax & nrmresc>tol)
         
             wrk1 = V(1:m,i);
             for kk = 2:nterm
-               v1(1:m,kk) = (M{kk}+snew(ir)*M{1})\wrk1;
+               v1(1:m,kk) = (M{kk}+snew(ir)*M{1})\wrk1; keyboard
             end
             wrk2 = wrk1;
 
