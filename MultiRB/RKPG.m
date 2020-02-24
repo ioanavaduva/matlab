@@ -8,7 +8,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
     res = 1; 
     it = 0; % the iterations also act as space dimension
     v0 = rhs1/norm(rhs1);
-    V = v0; W = v0;
+    V = v0; 
     
     fprintf(' no.its  residual   no.inner its \n')
     
@@ -27,7 +27,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
         
         % solve projected problem
         
-         Y = lyap(-Ap, rhs1p*rhs2p'); % keyboard
+         Y = lyap(-Ap, rhs1p*rhs2p'); % %keyboard
 %         proj_dim = size(A, 2);
 %         tol_inner = tol*1e-1;
 %         y0 = zeros(proj_dim, proj_dim);

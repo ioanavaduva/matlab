@@ -3,7 +3,7 @@
 %       IXN0 + M1XN1 + M2XN2 + M3XN3 = C, 
 % with N = [N0, N1, N2, N3] and M = [I, M1, M2, M3].
 
-n = 20; 
+n = 500; 
 h = 1/n;
 
 % A and B
