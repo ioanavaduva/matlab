@@ -1,10 +1,10 @@
 % Driver for RKPG
 
 clear all;
-addpath(genpath('../rktoolbox'));
+addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 500; % size of matrix A
+n = 100; % size of matrix A
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 rhs1 = ones(n, 1);
@@ -44,6 +44,6 @@ fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % plot residual v iterations
 iter = linspace(1, it+1, it+1);
-semilogy(iter, vec_res, 'x');
+semilogy(iter, vec_res, '+');hold on
 xlabel('Iterations');
 

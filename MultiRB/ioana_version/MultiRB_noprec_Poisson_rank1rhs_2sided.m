@@ -118,7 +118,7 @@ while (i < mmax & nrmresc>tol)
         il1 = find(l1>=tol_drop,1); 
         vnew1 = uu1(:,1:il1);
         Pvnew1 = vnew1;
-        V(1:m,iv+1:iv+il1) = vnew1; %keyboard
+        V(1:m,iv+1:iv+il1) = vnew1; 
         l2 = cumsum(ss2)/sum(ss2); 
         il2 = find(l2>=tol_drop,1); 
         vnew2 = uu2(:,1:il2);
@@ -263,6 +263,7 @@ else
    X1 = V*(uu(:,1:ns)*ss(1:ns,1:ns)); 
    X2=W*vv(:,1:ns);
 end
+
 
 dimV = size(V,2); final_err = nrmresc; avg_inner = mean(tot_inner);
 
