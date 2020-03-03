@@ -3,7 +3,7 @@
 %       IXN0 + M1XN1 + M2XN2 + M3XN3 = C, 
 % with N = [N0, N1, N2, N3] and M = [I, M1, M2, M3].
 
-n = 10; 
+n = 100; 
 h = 1/n;
 
 % A and B
@@ -55,6 +55,10 @@ N = {N0, M0}; %, N1, N2};
 % rank-one symmetric rhs
 rhs1 = ones(n,1);
 rhs2=rhs1; 
+
+% rhs1 = A\ones(n,1);
+% rhs2=rhs1; 
+
 % rhs=ones(n^2,1);
 
 % rank-one nonsymmetric rhs

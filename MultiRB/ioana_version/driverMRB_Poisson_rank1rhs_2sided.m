@@ -19,6 +19,11 @@ opts.tol=1e-4;  % NB: 'eigs' is VERY sensitive to this.
 % emin2 = 1e-6; 
 emin2=1e-16; % eigs(M{2},M{1},1,'SA',opts); - for n>800 eigs doesnt work
 emax2=eigs(M{2},M{1},1,'LA',opts);
+
+% evals = eig(A);
+% emin2 = min(evals);
+% emax2 = max(evals);
+
 n_m=size(M,2);
 
 
@@ -67,6 +72,8 @@ b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 po = imag(poles(r));
 s_parameter = po(po >=0 );
+% po = po(po>=0);
+% s_parameter = po(3);
 
 % OTHER POLES
 % s_parameter = sqrt(aa*bb);

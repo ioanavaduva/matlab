@@ -54,7 +54,7 @@ rhs1m = V'*rhs1;
 rhs2m = W'*rhs2;
 nrmresc = 1;
 error_vec(1) = nrmresc;
-upper_vec(1) = 1;
+upper_vec(1) = nrmresc;
 
 Y0 = [];
 
@@ -84,8 +84,10 @@ while (i < mmax & nrmresc>tol)
         ir = ir+1; if (ir>s_nodes),ir=1;end
         
         % compute the upper bound -- very costly timewise
-        val =  -fminbnd(@(z) u_out(z, snew(ir)), -emax2, -emin2);
-        fval = u_out(val, snew(ir));
+        [val,fval,exitflag] =  fminbnd(@(z) u_out_product(z, snew,tot_it,emin2,emax2), -emax2,-emin2);
+%         fval = -u_out_product(val, snew,tot_it,emin2,emax2);
+        fval = -fval;
+%         fprintf('exitflag = %i\n',exitflag)
         upper_bound = const*fval;
         upper_vec(i+1) = upper_bound;
         
