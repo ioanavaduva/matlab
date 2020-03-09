@@ -23,13 +23,13 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
 %         V = get_ek_basis(A, V);
         
         % project matrix A and rhs1/2
-        Ap = V'*A*V;
+        Ap = V'*A*V; keyboard
         rhs1p = V'*rhs1;
         rhs2p = V'*rhs2;
         
         % solve projected problem
         
-         Y = lyap(-Ap, rhs1p*rhs2p'); % %keyboard
+         Y = lyap(-Ap, rhs1p*rhs2p'); %keyboard
 %         proj_dim = size(A, 2);
 %         tol_inner = tol*1e-1;
 %         y0 = zeros(proj_dim, proj_dim);
