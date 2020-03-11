@@ -4,14 +4,14 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 5; % size of matrix A
+n = 1000; % size of matrix A
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 rhs1 = ones(n, 1);
 rhs2 = ones(n, 1);
 
-tol = 1e-10;
-maxit = 200;
+tol = 1e-9;
+maxit = 500;
 
 % Get smallest and largest eigenvalues
 emin = 1e-6; 
@@ -44,6 +44,6 @@ fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % plot residual v iterations
 iter = linspace(1, it+1, it+1);
-semilogy(iter, vec_res, '+');hold on
+semilogy(iter, vec_res, 'o');hold on
 xlabel('Iterations');
 

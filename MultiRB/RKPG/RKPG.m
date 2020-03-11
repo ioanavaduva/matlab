@@ -18,12 +18,12 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
         if i > length(poles) % cycle through poles
             i = 1; 
         end
-        V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
+%         V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
 %         V = get_poly_basis(A, V); % generate the polynomial (standard) Krylov basis
-%         V = get_ek_basis(A, V);
+        V = get_ek_basis(A, V);
         
         % project matrix A and rhs1/2
-        Ap = V'*A*V; keyboard
+        Ap = V'*A*V; %keyboard
         rhs1p = V'*rhs1;
         rhs2p = V'*rhs2;
         
