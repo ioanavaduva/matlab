@@ -15,7 +15,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
     while (res > tol && it < maxit)
         it = it + 1; 
         i = i+1; 
-        if i > length(poles) % cycle through poles
+        if i > length(poles) % cycle through poles                                                              v
             i = 1; 
         end
 %         V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
