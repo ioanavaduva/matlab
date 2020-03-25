@@ -9,6 +9,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
     it = 0; % the iterations also act as space dimension
     v0 = rhs1/norm(rhs1);
     V = v0; 
+    vec_res(1) = res;
     
     fprintf(' no.its  residual   no.inner its \n')
     
@@ -19,6 +20,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
             i = 1; 
         end
         V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
+%         rank(V)
 %         V = get_poly_basis(A, V); % generate the polynomial (standard) Krylov basis
 %         V = get_ek_basis(A, V);
         
@@ -35,7 +37,8 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
 %         y0 = zeros(proj_dim, proj_dim);
 %         App = mat2cell(Ap, [size(Ap, 2), 0]);
 %         [Y, inner_it] = cgkron(App, App, rhs1p*rhs2p', y0, proj_dim*proj_dim, tol_inner);
-        
+
+%         norm(Ap*Y+Y*Ap'-rhs1p*rhs2p', 'fro')/norm(rhs1p*rhs2p', 'fro')
 
         % obtain low-rank factors Y_1 & Y_2 using SVD
         [uu, ss, vv] = svd(Y, 0);
