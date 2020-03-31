@@ -1,10 +1,10 @@
 
 addpath(genpath('../../rktoolbox'));
 
-vec_n = [50, 100, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400];
-resid_mat = zeros(101, length(vec_n));
+vec_n = [50, 100, 200, 400, 600, 800, 1000, 1200, 1400, 1600];
+resid_mat = zeros(1001, length(vec_n));
 tol = 1e-14;
-maxit = 100;
+maxit = 1000;
 
 for i = 1:length(vec_n)
     n = vec_n(i);
