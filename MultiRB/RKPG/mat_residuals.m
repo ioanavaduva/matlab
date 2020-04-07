@@ -1,10 +1,10 @@
 
 addpath(genpath('../../rktoolbox'));
 
-vec_n = [50, 100, 200, 400, 600, 800, 1000, 1200, 1400, 1600];
-resid_mat = zeros(1001, length(vec_n));
+vec_n = [50, 100, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400];
+resid_mat = zeros(101, length(vec_n));
 tol = 1e-14;
-maxit = 1000;
+maxit = 100;
 
 for i = 1:length(vec_n)
     n = vec_n(i);
@@ -30,8 +30,26 @@ for i = 1:length(vec_n)
     po = imag(poles(r));
     poles_Zolo = po(po >= 0);
     
+    % % Compute the minimum of Z Problem 3 (by transforming c, the min of Prob 4)
+    K = ellipke(1-1/b^2);
+    [sn, cn, dn] = ellipj((0:k)*K/k, 1-1/b^2);
+    extrema = b*dn;
+    vals = 1-r(extrema);
+    c = mean( vals(1:2:end) );
+    e = eig( [ 2-4/c^2 1 ; -1 0 ] );
+    Zk = min(abs(e));
+
+    % Obtain the polynomials p and q of the rational function r = p/q 
+    [p,q,pq] = poly(r);
+    pp = [0, p];
+
+    % Transform Z Problem 4 into Problem 3 using eq. (2) - rearranged in Theorem 2.1
+    % (Istace/Thiran paper)and have the denominator given by
+    denom = q.*(1-Zk) - pp.*(1+Zk);
+    roots_denom = roots(denom);
+    
     % Solve with RKPG.m
-    [~, ~, ~, vec_res, ~, ~, ~] = RKPG(A, rhs1, rhs2, poles_Zolo, tol,  maxit);
+    [~, ~, ~, vec_res, ~, ~, ~] = RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit);
     
     resid_mat(:,i) = vec_res';
     

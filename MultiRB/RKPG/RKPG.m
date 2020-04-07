@@ -11,7 +11,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
     V = v0; 
     vec_res(1) = res;
     
-%     fprintf(' no.its  residual   no.inner its \n')
+    fprintf(' no.its  residual   no.inner its \n')
     
     while (res > tol && it < maxit)
         it = it + 1; 
@@ -19,9 +19,9 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
         if i > length(poles) % cycle through poles                                                              v
             i = 1; 
         end
-%         V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
+        V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
 %         rank(V)
-        V = get_poly_basis(A, V); % generate the polynomial (standard) Krylov basis
+%         V = get_poly_basis(A, V); % generate the polynomial (standard) Krylov basis
 %         V = get_ek_basis(A, V);
         
         % project matrix A and rhs1/2
@@ -52,12 +52,12 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
         res = norm(X1*X2*A + A*X1*X2 - rhs1*rhs2', 'fro')/norm(rhs1*rhs2', 'fro');
         
         % Print details to screen
-%         fprintf('\n  %2d   %3d   %2d \n', [it, res, inner_it])
+        fprintf('\n  %2d   %3d   %2d \n', [it, res, inner_it])
         
         vec_res(it + 1) = res;
     end
     
-%     fprintf('\n Total iterations: %d \n\n', it)
+    fprintf('\n Total iterations: %d \n\n', it)
     
     final_err = res;
     avg_inner = mean(inner_it);
