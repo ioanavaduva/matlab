@@ -13,7 +13,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
     
     fprintf(' no.its  residual   no.inner its \n')
     
-    while (res > tol && it < maxit)
+    while (res > tol && it < maxit) % || (res(it) < res(it+1) && res > 1e-7))
         it = it + 1; 
         i = i+1; 
         if i > length(poles) % cycle through poles                                                              v
