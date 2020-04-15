@@ -5,11 +5,11 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 1600; % size of matrix A
+n = 2000; % size of matrix A
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
-% rhs1 = ones(n, 1);
-% rhs2 = ones(n, 1);
+rhs1 = ones(n, 1);
+rhs2 = ones(n, 1);
 
 % rhs1 = randn(n, 1);
 % rhs2 = rhs1;
@@ -18,7 +18,14 @@ A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1),
 % rhs1 = NNn*randn(n, 1) + ones(n, 1);
 % rhs2 = rhs1;
 
-rhs1 = linspace(1, n, n)'; rhs2 = rhs1;
+% rhs1 = linspace(1, n, n)'; rhs2 = rhs1;
+
+% x = rand(n, 1);
+% rhs1 = cos(pi*x); rhs2 = rhs1;
+
+% rhs1 = sprand(n,1,0.23); rhs2 = rhs1;
+
+% rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
 
 tol = 1e-9;
 maxit = 100;
