@@ -2,6 +2,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
 % Rational Krylov Subspace solver using the Petrov-Galerkin orthogonality
 % condition. We currently solve Lyapunov equation XA + AX = rhs1*rhs2 with
 % plan to extend to convection-diffusion matrix equation.
+% !!! for Beckermann bound need to add extra output 'upper_vec'. 
 
     inner_it = 0;
     i = 0; 
@@ -10,28 +11,43 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
     v0 = rhs1/norm(rhs1);
     V = v0; 
     vec_res(1) = res;
+
+%     %%%% for Beckerman bound --- can comment out when not interested in it
+%     opts.tol=1e-4;
+%     emin2= 1e-6; % min eigenvalue
+%     emax2=eigs(A, 1,'LA',opts);
+%     %%%%
     
     fprintf(' no.its  residual   no.inner its \n')
     
-    while (res > tol && it < maxit) % || (res(it) < res(it+1) && res > 1e-7))
-        it = it + 1; 
+    while (res > tol && it < maxit)
+        it = it + 1;
         i = i+1; 
         if i > length(poles) % cycle through poles                                                              v
             i = 1; 
         end
+        
+%         %%%%% compute the Beckermann upper bound -- very costly --- can comment
+%         % out when not interested in plotting
+%         [val,fval,exitflag] =  fminbnd(@(z) u_out_product(z, poles, it, emin2, emax2), -emax2, -emin2);
+%         fval = -fval;
+%         const = 4 + 4*sqrt(2*cond(A));
+%         upper_bound = const*fval;
+%         upper_vec(it+1) = upper_bound;
+%         %%%%%
+        
+        % choose basis 
         V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
-%         rank(V)
 %         V = get_poly_basis(A, V); % generate the polynomial (standard) Krylov basis
 %         V = get_ek_basis(A, V);
         
         % project matrix A and rhs1/2
-        Ap = V'*A*V; %keyboard
+        Ap = V'*A*V; 
         rhs1p = V'*rhs1;
         rhs2p = V'*rhs2;
         
         % solve projected problem
-        
-         Y = lyap(-Ap, rhs1p*rhs2p'); %keyboard
+         Y = lyap(-Ap, rhs1p*rhs2p'); 
 %         proj_dim = size(A, 2);
 %         tol_inner = tol*1e-1;
 %         y0 = zeros(proj_dim, proj_dim);
@@ -55,6 +71,9 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
         fprintf('\n  %2d   %3d   %2d \n', [it, res, inner_it])
         
         vec_res(it + 1) = res;
+        if (vec_res(it+1) > vec_res(it) && vec_res(it+1) < 1e-8)
+            break
+        end
     end
     
     fprintf('\n Total iterations: %d \n\n', it)

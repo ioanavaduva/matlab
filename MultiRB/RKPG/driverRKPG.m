@@ -5,7 +5,7 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 2000; % size of matrix A
+n = 400; % size of matrix A
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 rhs1 = ones(n, 1);
@@ -69,6 +69,7 @@ roots_denom = roots(denom);
 % time & solve using RKPG
 tic;
 [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit);
+%!!for beckermann bound need to add extra 'upper_bound' to outputs
 time = toc;
 
 
@@ -77,8 +78,11 @@ fprintf('\n Total execution time: %9.4e seconds \n', time)
 fprintf('final_err   avg_inner  \n')
 fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
-% % plot residual v iterations
-% iter = linspace(1, it+1, it+1);
-% semilogy(iter, vec_res, 'o');hold on
-% xlabel('Iterations');
+% plot residual v iterations
+iter = linspace(1, it+1, it+1);
+semilogy(iter, vec_res, 'o');hold on
+xlabel('Iterations');
+ylabel('Residual');
 
+% plot Beckermann bound on top of residuals
+% semilogy(upper_bound, 'x'); hold off;
