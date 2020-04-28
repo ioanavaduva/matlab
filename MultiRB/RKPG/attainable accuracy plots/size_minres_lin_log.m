@@ -4,11 +4,24 @@ ek_res = [1.9556e-13; 9.8885e-13; 4.1082e-12; 1.8025e-11; 6.0872e-11; 1.0500e-10
 nn = [50; 100; 200; 400; 600; 800; 1000; 1200; 1600];
 pk_res = [1.1856e-13; 1.5054e-12; 8.7500e-12; 6.4914e-11; 1.6859e-10; 3.3783e-10; 5.5451e-10; 8.6700e-10; 1.7052e-09];
 
-subplot(121);
+%subplot(121); %linear 
 plot(n, rk_res, 'x'); hold on;
+p = polyfit(n, rk_res, 3);
+f = polyval(p, n);
+plot(n, f); hold on;
+
 plot(n, ek_res, 'o'); hold on;
-plot(nn, pk_res, '+'); hold on;
-subplot(122);
-semilogy(n, rk_res, 'x'); hold on;
-semilogy(n, ek_res, 'o'); hold on;
-semilogy(nn, pk_res, '+'); hold on;
+p2 = polyfit(n, ek_res, 3);
+f2 = polyval(p2, n);
+plot(n, f2); hold on;
+
+plot(nn, pk_res', 'v'); hold on;
+p3 = polyfit(nn, pk_res, 3);
+f3 = polyval(p3, nn);
+plot(nn, f3); hold on;
+
+
+% subplot(122); %logarithmic
+% semilogy(n, rk_res, 'x'); hold on;
+% semilogy(n, ek_res, 'o'); hold on;
+% semilogy(nn, pk_res, '+'); hold on;

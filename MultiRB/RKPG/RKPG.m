@@ -1,4 +1,4 @@
-function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, rhs2, poles, tol, maxit)
+function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, upper_vec] = RKPG(A, rhs1, rhs2, poles, tol, maxit)
 % Rational Krylov Subspace solver using the Petrov-Galerkin orthogonality
 % condition. We currently solve Lyapunov equation XA + AX = rhs1*rhs2 with
 % plan to extend to convection-diffusion matrix equation.
@@ -13,9 +13,9 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
     vec_res(1) = res;
 
 %     %%%% for Beckerman bound --- can comment out when not interested in it
-%     opts.tol=1e-4;
-%     emin2= 1e-6; % min eigenvalue
-%     emax2=eigs(A, 1,'LA',opts);
+    opts.tol=1e-4;
+    emin2= 1e-6; % min eigenvalue
+    emax2=eigs(A, 1,'LA',opts);
 %     %%%%
     
     fprintf(' no.its  residual   no.inner its \n')
@@ -28,12 +28,12 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = RKPG(A, rhs1, r
         end
         
 %         %%%%% compute the Beckermann upper bound -- very costly --- can comment
-%         % out when not interested in plotting
-%         [val,fval,exitflag] =  fminbnd(@(z) u_out_product(z, poles, it, emin2, emax2), -emax2, -emin2);
-%         fval = -fval;
-%         const = 4 + 4*sqrt(2*cond(A));
-%         upper_bound = const*fval;
-%         upper_vec(it+1) = upper_bound;
+        % out when not interested in plotting
+        [val,fval,exitflag] =  fminbnd(@(z) u_out_product(z, poles, it, emin2, emax2), -emax2, -emin2);
+        fval = -fval;
+        const = 4 + 4*sqrt(2*cond(A));
+        upper_bound = const*fval;
+        upper_vec(it+1) = upper_bound;
 %         %%%%%
         
         % choose basis 
