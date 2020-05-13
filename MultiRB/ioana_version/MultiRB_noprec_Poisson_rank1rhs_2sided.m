@@ -1,4 +1,4 @@
-function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec, upper_vec]=MultiRB_noprec_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,param,snew)
+function [X1,X2,dimV,final_err,avg_inner,error_vec,iv_vec]=MultiRB_noprec_Poisson_rank1rhs_2sided(M,N,rhs1,rhs2,param,snew)
 %
 % ---------------------- MultiRB solver -----------------------------------
 %
@@ -83,13 +83,13 @@ while (i < mmax & nrmresc>tol)
     % Get new basis vectors - direct solver for solving all systems simultaneously
         ir = ir+1; if (ir>s_nodes),ir=1;end
         
-        % compute the upper bound -- very costly timewise
-        [val,fval,exitflag] =  fminbnd(@(z) u_out_product(z, snew,tot_it,emin2,emax2), -emax2,-emin2);
-%         fval = -u_out_product(val, snew,tot_it,emin2,emax2);
-        fval = -fval;
-%         fprintf('exitflag = %i\n',exitflag)
-        upper_bound = const*fval;
-        upper_vec(i+1) = upper_bound;
+%         % compute the upper bound -- very costly timewise
+%         [val,fval,exitflag] =  fminbnd(@(z) u_out_product(z, snew,tot_it,emin2,emax2), -emax2,-emin2);
+% %         fval = -u_out_product(val, snew,tot_it,emin2,emax2);
+%         fval = -fval;
+% %         fprintf('exitflag = %i\n',exitflag)
+%         upper_bound = const*fval;
+%         upper_vec(i+1) = upper_bound;
         
             wrk1 = V(1:m,i);
             for kk = 2:nterm

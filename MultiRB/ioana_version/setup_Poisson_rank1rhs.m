@@ -52,12 +52,15 @@ N = {N0, M0}; %, N1, N2};
 % rhs11 = reshape(rhs, n, n); rhs1 = rhs11(:,1);
 % rhs22 = I; rhs2 = rhs22(:, 1);
 
-% rank-one symmetric rhs
-rhs1 = ones(n,1);
-rhs2=rhs1; 
+% % rank-one symmetric rhs
+% % rhs1 = ones(n,1);
+% % rhs2=rhs1; 
 
 % rhs1 = A\ones(n,1);
 % rhs2=rhs1; 
+
+x = linspace(0, 1, n);
+rhs1 = cos(x*pi)'; rhs2=rhs1;
 
 % rhs=ones(n^2,1);
 

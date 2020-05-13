@@ -17,7 +17,7 @@ function u = u_out_product(z, svec,iter,emin,emax)
     npoles = length(svec);
     svec = -svec;
     
-    display(svec)
+%     display(svec)
     for k = 1:iter
         index = mod(k,npoles);
         if index == 0, index = npoles; end

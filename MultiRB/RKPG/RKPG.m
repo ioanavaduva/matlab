@@ -1,8 +1,10 @@
-function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, upper_vec] = RKPG(A, rhs1, rhs2, poles, tol, maxit)
+function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, rhs1, rhs2, poles, tol, maxit, Xex_mat)
 % Rational Krylov Subspace solver using the Petrov-Galerkin orthogonality
 % condition. We currently solve Lyapunov equation XA + AX = rhs1*rhs2 with
 % plan to extend to convection-diffusion matrix equation.
 % !!! for Beckermann bound need to add extra output 'upper_vec'. 
+% !!! for bounds on the error need extra input 'Xex_mat' and output
+% 'error_vec'
 
     inner_it = 0;
     i = 0; 
@@ -11,11 +13,15 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, upper_vec] = RKPG
     v0 = rhs1/norm(rhs1);
     V = v0; 
     vec_res(1) = res;
+    %%%%  error initialization
+    error = 1;
+    error_vec(1) = error;
+    %%%%
 
 %     %%%% for Beckerman bound --- can comment out when not interested in it
-    opts.tol=1e-4;
-    emin2= 1e-6; % min eigenvalue
-    emax2=eigs(A, 1,'LA',opts);
+%     opts.tol=1e-4;
+%     emin2= 1e-6; % min eigenvalue
+%     emax2=eigs(A, 1,'LA',opts);
 %     %%%%
     
     fprintf(' no.its  residual   no.inner its \n')
@@ -29,16 +35,16 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, upper_vec] = RKPG
         
 %         %%%%% compute the Beckermann upper bound -- very costly --- can comment
         % out when not interested in plotting
-        [val,fval,exitflag] =  fminbnd(@(z) u_out_product(z, poles, it, emin2, emax2), -emax2, -emin2);
-        fval = -fval;
-        const = 4 + 4*sqrt(2*cond(A));
-        upper_bound = const*fval;
-        upper_vec(it+1) = upper_bound;
+%         [val,fval,exitflag] =  fminbnd(@(z) u_out_product(z, poles, it, emin2, emax2), -emax2, -emin2);
+%         fval = -fval;
+%         const = 4 + 4*sqrt(2*cond(A));
+%         upper_bound = const*fval;
+%         upper_vec(it+1) = upper_bound;
 %         %%%%%
         
         % choose basis 
-        V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
-%         V = get_poly_basis(A, V); % generate the polynomial (standard) Krylov basis
+%         V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
+        V = get_poly_basis(A, V); % generate the polynomial (standard) Krylov basis
 %         V = get_ek_basis(A, V);
         
         % project matrix A and rhs1/2
@@ -61,6 +67,10 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, upper_vec] = RKPG
         X1 = V*uu*ss;
         X2 = vv'*V';
         
+        %%% Exact solution at each iteration (only need for DKS bound
+        XX = X1*X2;
+        error = norm(Xex_mat - XX);
+        error_vec(it+1) = error;
         % project back
 %         X_hat = V*Y*V';
         
