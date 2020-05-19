@@ -1,5 +1,5 @@
 
-% Driver for RKPG
+% Driver for 1- sided RKPG
 
 clear all;
 addpath(genpath('../../rktoolbox'));
@@ -76,7 +76,7 @@ roots_denom = roots(denom);
 
 % time & solve using RKPG
 tic;
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit, Xex_mat);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = oneside_RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit, Xex_mat);
 %!!for beckermann bound need to add extra 'upper_bound' to outputs
 time = toc;
 

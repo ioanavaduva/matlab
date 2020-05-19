@@ -1,7 +1,7 @@
 % Simoncini Druskin Polynomial bound for error from Proposition 3.1
 
 % Set up of Lyapunov equation
-n = 100; 
+n = 5\00; 
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 

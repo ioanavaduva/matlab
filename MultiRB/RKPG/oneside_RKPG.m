@@ -1,4 +1,4 @@
-function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, rhs1, rhs2, poles, tol, maxit, Xex_mat)
+function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = oneside_RKPG(A, rhs1, rhs2, poles, tol, maxit, Xex_mat)
 % Rational Krylov Subspace solver using the Petrov-Galerkin orthogonality
 % condition. We currently solve Lyapunov equation XA + AX = rhs1*rhs2 with
 % plan to extend to convection-diffusion matrix equation.
@@ -42,18 +42,16 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG
 %         upper_vec(it+1) = upper_bound;
 %         %%%%%
         
-        % choose basis 
-        V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
-%         V = get_poly_basis(A, V); % generate the polynomial (standard) Krylov basis
-%         V = get_ek_basis(A, V);
+        % basis 
+        V = get_rk_basis(A, poles(i), V); 
         
         % project matrix A and rhs1/2
         Ap = V'*A*V; 
         rhs1p = V'*rhs1;
-        rhs2p = V'*rhs2;
+        rhs2p = rhs2;
         
-        % solve projected problem
-         Y = lyap(-Ap, rhs1p*rhs2p'); 
+        % solve projected problem ApY+YA=rhs1p*rhs2'
+         Y = lyap(-Ap, -A, rhs1p*rhs2p'); 
 %         proj_dim = size(A, 2);
 %         tol_inner = tol*1e-1;
 %         y0 = zeros(proj_dim, proj_dim);
@@ -65,7 +63,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG
         % obtain low-rank factors Y_1 & Y_2 using SVD
         [uu, ss, vv] = svd(Y, 0);
         X1 = V*uu*ss;
-        X2 = vv'*V';
+        X2 = vv';
         
         %%% Exact solution at each iteration (only need for DKS bound
         XX = X1*X2;
