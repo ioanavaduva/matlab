@@ -5,7 +5,7 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 1000; % size of matrix A
+n = 2000; % size of matrix A
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 rhs1 = ones(n, 1);
@@ -76,7 +76,7 @@ roots_denom = roots(denom);
 
 % time & solve using RKPG
 tic;
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit, Xex_mat);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec, e_Ap] = RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit, Xex_mat);
 %!!for beckermann bound need to add extra 'upper_bound' to outputs
 time = toc;
 
