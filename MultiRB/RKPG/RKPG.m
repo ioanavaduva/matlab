@@ -1,10 +1,12 @@
- function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec, e_Ap] = RKPG(A, rhs1, rhs2, poles, tol, maxit, Xex_mat)
+ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, rhs1, rhs2, poles, tol, maxit, Xex_mat)
 % Rational Krylov Subspace solver using the Petrov-Galerkin orthogonality
 % condition. We currently solve Lyapunov equation XA + AX = rhs1*rhs2 with
 % plan to extend to convection-diffusion matrix equation.
 % !!! for Beckermann bound need to add extra output 'upper_vec'. 
 % !!! for bounds on the error need extra input 'Xex_mat' and output
 % 'error_vec'
+% !!! for Ritz values need e_Ap in output which collects eigenvalues of
+% projected matrix Ap
 
     inner_it = 0;
     i = 0; 
@@ -13,7 +15,7 @@
     v0 = rhs1/norm(rhs1);
     V = v0; 
     vec_res(1) = res;
-    %%%%  error initialization
+    %%%%  for Error plots error initialization
     error = 1;
     error_vec(1) = error;
     %%%%
@@ -29,7 +31,7 @@
     while (res > tol && it < maxit)
         it = it + 1;
         i = i+1; 
-        if i > length(poles) % cycle through poles                                                              v
+        if i > length(poles) % cycle through poles          
             i = 1; 
         end
         
@@ -51,7 +53,7 @@
         Ap = V'*A*V; 
         rhs1p = V'*rhs1;
         rhs2p = V'*rhs2;
-        e_Ap{it} = eig(Ap);
+%         e_Ap{it} = eig(Ap); (uncomment for Ritz values)
         
         % solve projected problem
          Y = lyap(-Ap, rhs1p*rhs2p'); 
@@ -63,15 +65,16 @@
 
 %         norm(Ap*Y+Y*Ap'-rhs1p*rhs2p', 'fro')/norm(rhs1p*rhs2p', 'fro')
 
-        % obtain low-rank factors Y_1 & Y_2 using SVD
+        % obtain low-rank factors X_1 & X_2 using SVD
         [uu, ss, vv] = svd(Y, 0);
         X1 = V*uu*ss;
         X2 = vv'*V';
         
-        %%% Exact solution at each iteration (only need for DKS bound
+        %%% Exact solution at each iteration (only need for bounds & to compare 1-&2-sided proj)
         XX = X1*X2;
         error = norm(Xex_mat - XX);
-        error_vec(it+1) = error;
+        error_vec(it) = error;
+        %%%
         
         % project back
 %         X_hat = V*Y*V';
@@ -82,9 +85,11 @@
         % Print details to screen
         fprintf('\n  %2d   %3d   %2d \n', [it, res, inner_it])
         
-        vec_res(it + 1) = res;
-        if (vec_res(it+1) > vec_res(it) && vec_res(it+1) < 1e-8)
+        vec_res(it) = res;
+        if it > 1
+        if (vec_res(it) > vec_res(it-1) && vec_res(it) < 1e-8)
             break
+        end
         end
     end
     

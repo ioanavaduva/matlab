@@ -1,15 +1,18 @@
 
 % Driver for 1- sided RKPG
-
-clear all;
-addpath(genpath('../../rktoolbox'));
+% 
+% clear all;
+% addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 200; % size of matrix A
+n = 100; % size of matrix A
 h = 1/n; eps = 1;
-A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
-rhs1 = ones(n, 1);
-rhs2 = ones(n, 1);
+% A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
+
+% B = A+A';
+
+% rhs1 = ones(n, 1);
+% rhs2 = ones(n, 1);
 
 % rhs1 = randn(n, 1);
 % rhs2 = rhs1;
@@ -20,15 +23,15 @@ rhs2 = ones(n, 1);
 
 % rhs1 = linspace(1, n, n)'; rhs2 = rhs1;
 
-% x = linspace(0, 1, n)';
-% rhs1 = cos(pi*x); rhs2 = rhs1;
+x = linspace(0, 1, n)';
+rhs1 = cos(pi*x); rhs2 = rhs1;
 
 % rhs1 = sprand(n,1,0.23); rhs2 = rhs1;
-
+% 
 % rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
 
 %%%% Exact solution --- only need to check bounds for the 3 bases
-AA = kron(A, speye(n))+kron(speye(n), A);
+AA = kron(B, speye(n))+kron(speye(n), B);
 rhs = rhs1*rhs2';
 rhss = rhs(:);
 Xex = AA\rhss;
@@ -39,9 +42,16 @@ tol = 1e-9;
 maxit = 300;
 
 % Get smallest and largest eigenvalues
-emin = 1e-6; 
+% emin = 1e-6; 
 opts.tol=1e-4;
-emax = eigs(A, 1,'LA',opts);
+emin = eigs(B, 1, 'SM', opts);
+emax = eigs(B, 1,'LA',opts);
+
+% 8 random poles in the spectral interval
+poles_rand = [70194.8071105534,61045.6219154057,122475.200195771,127224.208005786,29897.7893219326,78357.5139720186,71289.4347736214,103403.761391083]';
+
+% 8 linspace poles in the spectral interval
+poles_linspace = linspace(emin, emax, 8)';
 
 % 6 logspace poles
 poles_log = logspace(log10(emin), log10(emax), 6)';
@@ -74,9 +84,12 @@ pp = [0, p];
 denom = q.*(1-Zk) - pp.*(1+Zk);
 roots_denom = roots(denom);
 
+% work with 6 poles only
+sm6 = roots_denom(3:8);
+
 % time & solve using RKPG
 tic;
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = oneside_RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit, Xex_mat);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = oneside_RKPG(B, rhs1, rhs2, roots_denom, tol,  maxit, Xex_mat);
 %!!for beckermann bound need to add extra 'upper_bound' to outputs
 time = toc;
 
@@ -86,7 +99,7 @@ fprintf('final_err   avg_inner  \n')
 fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % plot residual v iterations
-iter = linspace(1, it+1, it+1);
+iter = linspace(1, it, it);
 semilogy(iter, vec_res, 'v');hold on
 xlabel('Iterations');
 ylabel('Residual');

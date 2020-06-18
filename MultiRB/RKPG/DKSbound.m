@@ -33,11 +33,12 @@ e = exp(-(pi*princ)/(2*compl));
 
 % Plot the bound vector (initialized as zeros(iterations, 1)
 bound_vec = zeros(34, 1);
-for n = 1:33
+for n = 1:34
 er = e^n;
-bound_vec(n+1) = er;
+bound_vec(n) = er;
 end
 plot(bound_vec, 'x');
+legend('residual', 'error ||X-Xm||', 'DKS bound');
 
 % % Obtain exact X using Kronecker product
 % AA = kron(A, eye(n))+kron(eye(n), A);
