@@ -8,6 +8,7 @@ n = 10; k = 4;
 A = full(gallery('tridiag',n,-1,2,-1));
 f = ones(n,1);
 
+% Identity matrices of correct sizes
 In = eye(n); Ik = eye(k);
 
 % Solve full problem
@@ -26,12 +27,13 @@ xi = lam_min + (lam_max-lam_min)*rand(1,k);
 W = rat_krylov(A,f,xi);
 W = W(:,1:k);
 
+% Load Ioana's RK basis
+load OneTwoSided
+V = V(:,1:k);
+
 % Projected matrix and vector
 Ak = V'*A*V;
 fk = V'*f;
-
-% Identity matrices of correct sizes
-In = eye(n); Ik = eye(k);
 
 % Solve one-sided problem
 F1 = fk*f'; b1 = F1(:);
