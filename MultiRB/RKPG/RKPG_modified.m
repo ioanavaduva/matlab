@@ -92,7 +92,7 @@
         end
         end
     end
-     keyboard
+    
     fprintf('\n Total iterations: %d \n\n', it)
     
     final_err = res;
