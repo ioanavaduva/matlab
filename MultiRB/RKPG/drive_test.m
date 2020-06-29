@@ -20,4 +20,7 @@ R = A*X + X*A - F;
 tol = 1e-9;
 maxit = 300;
 
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, f, f, xi, tol, maxit, X);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, f, f, xi, tol, maxit, X); %this keyboards to give basis V
+
+% Create rational krylov basis using rktoolbox
+W = rat_krylov(A,f,xi);
