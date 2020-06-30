@@ -1,7 +1,12 @@
 % Compares results from one-sided and two-sided Rational Krylov 
 % projections of Lyapunov problem - requires RKToolbox
 %
-% J. Pestana 29/6/20
+% J. Pestana 29/6/20; last edit 30/6/20
+
+% Directories
+thisdir = pwd;
+addpath(genpath('../../rktoolbox'));
+% basisdir = '/Users/jen/ShareFile/Personal Folders/Supervision/IoanaVaduva/Code/matlab/MultiRB/RKPG';
 
 % Set up problem
 n = 10; k = 4;
@@ -24,11 +29,15 @@ lam_min = min(eig(A));
 xi = lam_min + (lam_max-lam_min)*rand(1,k);
 
 % Create rational krylov basis using rktoolbox
-W = rat_krylov(A,f,xi);
-W = W(:,1:k);
+% V = orth(randn(n,k)); % Random Stiefel matrix
 
-% Load Ioana's RK basis
-load OneTwoSided
+% Ioana's basis
+V = f/norm(f);
+for j = 1:k
+    V = get_rk_basis(A, xi(j), V);
+end
+
+% V = rat_krylov(A,f,-xi); % Rational Krylov basis
 V = V(:,1:k);
 
 % Projected matrix and vector
@@ -39,7 +48,7 @@ fk = V'*f;
 F1 = fk*f'; b1 = F1(:);
 B1 = kron(In,Ak) + kron(A,Ik);
 y1 = B1\b1; Y1 = reshape(y1,k,n);
-X1 = V*Y1; %norm(A*X1 + X1*A - F)
+X1 = V*Y1;
 R1 = V'*(A*X1 + X1*A - F);
 fprintf('Norm of residual for one-sided problem = %g\n',norm(R1));
 
@@ -47,6 +56,6 @@ fprintf('Norm of residual for one-sided problem = %g\n',norm(R1));
 F2 = fk*fk'; b2 = F2(:);
 B2 = kron(Ik,Ak) + kron(Ak,Ik);
 y2 = B2\b2; Y2 = reshape(y2,k,k);
-X2 = V*Y2*V'; %norm(A*X2 + X2*A - F)
+X2 = V*Y2*V';
 R2 = V'*(A*X2 + X2*A - F)*V;
 fprintf('Norm of residual for two-sided problem = %g\n',norm(R2));
