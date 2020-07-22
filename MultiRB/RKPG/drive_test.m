@@ -17,10 +17,13 @@ B = kron(In,A) + kron(A,In);
 x = B\b; X = reshape (x,n,n);
 R = A*X + X*A - F;
 
+% Create rational krylov basis using rktoolbox
+% W = rat_krylov(A,f,xi);
+
+%Compute rational Krylov basis using RKPG
 tol = 1e-9;
 maxit = 300;
 
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, f, f, xi, tol, maxit, X); %this keyboards to give basis V
+% [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, f, f, xi, tol, maxit, X); %this keyboards to give basis V
 
-% Create rational krylov basis using rktoolbox
-W = rat_krylov(A,f,xi);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = oneside_RKPG(A, f, f, xi, tol, maxit, X);

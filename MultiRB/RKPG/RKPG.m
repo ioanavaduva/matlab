@@ -71,7 +71,7 @@
         X2 = vv'*V';
         
         %%% Exact solution at each iteration (only need for bounds & to compare 1-&2-sided proj)
-        XX = X1*X2;
+        XX = X1*X2; %keyboard
         error = norm(Xex_mat - XX);
         error_vec(it) = error;
         %%%
@@ -92,7 +92,6 @@
         end
         end
     end
-     keyboard
     fprintf('\n Total iterations: %d \n\n', it)
     
     final_err = res;

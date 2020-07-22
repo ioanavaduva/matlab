@@ -66,7 +66,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = ones
         X2 = vv';
         
         %%% Exact solution at each iteration (only need for DKS bound
-        XX = X1*X2;
+        XX = X1*X2; %keyboard
         error = norm(Xex_mat - XX);
         error_vec(it) = error;
         % project back
@@ -84,7 +84,6 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = ones
             break
         end
         end
-    end
     
     fprintf('\n Total iterations: %d \n\n', it)
     

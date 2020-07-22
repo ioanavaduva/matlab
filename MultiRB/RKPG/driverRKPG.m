@@ -5,7 +5,7 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 10; % size of matrix A 
+n = 100; % size of matrix A 
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 
@@ -132,7 +132,7 @@ fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % plot residual v iterations
 iter = linspace(1, it, it);
-semilogy(iter, vec_res, 'v');hold on
+plot(iter, vec_res, 'v');hold on
 xlabel('Iterations');
 ylabel('Residual');
 
