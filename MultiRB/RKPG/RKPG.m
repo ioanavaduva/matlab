@@ -48,6 +48,7 @@
         V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
 %         V = get_poly_basis(A, V); % generate the polynomial (standard) Krylov basis
 %         V = get_ek_basis(A, V);
+
         
         % project matrix A and rhs1/2
         Ap = V'*A*V; 
@@ -97,4 +98,5 @@
     final_err = res;
     avg_inner = mean(inner_it);
 end
+
 
