@@ -11,6 +11,8 @@ A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1),
 rhs1 = [ones(n,1), rand(n,1)];
 rhs2 = rhs1;
 
+% rhs1 = rand(n, 4); rhs2=rhs1;
+
 tol = 1e-9;
 maxit = 300;
 
@@ -22,7 +24,7 @@ emax = eigs(A, 1,'LA',opts);
 % compute roots denom from Zolotarev problem
 bb = emax - emin + 1;
 
-k = 1;      % rational degree
+k = 3;      % rational degree
 b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 
