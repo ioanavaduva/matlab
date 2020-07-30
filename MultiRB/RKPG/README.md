@@ -10,19 +10,19 @@ Require access to rktoolbox, which can be obtained from here: http://guettel.com
 ### Running the tests
 
 To solve the Lyapunov equation with rank 1 rhs need, 2-sided projection:
-- driverRKPG.m: set up the problem by changing the size (n), rhs, and poles, as well as teolerance tol and maximum number of iterations maxit.
+- driverRKPG.m: set up the problem by changing the size (n), rhs, and poles, as well as tolerance tol and maximum number of iterations maxit.
 - RKPG.m: this is the solver; can choose the basis from:
     - get_rk_basis.m: rational Krylov basis (only works with rank 1 rhs).
     - get_pk_basis.m: standard (polynomial) Krylov basis (only tested for rank 1 rhs).
     - get_ek_basis.m: extended Krylov basis (only tested for rank 1 rhs).
 
 To solve the Lyapunov equation with rank 1 rhs need, 1-sided projection (on the left):
-- oneside_RKPGdriver.m: set up the problem by changing the size (n), rhs, and poles, as well as teolerance tol and maximum number of iterations maxit.
+- oneside_RKPGdriver.m: set up the problem by changing the size (n), rhs, and poles, as well as tolerance tol and maximum number of iterations maxit.
 - oneside_RKPG.m: this is the solver; uses:
     - get_rk_basis.m: rational Krylov basis (only works with rank 1 rhs).
 
 To solve the Lyapunov equation with rank >1 rhs need, 2-sided projection:
-- driverBlockRKPG.m: set up the problem by changing the size (n), rhs, and poles, as well as teolerance tol and maximum number of iterations maxit.
+- driverBlockRKPG.m: set up the problem by changing the size (n), rhs, and poles, as well as tolerance tol and maximum number of iterations maxit.
 - RKPGblock.m: this is the solver; uses:
     - get_start_basis.m generates the starting basis of same dimension as rhs.
     - get_rk_block_basis.m generates the block rational Krylov basis by adding a new column to existing ones.
