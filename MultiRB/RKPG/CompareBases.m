@@ -3,9 +3,9 @@
 addpath(genpath('../../rktoolbox'));
 
 % Set up
-n = 100; 
+n = 100; % can change
 A = full(gallery('tridiag',n,-1,2,-1));
-f = ones(n,1);
+f = ones(n,1); % can change
 In = eye(n);
 
 % Compute spectral interval
@@ -15,11 +15,11 @@ lam_min = min(eig(A));
 % Choose pole set -- set up for both random poles and roots denominator
 
 %%% Random poles from spectral interval
-m = 4; % number of poles
+m = 4; % number of poles; can change
 xi = lam_min + (lam_max-lam_min)*rand(1,m);
 %%%
 
-%%% Ioana's roots of denominator
+%%% Ioana's roots denominator
 bb = lam_max - lam_min + 1; 
 b = bb; 
 k = 2; % number of poles from this is 2*k 
@@ -44,7 +44,7 @@ roots_denom = roots(denom)';
 %%%
 
 % Create rational krylov basis using rktoolbox -- change xi to roots_denom to change poles 
-V = rat_krylov(A,f,xi); % uses all poles at once -- use eg xi(1) to only 
+V = rat_krylov(A,f,-xi); % uses all poles at once -- use eg xi(1) to only 
 % use first pole and obtain 2 columns or xi(1:3) to use first 3 poles and 
 % obtain 4 columns
 
@@ -52,10 +52,9 @@ V = rat_krylov(A,f,xi); % uses all poles at once -- use eg xi(1) to only
 W = f/norm(f);
 % W = get_rk_basis(A, xi(1),W);
 for i = 1:length(xi)
-    W = get_rk_basis(A, -xi(i),W);
+    W = get_rk_basis(A, xi(i),W);
 end
 
-fprintf('Bases norm after 1 pole = %g\n',norm(V(:, 1:2) - W(:, 1:2)));
 fprintf('Bases norm after all poles = %g\n',norm(V - W));
 fprintf('Angle between bases = %g\n', subspace(V,W));
 

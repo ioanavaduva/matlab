@@ -26,4 +26,5 @@ for k = 1:length(f(1, :)) % k refers to what column we're filling in
     end
 end
 
+fprintf('Bases norm after all poles = %g\n',norm(V - W));
 fprintf('Angle between bases = %g\n', subspace(V,W));

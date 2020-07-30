@@ -66,7 +66,7 @@ poles_log = logspace(log10(emin), log10(emax), 6)';
 % 4 positive imaginary parts of Zolotarev poles
 bb = emax - emin + 1;
 
-k = 4;      % rational degree
+k = 4;      % number of poles is 2*k
 b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 % poles(r)
@@ -132,7 +132,7 @@ fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % plot residual v iterations
 iter = linspace(1, it, it);
-plot(iter, vec_res, 'v');hold on
+semilogy(iter, vec_res, 'v');hold on
 xlabel('Iterations');
 ylabel('Residual');
 

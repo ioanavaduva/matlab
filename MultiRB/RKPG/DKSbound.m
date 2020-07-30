@@ -1,7 +1,7 @@
 % DKS bound from Theorem 4.8
+function bound_vec = DKSbound(n, it)
 
-% Set up of Lyapunov equation
-n = 500; 
+% Set up of Lyapunov equation 
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 
@@ -31,14 +31,14 @@ compl = ellipticCK(m);
 % the power p at the pth iteration in order to bound ||X-Xp||.
 e = exp(-(pi*princ)/(2*compl)); 
 
-% Plot the bound vector (initialized as zeros(iterations, 1)
-bound_vec = zeros(34, 1);
-for n = 1:34
-er = e^n;
+% Plot the bound vector (initialized as zeros(number iterations, 1)
+bound_vec = zeros(it, 1);
+for n = 1:it
+    er = e^n;
 bound_vec(n) = er;
 end
 plot(bound_vec, 'x');
-legend('residual', 'error ||X-Xm||', 'DKS bound');
+end
 
 % % Obtain exact X using Kronecker product
 % AA = kron(A, eye(n))+kron(eye(n), A);

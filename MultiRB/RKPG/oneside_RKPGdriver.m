@@ -1,8 +1,8 @@
 
 % Driver for 1- sided RKPG
 % 
-% clear all;
-% addpath(genpath('../../rktoolbox'));
+clear all;
+addpath(genpath('../../rktoolbox'));
 
 % Setup
 n = 200; % size of matrix A
@@ -59,7 +59,7 @@ poles_log = logspace(log10(emin), log10(emax), 6)';
 % 4 positive imaginary parts of Zolotarev poles
 bb = emax - emin + 1;
 
-k = 4;      % rational degree
+k = 4;      % number of poles is 2*k
 b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 % poles(r)
@@ -82,7 +82,7 @@ pp = [0, p];
 % Transform Z Problem 4 into Problem 3 using eq. (2) - rearranged in Theorem 2.1
 % (Istace/Thiran paper)and have the denominator given by
 denom = q.*(1-Zk) - pp.*(1+Zk);
-roots_denom = roots(denom);
+roots_denom = roots(denom); % use this as poles
 
 % work with 6 poles only
 sm6 = roots_denom(3:8);
