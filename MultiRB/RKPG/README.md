@@ -9,23 +9,25 @@ Require access to rktoolbox, which can be obtained from here: http://guettel.com
 
 ### Running the tests
 
-To solve the Lyapunov equation with rank 1 rhs need, 2-sided projection:
+To solve the Lyapunov equation with rank 1 rhs, 2-sided projection, need:
 - driverRKPG.m: set up the problem by changing the size (n), rhs, and poles, as well as tolerance tol and maximum number of iterations maxit.
 - RKPG.m: this is the solver; can choose the basis from:
     - get_rk_basis.m: rational Krylov basis (only works with rank 1 rhs).
     - get_pk_basis.m: standard (polynomial) Krylov basis (only tested for rank 1 rhs).
     - get_ek_basis.m: extended Krylov basis (only tested for rank 1 rhs).
 
-To solve the Lyapunov equation with rank 1 rhs need, 1-sided projection (on the left):
+To solve the Lyapunov equation with rank 1 rhs, 1-sided projection (on the left), need:
 - oneside_RKPGdriver.m: set up the problem by changing the size (n), rhs, and poles, as well as tolerance tol and maximum number of iterations maxit.
 - oneside_RKPG.m: this is the solver; uses:
     - get_rk_basis.m: rational Krylov basis (only works with rank 1 rhs).
 
-To solve the Lyapunov equation with rank >1 rhs need, 2-sided projection:
-- driverBlockRKPG.m: set up the problem by changing the size (n), rhs, and poles, as well as tolerance tol and maximum number of iterations maxit.
-- RKPGblock.m: this is the solver; uses:
-    - get_start_basis.m generates the starting basis of same dimension as rhs.
-    - get_rk_block_basis.m generates the block rational Krylov basis by adding a new column to existing ones.
+To solve the Lyapunov equation with rank >1 rhs, 2-sided projection, need:
+- driverBlockRKPG.m: set up the problem by changing the size (n), rhs, and poles, as well as tolerance tol and maximum number of iterations maxit; in driverBlockRKPG.m can change how iterations are counted by changing the solver:
+    - RKPGblock.m: this solver counts iterations corresponding to each new column added to the basis; 
+    - RKPGblock2.m: this solver counts iterations corresponding to each new use of a shift;
+    - both solvers give the same solution and use:
+        - get_start_basis.m generates the starting basis of same dimension as rhs.
+        - get_rk_block_basis.m generates the block rational Krylov basis by adding a new column to existing ones.
 
 To compare the bases with rat_krylov.m from rktoolbox use:
 - CompareBases.m for rank 1 rhs; can choose size (n), rhs (f), number of poles (m - for random, k - for roots denominator).

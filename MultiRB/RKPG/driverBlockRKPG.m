@@ -8,11 +8,13 @@ n = 100; % size of matrix A
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 
-rhs1=ones(n, 1); rhs2=rhs1;
+% choices for RHS
+% rhs1=ones(n, 1); 
 % rhs1 = [ones(n,1), rand(n,1)];
-% rhs2 = rhs1;
-
 % rhs1 = rand(n, 4); rhs2=rhs1;
+% rhs1 = [ones(n, 1),((-1).^(0:n-1))', [ones(n/2, 1); zeros(n/2, 1)]];
+rhs1 = [[ones(n/2, 1); zeros(n/2, 1)], [zeros(n/2, 1); ones(n/2, 1)]];
+rhs2 = rhs1;
 
 tol = 1e-9;
 maxit = 300;
@@ -25,7 +27,7 @@ emax = eigs(A, 1,'LA',opts);
 % compute roots denom from Zolotarev problem
 bb = emax - emin + 1;
 
-k = 3;      % number of poles is 2*k
+k = 6;      % number of poles is 2*k
 b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 
@@ -48,7 +50,7 @@ denom = q.*(1-Zk) - pp.*(1+Zk);
 roots_denom = roots(denom);
 
 tic;
-[X1, X2, vec_res, it, final_err, upper_bound] = RKPGblock(A, rhs1, rhs2, roots_denom, tol,  maxit);
+[X1, X2, vec_res, it, final_err, upper_vec] = RKPGblock2(A, rhs1, rhs2, roots_denom, tol,  maxit);
 time = toc;
 
 fprintf('\n Total execution time: %9.4e seconds \n', time)
