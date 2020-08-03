@@ -39,4 +39,9 @@ To compute different bounds:
 - polynomial_bound.m: computes the error bound at each iteration for the standard (polynomial) Kryov basis; from Prop 3.1 in Simoncini, Druskin paper: https://www.jstor.org/stable/25663151?seq=1#metadata_info_tab_contents.
 - u_out_product.m to be used in RKPG.m to compute the rational Krylov residual bound from Corollary 2.5, Beckermann paper: http://math.univ-lille1.fr/~bbecker/abstract/rational_Galerkin_rev.pdf
 
+To compute IRKA shifts:
+- irka_shifts.m: computes new irka shifts and counts iterations; input: A, rhs, poles, tolerace; runs until the relative change in shifts is < tol; uses:
+    - rk_irka_basis.m: generates a rational Krylov basis by applying the original poles to solve the shifted system; does not start from v0=rhs/||rhs||, but directly solves (A+s1I)^{-1}*rhs;
+- CompareIRKAshifts.m: runs irka_shifts.m for test problem.
+
 All other codes and subfolders in this folder are tests and plots run by me and can be ignored.

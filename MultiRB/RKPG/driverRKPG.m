@@ -91,6 +91,8 @@ pp = [0, p];
 denom = q.*(1-Zk) - pp.*(1+Zk);
 roots_denom = roots(denom);
 
+[shifts,its] = irka_shifts(A,rhs1, roots_denom, 1e-4);
+
 % %%% work with 6 poles only
 % sm6 = roots_denom(3:8); % 6 smallest poles
 % la6 = roots_denom(1:6); % 6 largest poles
@@ -119,7 +121,7 @@ roots_denom = roots(denom);
 
 % time & solve using RKPG
 tic;
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit, Xex_mat);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, rhs1, rhs2, shifts, tol,  maxit, Xex_mat);
 %!! for beckermann bound need to add extra 'upper_bound' to outputs
 %!! to check errors need error_vec in outputs and Xex_mat (exact solution in matrix form) in inputs
 %!! plot Ritz values need e_Ap in outputs

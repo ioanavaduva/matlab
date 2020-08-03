@@ -1,7 +1,3 @@
-% Comparison of bases: get_rk_basis (separate code) and rat_krylov
-% (rktoolbox)
-addpath(genpath('../../rktoolbox'));
-
 % Set up
 n = 10; % can change
 A = full(gallery('tridiag',n,-1,2,-1));
@@ -11,8 +7,6 @@ In = eye(n);
 % Compute spectral interval
 lam_max = max(eig(A));
 lam_min = min(eig(A));
-
-% Choose pole set -- set up for both random poles and roots denominator
 
 %%% Random poles from spectral interval
 m = 4; % number of poles; can change
@@ -43,18 +37,4 @@ denom = q.*(1-Zk) - pp.*(1+Zk);
 roots_denom = roots(denom)';
 %%%
 
-% Create rational krylov basis using rktoolbox -- change xi to roots_denom to change poles 
-V = rat_krylov(A,f,-xi); % uses all poles at once -- use eg xi(1) to only 
-% use first pole and obtain 2 columns or xi(1:3) to use first 3 poles and 
-% obtain 4 columns
-
-% Create rational Krylov basis using get_rk_basis -- change xi to roots_denom to change poles 
-W = f/norm(f);
-% W = get_rk_basis(A, xi(1),W);
-for i = 1:length(xi)
-    W = get_rk_basis(A, xi(i),W);
-end
-
-fprintf('Bases norm after all poles = %g\n',norm(V - W));
-fprintf('Angle between bases = %g\n', subspace(V,W));
-
+[shifts, it] = irka_shifts(A, f, xi, 1e-4);
