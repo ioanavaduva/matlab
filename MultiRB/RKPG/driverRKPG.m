@@ -5,7 +5,7 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 100; % size of matrix A 
+n = 500; % size of matrix A 
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 
@@ -17,8 +17,8 @@ A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1),
 % end
 %%%
 
-rhs1 = ones(n, 1);
-rhs2 = ones(n, 1);
+% rhs1 = ones(n, 1);
+% rhs2 = ones(n, 1);
 
 % rhs1 = randn(n, 1);
 % rhs2 = rhs1;
@@ -34,9 +34,9 @@ rhs2 = ones(n, 1);
 
 % rhs1 = sprand(n,1,0.23); rhs2 = rhs1;
  
-% rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
+rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
 
-%%%% Exact solution --- only need to check bounds for the 3 bases & to
+%%% Exact solution --- only need to check bounds for the 3 bases & to
 %%%% compare with 1 sided projection
 AA = kron(A, speye(n))+kron(speye(n), A);
 rhs = rhs1*rhs2';
@@ -54,8 +54,8 @@ opts.tol=1e-4;
 % emin = eigs(B, 1, 'SM', opts);
 emax = eigs(A, 1,'LA',opts);
 
-% 8 random poles in the spectral interval
-poles_rand = emin + rand(1,8)*(emax - emin)';
+% % 8 random poles in the spectral interval
+% poles_rand = emin + rand(1,8)*(emax - emin)';
 
 % 8 linspace poles in the spectral interval
 poles_linspace = linspace(emin, emax, 8)';
@@ -66,7 +66,7 @@ poles_log = logspace(log10(emin), log10(emax), 6)';
 % 4 positive imaginary parts of Zolotarev poles
 bb = emax - emin + 1;
 
-k = 4;      % number of poles is 2*k
+k = 6;      % number of poles is 2*k
 b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 % poles(r)
@@ -90,6 +90,9 @@ pp = [0, p];
 % (Istace/Thiran paper)and have the denominator given by
 denom = q.*(1-Zk) - pp.*(1+Zk);
 roots_denom = roots(denom);
+
+% m = 4; % number of poles; can change
+% xi = emin + (emax-emin)*rand(1,m);
 
 [shifts,its] = irka_shifts(A,rhs1, roots_denom, 1e-4);
 
@@ -134,9 +137,10 @@ fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % plot residual v iterations
 iter = linspace(1, it, it);
-semilogy(iter, vec_res, 'v');hold on
+semilogy(iter, vec_res, 'o');hold on
 xlabel('Iterations');
 ylabel('Residual');
+% plot(error_vec, 'o');hold on;
 
 % plot Beckermann bound on top of residuals
 % semilogy(upper_bound, 'x'); hold off;

@@ -1,5 +1,5 @@
 % Set up
-n = 10; % can change
+n = 100; % can change
 A = full(gallery('tridiag',n,-1,2,-1));
 f = ones(n,1); % can change
 In = eye(n);
@@ -37,4 +37,6 @@ denom = q.*(1-Zk) - pp.*(1+Zk);
 roots_denom = roots(denom)';
 %%%
 
-[shifts, it] = irka_shifts(A, f, xi, 1e-4);
+[shifts, it] = irka_shifts(A, f, roots_denom, 1e-4);
+[shifts2, its] = irka_shifts(A, f, xi, 1e-4);
+
