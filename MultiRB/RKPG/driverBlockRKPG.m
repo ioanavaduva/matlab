@@ -4,7 +4,7 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 100; % size of matrix A 
+n = 500; % size of matrix A 
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 
@@ -27,7 +27,7 @@ emax = eigs(A, 1,'LA',opts);
 % compute roots denom from Zolotarev problem
 bb = emax - emin + 1;
 
-k = 6;      % number of poles is 2*k
+k = 4;      % number of poles is 2*k
 b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 

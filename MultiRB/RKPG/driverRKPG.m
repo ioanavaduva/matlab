@@ -17,8 +17,8 @@ A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1),
 % end
 %%%
 
-% rhs1 = ones(n, 1);
-% rhs2 = ones(n, 1);
+rhs1 = ones(n, 1);
+rhs2 = ones(n, 1);
 
 % rhs1 = randn(n, 1);
 % rhs2 = rhs1;
@@ -34,7 +34,7 @@ A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1),
 
 % rhs1 = sprand(n,1,0.23); rhs2 = rhs1;
  
-rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
+% rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
 
 %%% Exact solution --- only need to check bounds for the 3 bases & to
 %%%% compare with 1 sided projection
@@ -66,7 +66,7 @@ poles_log = logspace(log10(emin), log10(emax), 6)';
 % 4 positive imaginary parts of Zolotarev poles
 bb = emax - emin + 1;
 
-k = 6;      % number of poles is 2*k
+k = 5;      % number of poles is 2*k
 b = bb;     % sign function on [-10,-1]\cup [1,10]
 r = rkfun.gallery('sign', k, b);
 % poles(r)
@@ -94,7 +94,7 @@ roots_denom = roots(denom);
 % m = 4; % number of poles; can change
 % xi = emin + (emax-emin)*rand(1,m);
 
-[shifts,its] = irka_shifts(A,rhs1, roots_denom, 1e-4);
+% [shifts,its] = irka_shifts(A,rhs1, roots_denom, 1e-4);
 
 % %%% work with 6 poles only
 % sm6 = roots_denom(3:8); % 6 smallest poles
@@ -124,7 +124,7 @@ roots_denom = roots(denom);
 
 % time & solve using RKPG
 tic;
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, rhs1, rhs2, shifts, tol,  maxit, Xex_mat);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit, Xex_mat);
 %!! for beckermann bound need to add extra 'upper_bound' to outputs
 %!! to check errors need error_vec in outputs and Xex_mat (exact solution in matrix form) in inputs
 %!! plot Ritz values need e_Ap in outputs
@@ -137,7 +137,7 @@ fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % plot residual v iterations
 iter = linspace(1, it, it);
-semilogy(iter, vec_res, 'o');hold on
+semilogy(iter, vec_res, 'p');hold on
 xlabel('Iterations');
 ylabel('Residual');
 % plot(error_vec, 'o');hold on;
