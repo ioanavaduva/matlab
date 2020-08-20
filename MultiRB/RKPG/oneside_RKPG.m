@@ -1,4 +1,4 @@
-function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = oneside_RKPG(A, rhs1, rhs2, poles, tol, maxit, Xex_mat)
+function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = oneside_RKPG(A, rhs1, rhs2, poles, tol, maxit)
 % Rational Krylov Subspace solver using the Petrov-Galerkin orthogonality
 % condition. We currently solve Lyapunov equation XA + AX = rhs1*rhs2 with
 % plan to extend to convection-diffusion matrix equation.
@@ -13,10 +13,10 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = ones
     v0 = rhs1/norm(rhs1);
     V = v0; 
     vec_res(1) = res;
-    %%%%  error initialization
-    error = 1;
-    error_vec(1) = error;
-    %%%%
+%     %%%%  error initialization
+%     error = 1;
+%     error_vec(1) = error;
+%     %%%%
 
 %     %%%% for Beckerman bound --- can comment out when not interested in it
 %     opts.tol=1e-4;
@@ -65,11 +65,11 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = ones
         X1 = V*uu*ss;
         X2 = vv';
         
-        %%% Exact solution at each iteration (only need for DKS bound
-        XX = X1*X2; %keyboard
-        error = norm(Xex_mat - XX);
-        error_vec(it) = error;
-        % project back
+%         %%% Exact solution at each iteration (only need for DKS bound
+%         XX = X1*X2; %keyboard
+%         error = norm(Xex_mat - XX);
+%         error_vec(it) = error;
+%         % project back
 %         X_hat = V*Y*V';
         
         % compute residual

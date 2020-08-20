@@ -8,6 +8,9 @@ addpath(genpath('../../rktoolbox'));
 n = 500; % size of matrix A 
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
+% density = 2/n; % for example
+% rc = 0.1; % Reciprocal condition number
+% A = sprandsym(m, density, rc, 1);
 
 %%% get indefinite matrix B
 % A = rand(n,n);
@@ -17,8 +20,8 @@ A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1),
 % end
 %%%
 
-rhs1 = ones(n, 1);
-rhs2 = ones(n, 1);
+% rhs1 = ones(n, 1);
+% rhs2 = ones(n, 1);
 
 % rhs1 = randn(n, 1);
 % rhs2 = rhs1;
@@ -32,18 +35,18 @@ rhs2 = ones(n, 1);
 % x = linspace(0, 1, n)';
 % rhs1 = cos(pi*x); rhs2 = rhs1;
 
-% rhs1 = sprand(n,1,0.23); rhs2 = rhs1;
+rhs1 = sprand(n,1,0.23); rhs2 = rhs1;
  
 % rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
 
-%%% Exact solution --- only need to check bounds for the 3 bases & to
-%%%% compare with 1 sided projection
-AA = kron(A, speye(n))+kron(speye(n), A);
-rhs = rhs1*rhs2';
-rhss = rhs(:);
-Xex = AA\rhss;
-Xex_mat = reshape(Xex, n, n);
-%%%%
+% %%% Exact solution --- only need to check bounds for the 3 bases & to
+% %%%% compare with 1 sided projection
+% AA = kron(A, speye(n))+kron(speye(n), A);
+% rhs = rhs1*rhs2';
+% rhss = rhs(:);
+% Xex = AA\rhss;
+% Xex_mat = reshape(Xex, n, n);
+% %%%%
 
 tol = 1e-9;
 maxit = 300;
@@ -58,42 +61,25 @@ emax = eigs(A, 1,'LA',opts);
 % poles_rand = emin + rand(1,8)*(emax - emin)';
 
 % 8 linspace poles in the spectral interval
-poles_linspace = linspace(emin, emax, 8)';
+% poles_linspace = linspace(emin, emax, 8)';
 
 % 6 logspace poles
-poles_log = logspace(log10(emin), log10(emax), 6)';
+% poles_log = logspace(log10(emin), log10(emax), 8)';
+
+
+% s_nodes = 8;                           % Choose 2 nodes (could vary)
+% snew = get_nodes2(emin,emax,s_nodes);      % Use interval for A_1;
+% s_parameter=snew;
 
 % 4 positive imaginary parts of Zolotarev poles
 bb = emax - emin + 1;
+k = 4;      % number of poles is 2*k
+roots_denom = get_rootsden(k, bb);
 
-k = 5;      % number of poles is 2*k
-b = bb;     % sign function on [-10,-1]\cup [1,10]
-r = rkfun.gallery('sign', k, b);
-% poles(r)
-po = imag(poles(r));
-poles_Zolo = po(po >= 0);
-
-% % Compute the minimum of Z Problem 3 (by transforming c, the min of Prob 4)
-K = ellipke(1-1/b^2);
-[sn, cn, dn] = ellipj((0:k)*K/k, 1-1/b^2);
-extrema = b*dn;
-vals = 1-r(extrema);
-c = mean( vals(1:2:end) );
-e = eig( [ 2-4/c^2 1 ; -1 0 ] );
-Zk = min(abs(e));
-
-% Obtain the polynomials p and q of the rational function r = p/q 
-[p,q,pq] = poly(r);
-pp = [0, p];
-
-% Transform Z Problem 4 into Problem 3 using eq. (2) - rearranged in Theorem 2.1
-% (Istace/Thiran paper)and have the denominator given by
-denom = q.*(1-Zk) - pp.*(1+Zk);
-roots_denom = roots(denom);
-
-% m = 4; % number of poles; can change
+% m = 12; % number of poles; can change
 % xi = emin + (emax-emin)*rand(1,m);
-
+% 
+% % IRKA shifts
 % [shifts,its] = irka_shifts(A,rhs1, roots_denom, 1e-4);
 
 % %%% work with 6 poles only
@@ -124,7 +110,7 @@ roots_denom = roots(denom);
 
 % time & solve using RKPG
 tic;
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit, Xex_mat);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, upper_vec] = RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit);
 %!! for beckermann bound need to add extra 'upper_bound' to outputs
 %!! to check errors need error_vec in outputs and Xex_mat (exact solution in matrix form) in inputs
 %!! plot Ritz values need e_Ap in outputs
@@ -137,10 +123,10 @@ fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % plot residual v iterations
 iter = linspace(1, it, it);
-semilogy(iter, vec_res, 'p');hold on
+semilogy(iter, vec_res, 'o');hold on
 xlabel('Iterations');
 ylabel('Residual');
 % plot(error_vec, 'o');hold on;
 
 % plot Beckermann bound on top of residuals
-% semilogy(upper_bound, 'x'); hold off;
+% semilogy(upper_vec, 'x'); hold off;

@@ -5,14 +5,14 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 200; % size of matrix A
+n = 500; % size of matrix A
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 
 % B = A+A';
 % 
-% rhs1 = ones(n, 1);
-% rhs2 = ones(n, 1);
+rhs1 = ones(n, 1);
+rhs2 = ones(n, 1);
 
 % rhs1 = randn(n, 1);
 % rhs2 = rhs1;
@@ -28,15 +28,15 @@ A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1),
 
 % rhs1 = sprand(n,1,0.23); rhs2 = rhs1;
 % 
-rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
+% rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
 
-%%%% Exact solution --- only need to check bounds for the 3 bases
-AA = kron(A, speye(n))+kron(speye(n), A);
-rhs = rhs1*rhs2';
-rhss = rhs(:);
-Xex = AA\rhss;
-Xex_mat = reshape(Xex, n, n);
-%%%%
+% %%%% Exact solution --- only need to check bounds for the 3 bases
+% AA = kron(A, speye(n))+kron(speye(n), A);
+% rhs = rhs1*rhs2';
+% rhss = rhs(:);
+% Xex = AA\rhss;
+% Xex_mat = reshape(Xex, n, n);
+% %%%%
 
 tol = 1e-9;
 maxit = 300;
@@ -61,34 +61,14 @@ bb = emax - emin + 1;
 
 k = 4;      % number of poles is 2*k
 b = bb;     % sign function on [-10,-1]\cup [1,10]
-r = rkfun.gallery('sign', k, b);
-% poles(r)
-po = imag(poles(r));
-poles_Zolo = po(po >= 0);
 
-% % Compute the minimum of Z Problem 3 (by transforming c, the min of Prob 4)
-K = ellipke(1-1/b^2);
-[sn, cn, dn] = ellipj((0:k)*K/k, 1-1/b^2);
-extrema = b*dn;
-vals = 1-r(extrema);
-c = mean( vals(1:2:end) );
-e = eig( [ 2-4/c^2 1 ; -1 0 ] );
-Zk = min(abs(e));
-
-% Obtain the polynomials p and q of the rational function r = p/q 
-[p,q,pq] = poly(r);
-pp = [0, p];
-
-% Transform Z Problem 4 into Problem 3 using eq. (2) - rearranged in Theorem 2.1
-% (Istace/Thiran paper)and have the denominator given by
-denom = q.*(1-Zk) - pp.*(1+Zk);
-roots_denom = roots(denom); % use this as poles
+roots_denom = get_rootsden(k, b);
 
 % work with 6 poles only
 sm6 = roots_denom(3:8);
 % time & solve using RKPG
 tic;
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, error_vec] = oneside_RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit, Xex_mat);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner] = oneside_RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit);
 %!!for beckermann bound need to add extra 'upper_bound' to outputs
 time = toc;
 
@@ -99,7 +79,7 @@ fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % plot residual v iterations
 iter = linspace(1, it, it);
-plot(iter, vec_res, 'v');hold on
+plot(iter, vec_res, 'o');hold on
 xlabel('Iterations');
 ylabel('Residual');
 

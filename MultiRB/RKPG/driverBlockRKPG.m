@@ -13,7 +13,39 @@ A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1),
 % rhs1 = [ones(n,1), rand(n,1)];
 % rhs1 = rand(n, 4); rhs2=rhs1;
 % rhs1 = [ones(n, 1),((-1).^(0:n-1))', [ones(n/2, 1); zeros(n/2, 1)]];
-rhs1 = [[ones(n/2, 1); zeros(n/2, 1)], [zeros(n/2, 1); ones(n/2, 1)]];
+% rhs1 = [[ones(n/2, 1); zeros(n/2, 1)], [zeros(n/2, 1); ones(n/2, 1)]];
+
+% alternate 1&-1 columns 
+% rhs1 = ((-1).^(1:n))';
+% rhs1 = [[((-1).^(1:n/2))'; zeros(n/2, 1)], [zeros(n/2, 1); ((-1).^(1:n/2))']];
+
+% columns of identity
+% I = speye(n);
+% rhs1 = I(:, 5);
+% rhs1 = [I(:,1), I(:,1)+I(:,2)];
+% rhs1 = [I(:,1), I(:,1)+I(:,2), I(:,1)+I(:,2)+I(:,3)];
+
+% build up rand rhs
+% x1 = rand(n,1);
+% x2 = rand(n,1);
+% x3 = rand(n,1);
+% rhs1 = x1;
+% rhs1 = [x1,x2];
+% rhs1 = [x1,x2,x3];
+
+% eigenvectors
+% [V, ~] = eigs(A, n);
+% % rhs1 = V(:, 2);
+% % rhs1 = V(:, 2:3);
+% rhs1 = V(:, 78:80);
+
+% random orthonormal vectors
+Q = rand(n, 3);
+Q = orth(Q);
+rhs1 = Q(:, 1);
+% rhs1 = Q(:, 1:2);
+% rhs1 = Q;
+
 rhs2 = rhs1;
 
 tol = 1e-9;
@@ -26,28 +58,8 @@ emax = eigs(A, 1,'LA',opts);
 
 % compute roots denom from Zolotarev problem
 bb = emax - emin + 1;
-
 k = 4;      % number of poles is 2*k
-b = bb;     % sign function on [-10,-1]\cup [1,10]
-r = rkfun.gallery('sign', k, b);
-
-% Compute the minimum of Z Problem 3 (by transforming c, the min of Prob 4)
-K = ellipke(1-1/b^2);
-[sn, cn, dn] = ellipj((0:k)*K/k, 1-1/b^2);
-extrema = b*dn;
-vals = 1-r(extrema);
-c = mean( vals(1:2:end) );
-e = eig( [ 2-4/c^2 1 ; -1 0 ] );
-Zk = min(abs(e));
-
-% Obtain the polynomials p and q of the rational function r = p/q 
-[p,q,pq] = poly(r);
-pp = [0, p];
-
-% Transform Z Problem 4 into Problem 3 using eq. (2) - rearranged in Theorem 2.1
-% (Istace/Thiran paper)and have the denominator given by
-denom = q.*(1-Zk) - pp.*(1+Zk);
-roots_denom = roots(denom);
+roots_denom = get_rootsden(k, bb);
 
 tic;
 [X1, X2, vec_res, it, final_err, upper_vec] = RKPGblock2(A, rhs1, rhs2, roots_denom, tol,  maxit);

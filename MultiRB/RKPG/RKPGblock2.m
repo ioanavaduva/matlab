@@ -49,8 +49,14 @@ function [X1, X2, vec_res, it, final_err, upper_vec] = RKPGblock2(A, rhs1, rhs2,
             if res < tol || it > maxit
                 break;
             end
+            if it > 1
+            if (vec_res(it) > vec_res(it-1) && vec_res(it) < 1e-8)
+                break
+            end
+            end
             it = it+1;
         i = i+1; j=j+1;
+        
     end
     final_err = res;
 end
