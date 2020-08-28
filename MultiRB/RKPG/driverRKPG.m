@@ -5,9 +5,10 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 500; % size of matrix A 
+n = 1000; % size of matrix A 
 h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
+I = speye(n);
 % density = 2/n; % for example
 % rc = 0.1; % Reciprocal condition number
 % A = sprandsym(m, density, rc, 1);
@@ -19,6 +20,8 @@ A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1),
 %     return
 % end
 %%%
+
+% rhs1 = I(:,6); rhs2=rhs1;
 
 % rhs1 = ones(n, 1);
 % rhs2 = ones(n, 1);
@@ -35,9 +38,9 @@ A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1),
 % x = linspace(0, 1, n)';
 % rhs1 = cos(pi*x); rhs2 = rhs1;
 
-rhs1 = sprand(n,1,0.23); rhs2 = rhs1;
+% rhs1 = sprand(n,1,0.23); rhs2 = rhs1;
  
-% rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
+rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
 
 % %%% Exact solution --- only need to check bounds for the 3 bases & to
 % %%%% compare with 1 sided projection
@@ -72,15 +75,15 @@ emax = eigs(A, 1,'LA',opts);
 % s_parameter=snew;
 
 % 4 positive imaginary parts of Zolotarev poles
-bb = emax - emin + 1;
-k = 4;      % number of poles is 2*k
-roots_denom = get_rootsden(k, bb);
-
-% m = 12; % number of poles; can change
-% xi = emin + (emax-emin)*rand(1,m);
+% bb = emax - emin + 1;
+% k = 4;      % number of poles is 2*k
+% roots_denom = get_rootsden(k, bb);
 % 
-% % IRKA shifts
-% [shifts,its] = irka_shifts(A,rhs1, roots_denom, 1e-4);
+m = 12; % number of poles; can change
+xi = emin + (emax-emin)*rand(1,m);
+
+% IRKA shifts
+[shifts,its] = irka_shifts(A,rhs1, xi, 1e-4);
 
 % %%% work with 6 poles only
 % sm6 = roots_denom(3:8); % 6 smallest poles
@@ -110,7 +113,7 @@ roots_denom = get_rootsden(k, bb);
 
 % time & solve using RKPG
 tic;
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, upper_vec] = RKPG(A, rhs1, rhs2, roots_denom, tol,  maxit);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, upper_vec] = RKPG(A, rhs1, rhs2, shifts, tol,  maxit);
 %!! for beckermann bound need to add extra 'upper_bound' to outputs
 %!! to check errors need error_vec in outputs and Xex_mat (exact solution in matrix form) in inputs
 %!! plot Ritz values need e_Ap in outputs
@@ -123,7 +126,7 @@ fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % plot residual v iterations
 iter = linspace(1, it, it);
-semilogy(iter, vec_res, 'o');hold on
+semilogy(iter, vec_res, 'x');hold on
 xlabel('Iterations');
 ylabel('Residual');
 % plot(error_vec, 'o');hold on;

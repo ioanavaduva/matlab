@@ -16,12 +16,17 @@ f = ones(n,1); % can change
 % f = ((-1).^(0:n-1))';
 In = eye(n);
 
+Re = real(eig(A));
+Im = imag(eig(A));
+
+semilogx(Re, Im, 'o'); hold on;
+
 % Compute spectral interval
 lam_max = max(eig(A));
 lam_min = min(eig(A));
 
 % %%% Random poles from spectral interval
-m = 8; % number of poles; can change
+m = 12; % number of poles; can change
 xi = lam_min + (lam_max-lam_min)*rand(1,m);
 %%%
 
@@ -31,7 +36,12 @@ b = bb;
 k = 4; % number of poles from this is 2*k 
 roots_denom = get_rootsden(k, b);
 %%%
+re = real(roots_denom);
+im = imag(roots_denom);
+plot(re, im, 'x'); hold on;
 
-[shifts, it] = irka_shifts(A, f, roots_denom, 1e-4);
-[shifts1, it] = irka_shifts(A, f, xi, 1e-4);
-
+% [shifts, it] = irka_shifts(A, f, roots_denom, 1e-4);
+[shifts, it] = irka_shifts(A, f, xi, 1e-4);
+r = real(shifts);
+i = imag(shifts);
+plot(r, i, 'p');
