@@ -1,13 +1,19 @@
 #### Block right-hand side figures 
 
 ## Independedent tests
-- b_Ab_n500_bones: n=500, rhs is given by b for 1 column and [b, Ab] for 2 columns, where b is a vector of ones, 8 Zolotarev poles
 - dif_size_8roots_denom_2colalt: n varies for tests with 8 Zolotarev poles, rhs is 2 cols of alternate 1 & -1 values (one where top half is alternating 1&-1 and bottom is zeros, and the other where top half is zeros and bottom half is alternating 1&-1)
 - different_nr_poles: n=100, rhs is 2 columns, 1st ones, 2nd alternate 1&-1, number of Zolotarev poles vary
 - different_nr_poles_3colrhs: n=100, rhs is 3 columns, 1st ones, 2nd alternate 1&-1, 3rd top half ones, bottom half zeros, number of Zolotarev poles vary
 - n100_6poles_differentrhs: n=100, 3 tests where rhs varies (1 col: ones, 2 cols: [ones, alternate 1&-1], 3 cols:[ones, alternate 1&-1, top half ones bottom zero]), 6 Zolotarev poles
 - n500-identity: n=500, rhs is 1, 2, 3 columns respectively (1 col: first col of identity, 2 col: [1st col I, 2nd col I], 3 col: [1st col I, 2nd col I, 3rd col I]), 8 Zolotarev poles
 - randorthrhs_n500: n=500, rhs is 1, 2, 3 columns respectively, all random and built on top of eachother to be orthogonal, 8 Zolotarev poles
+
+## [b, Ab, ...]
+# b = ones
+- b_Ab_n500_bones: n=500, rhs is given by b for 1 column and [b, Ab] for 2 columns, etc.,  where b is a vector of ones, 8 Zolotarev poles
+- b_Ab_n500_balt: n=500, rhs is given by b for 1 column and [b, Ab] for 2 columns, etc., where b is a vector of alternating 1&-1, 8 Zolotarev poles
+- b_Ab_n500_balt: n=500, rhs is given by b for 1 column and [b, Ab] for 2 columns, etc., where b is a vector of randomly distributed numbers, 8 Zolotarev poles
+- b_Ab_n500_balt: n=500, rhs is given by b for 1 column and [b, Ab] for 2 columns, etc., where b is a cos(pi*x), 8 Zolotarev poles
 
 
 ## Build on random rhs -- summary of below figs in comp_buildonrandrhs_nrpoles

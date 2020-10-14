@@ -5,10 +5,12 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 % Setup
-n = 1000; % size of matrix A 
+n = 500; % size of matrix A 
 h = 1/n; eps = 1;
-A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
+A = eps*(diag(2*ones(n, 1)) + diag(-1*ones(n-1, 1), 1) + diag(-1*ones(n-1, 1), -1))/h^2;
+A_rksm = -(eps*(diag(2*ones(n, 1)) + diag(-1*ones(n-1, 1), 1) + diag(-1*ones(n-1, 1), -1))/h^2);
 I = speye(n);
+
 % density = 2/n; % for example
 % rc = 0.1; % Reciprocal condition number
 % A = sprandsym(m, density, rc, 1);
@@ -26,8 +28,8 @@ I = speye(n);
 % rhs1 = ones(n, 1);
 % rhs2 = ones(n, 1);
 
-% rhs1 = randn(n, 1);
-% rhs2 = rhs1;
+rhs1 = randn(n, 1);
+rhs2 = rhs1;
 
 % NNn = 0.0001;
 % rhs1 = NNn*randn(n, 1) + ones(n, 1);
@@ -40,7 +42,7 @@ I = speye(n);
 
 % rhs1 = sprand(n,1,0.23); rhs2 = rhs1;
  
-rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
+% rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
 
 % %%% Exact solution --- only need to check bounds for the 3 bases & to
 % %%%% compare with 1 sided projection
@@ -55,10 +57,11 @@ tol = 1e-9;
 maxit = 300;
 
 % Get smallest and largest eigenvalues
-emin = 1e-6; 
+% emin = 1e-6; 
 opts.tol=1e-4;
-% emin = eigs(B, 1, 'SM', opts);
-emax = eigs(A, 1,'LA',opts);
+emin = eigs(A, 1, 'smallestabs', opts);
+emax = eigs(A, 1,'largestabs',opts);
+emax_rksm = eigs(A_rksm, 1,'smallestabs',opts);
 
 % % 8 random poles in the spectral interval
 % poles_rand = emin + rand(1,8)*(emax - emin)';
@@ -75,13 +78,13 @@ emax = eigs(A, 1,'LA',opts);
 % s_parameter=snew;
 
 % 4 positive imaginary parts of Zolotarev poles
-% bb = emax - emin + 1;
-% k = 4;      % number of poles is 2*k
-% roots_denom = get_rootsden(k, bb);
-% 
+bb = emax - emin + 1;
+k = 4;      % number of poles is 2*k
+roots_denom = get_rootsden(k, bb) + emin - 1;
+
 m = 12; % number of poles; can change
 xi = emin + (emax-emin)*rand(1,m);
-
+% 
 % IRKA shifts
 [shifts,its] = irka_shifts(A,rhs1, xi, 1e-4);
 
@@ -111,9 +114,20 @@ xi = emin + (emax-emin)*rand(1,m);
 % sort_poles = roots_denom(vec_srt);
 %%%%
 
+% greedy poles n=100 rhs=ones
+% pol = [9.6744; 200.0000; 9.6744; 9.6744; 9.6744; 9.6744; 9.6744; 9.6744; 9.6744; 2.0205e+04; 9.6744; 2.8462e+04];
+% pol = [9.6744; 200.0000; 2.0205e+04; 2.8462e+04];
+% greedy poles n=500
+% pol = [9.83021189253562; 1000.00000000001; 9.83021189253562; 37834.7018953791; 9.83021189253562; 9.83021189253562; 9.83021189253562; 9.83021189253562; 9.83021189253562; 9.83021189253562; 284713.686991583];
+[Z, nrmrestot, pol] = rksm(A_rksm, I, I, rhs1, maxit, tol, emin, emax_rksm, 0, 1e-12);
+[pols,m1,n1] = uniquetol(pol);
+[c1,d1] = sort(m1);
+pols_dist = pols(d1);
+fprintf('\n Number of rksm unique poles: %d \n', length(pols_dist))
+fprintf('\n Number of rksm poles (total): %d \n', length(pol))
 % time & solve using RKPG
 tic;
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, upper_vec] = RKPG(A, rhs1, rhs2, shifts, tol,  maxit);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, upper_vec] = RKPG(A, rhs1, rhs2, pol, tol,  maxit);
 %!! for beckermann bound need to add extra 'upper_bound' to outputs
 %!! to check errors need error_vec in outputs and Xex_mat (exact solution in matrix form) in inputs
 %!! plot Ritz values need e_Ap in outputs
@@ -126,7 +140,7 @@ fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % plot residual v iterations
 iter = linspace(1, it, it);
-semilogy(iter, vec_res, 'x');hold on
+semilogy(iter, vec_res, 's');hold on
 xlabel('Iterations');
 ylabel('Residual');
 % plot(error_vec, 'o');hold on;

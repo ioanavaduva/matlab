@@ -9,10 +9,27 @@ h = 1/n; eps = 1;
 A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 
 % choices for RHS
-% rhs1=ones(n, 1); 
+% rhs1 = ones(n, 1); 
 % rhs1 = [ones(n, 1), A*ones(n, 1)];
+% rhs1 = [ones(n, 1), A*ones(n, 1), A^2*ones(n, 1), A^3*ones(n, 1)];
 
-% rhs1 = [ones(n,1), rand(n,1)];
+% rhs = ((-1).^(1:n))';
+% % rhs1 = [rhs, A*rhs];
+% % rhs1 = [rhs, A*rhs, A^2*rhs];
+% rhs1 = [rhs, A*rhs, A^2*rhs, A^3*rhs];
+
+% rhs1 = rand(n, 1);
+% r = rhs1;
+% rhs1 = [r, A*r];
+% rhs1 = [r, A*r, A^2*r];
+% rhs1 = [r, A*r, A^2*r, A^3*r];
+
+x = linspace(0, 1, n)';
+rhs = cos(pi*x);
+% rhs1 = [rhs, A*rhs];
+% rhs1 = [rhs, A*rhs, A^2*rhs];
+rhs1 = [rhs, A*rhs, A^2*rhs, A^3*rhs];
+
 % rhs1 = rand(n, 4); rhs2=rhs1;
 % rhs1 = [ones(n, 1),((-1).^(0:n-1))', [ones(n/2, 1); zeros(n/2, 1)]];
 % rhs1 = [[ones(n/2, 1); zeros(n/2, 1)], [zeros(n/2, 1); ones(n/2, 1)]];
@@ -69,7 +86,7 @@ k = 4;      % number of poles is 2*k
 roots_denom = get_rootsden(k, bb);
 
 tic;
-[X1, X2, vec_res, it, final_err, upper_vec] = RKPGblock2(A, rhs1, rhs2, roots_denom, tol,  maxit);
+[X1, X2, vec_res, it, final_err] = RKPGblock2(A, rhs1, rhs2, roots_denom, tol,  maxit);
 time = toc;
 
 fprintf('\n Total execution time: %9.4e seconds \n', time)

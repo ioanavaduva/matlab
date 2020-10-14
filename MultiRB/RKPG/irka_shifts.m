@@ -6,7 +6,7 @@ function [shifts, it] = irka_shifts(A, rhs, poles, tol)
         it = it+1;
         V = get_irka_basis(A, rhs, poles);
         Ap = V'*A*V; 
-        shifts = sort(eig(Ap), 'descend');
+        shifts = sort(eig(Ap), 'descend'); %keyboard
         ch = norm(poles-shifts)/norm(poles); % c = max(abs((poles-shifts)./(eps+poles)));
         poles = shifts; 
     end
