@@ -2,7 +2,7 @@
 
 %% Large problem poles
 
-n = 1000; h = 1/n; 
+n = 1400; h = 1/n; 
 A = (diag(2*ones(n, 1)) + diag(-1*ones(n-1, 1), 1) + diag(-1*ones(n-1, 1), -1))/h^2;
 
 rhs1 = ones(n, 1);
@@ -42,25 +42,27 @@ tic;
 toc;
 
 %% Small problem poles -- scaled
-
-A_scaled = (diag(2*ones(n_small, 1)) + diag(-1*ones(n_small-1, 1), 1) + diag(-1*ones(n_small-1, 1), -1))/h^2;
-rhs1_small = ones(n_small, 1);
-
-% emin_scaled = eigs(A_scaled, 1, 'smallestabs', opts);
-% emax_scaled =  eigs(A_scaled, 1, 'largestabs', opts);
-
-% m_scaled = m-2; % for poles 2
-% m_scaled = m-5; % for poles 1
-% xi_scaled = emin + (emax-emin)*rand(1,m_scaled);
-tic;
-[shifts_scaled, its_scaled] = irka_shifts(A_scaled, rhs1_small, xi, 1e-4);
-toc;
+% 
+% A_scaled = (diag(2*ones(n_small, 1)) + diag(-1*ones(n_small-1, 1), 1) + diag(-1*ones(n_small-1, 1), -1))/h^2;
+% rhs1_small = ones(n_small, 1);
+% 
+% % emin_scaled = eigs(A_scaled, 1, 'smallestabs', opts);
+% % emax_scaled =  eigs(A_scaled, 1, 'largestabs', opts);
+% 
+% % m_scaled = m-2; % for poles 2
+% % m_scaled = m-5; % for poles 1
+% % xi_scaled = emin + (emax-emin)*rand(1,m_scaled);
+% tic;
+% [shifts_scaled, its_scaled] = irka_shifts(A_scaled, rhs1_small, xi, 1e-4);
+% toc;
 
 %% Small problems poles combinations
 
 % 1&2 small, 2&3/10 small scaled
-% poles = sort([shifts_small(length(shifts_small)/2+1:length(shifts_small)); shifts_scaled(length(shifts_small)/4+1:3*length(shifts_small)/4)/10]);
-% 1&2 small, 3&4/10 small scaled
-poles = sort([shifts_small(length(shifts_small)/2+1:length(shifts_small)); shifts_scaled(1:length(shifts_small)/2)/10]);
+% poles = sort([shifts_small(length(shifts_small)/2+1:length(shifts_small)); shifts_small(length(shifts_small)/4+1:3*length(shifts_small)/4)*10]);
+
+% 1&2 small, 3&4*10 small 
+poles = sort([shifts_small(length(shifts_small)/2+1:length(shifts_small)); shifts_small(1:length(shifts_small)/2)*10]);
+
 % poles1 = sort([shifts_small(1); shifts_small(length(shifts_small)-3:length(shifts_small)); shifts_scaled], 'descend');
 % poles2 = sort([shifts_small(1); shifts_small(length(shifts_small)-3:length(shifts_small)); shifts_scaled(4:length(shifts_scaled))], 'descend');
