@@ -4,8 +4,11 @@ function [X1, X2, vec_res, it, final_err] = RKPGblock2(A, rhs1, rhs2,poles, tol,
     res = 1; 
     it = 1; 
     vec_res(1) = res;
-    V = get_start_basis(rhs1); % computes the starting basis block of same dimension as rhs)
-    
+    r = rank(rhs1);
+    [u, ~, ~] = svd(rhs1);
+    V = u(:, 1:r);
+%     V = get_start_basis(rhs1); % computes the starting basis block of same dimension as rhs)
+%     keyboard;
 %     %%%% for Beckerman bound --- can comment out when not interested in it
 %     opts.tol=1e-4;
 %     emin2= 1e-6; % min eigenvalue

@@ -1,4 +1,4 @@
- function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, upper_vec] = RKPG(A, rhs1, rhs2, poles, tol, maxit)
+ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, e_Ap] = RKPG(A, rhs1, rhs2, poles, tol, maxit)
 % Rational Krylov Subspace solver using the Petrov-Galerkin orthogonality
 % condition. We currently solve Lyapunov equation XA + AX = rhs1*rhs2 with
 % plan to extend to convection-diffusion matrix equation.
@@ -21,10 +21,10 @@
 %     %%%%
 
     %%%% for Beckerman bound --- can comment out when not interested in it
-    opts.tol=1e-4;
-    emin2= 1e-6; % min eigenvalue
-    emax2=eigs(A, 1,'LA',opts);
-    %%%%
+%     opts.tol=1e-4;
+%     emin2= 1e-6; % min eigenvalue
+%     emax2=eigs(A, 1,'LA',opts);
+%     %%%%
     
     fprintf(' no.its  residual   no.inner its \n')
     
@@ -37,12 +37,12 @@
         
         %%%%% compute the Beckermann upper bound -- very costly --- can comment
 %         out when not interested in plotting
-        [val,fval,exitflag] =  fminbnd(@(z) u_out_product(z, poles, it, emin2, emax2), -emax2, -emin2);
-        fval = -fval;
-        const = 4 + 4*sqrt(2*cond(A));
-        upper_bound = const*fval;
-        upper_vec(it) = upper_bound;
-        %%%%%
+%         [val,fval,exitflag] =  fminbnd(@(z) u_out_product(z, poles, it, emin2, emax2), -emax2, -emin2);
+%         fval = -fval;
+%         const = 4 + 4*sqrt(2*cond(A));
+%         upper_bound = const*fval;
+%         upper_vec(it) = upper_bound;
+%         %%%%%
         
         % choose basis 
         V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
@@ -54,7 +54,15 @@
         Ap = V'*A*V; 
         rhs1p = V'*rhs1;
         rhs2p = V'*rhs2;
-%         e_Ap{it} = eig(Ap); (uncomment for Ritz values)
+        e_Ap = eig(Ap); %(uncomment for Ritz values)
+        % at each iteration plot the Ritz values and the poles
+%         figure(it);
+%         Re = real(e_Ap);
+%         Im = imag(e_Ap);
+% 	      semilogx(Re, Im, 'o'); hold on;
+%         R = real(poles);
+%         Ima = imag(poles);
+%         plot(R, Ima, 'x');
         
         % solve projected problem
          Y = lyap(-Ap, rhs1p*rhs2p'); 

@@ -9,7 +9,7 @@ function V = get_rk_block_basis(A, poles, V, col)
     w = w - V*(V'*w);%keyboard
     w = w/norm(w); %keyboard
 
-    V = [V, w(:)]; 
+    V = [V, w(:)]; %keyboard
 
     if size(V) == nV
         warning('Space dimension does not increase');

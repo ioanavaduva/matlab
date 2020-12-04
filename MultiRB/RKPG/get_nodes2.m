@@ -14,10 +14,10 @@ function omega = get_nodes2(m,M,ell)
 % points in [a,b]:    omega = logspace(log10(a),log10(b),n)’;
 %
 
-kk=1-(m/M)^2;
-[K,E]=ellipke(kk);
-t = (2*(1:ell)-1)*K/(2*ell);
-[sn,cn,dn]=ellipj(t,kk);
+kk=1-(m/M)^2; %keyboard
+[K,E]=ellipke(kk); %keyboard
+t = (2*(1:ell)-1)*K/(2*ell); %keyboard
+[sn,cn,dn]=ellipj(t,kk); %keyboard
 % omega = linspace(m, M, ell);
 omega =sort(dn*M)';
 % omega = logspace(log10(m),log10(M),ell)';

@@ -8,7 +8,8 @@ function V = get_irka_basis(A, rhs, poles)
     
     for i = 2:length(poles)
         w = V(:, i-1); %keyboard
-        w = (A + poles(i)*I)\w; %keyboard
+        L = ichol(sparse(A+poles(i)*I)); % need L' first in pcg and then L second for full chol
+        w = (A + poles(i)*I)\w; %pcg((A+poles(i)*I), w, 1e-4, 50, L, L'); % %keyboard
         w = w - V*(V'*w); %keyboard
         w = w - V*(V'*w);%keyboard
         w = w/norm(w); %keyboard
