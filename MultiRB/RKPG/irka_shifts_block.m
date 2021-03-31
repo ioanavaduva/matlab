@@ -12,5 +12,6 @@ function [shifts, it] = irka_shifts_block(A, B, B_hat, poles, tol)
         poles = shifts; 
         Bp = V'*B;
         B_hat = Bp'*Q;
+        
     end
 end

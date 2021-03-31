@@ -13,8 +13,7 @@ function omega = get_nodes2(m,M,ell)
 % A good approximation is given by logarithmically distributed
 % points in [a,b]:    omega = logspace(log10(a),log10(b),n)’;
 %
-
-kk=1-(m/M)^2; %keyboard
+kk=1-vpa((m/M)^2); %keyboard
 [K,E]=ellipke(kk); %keyboard
 t = (2*(1:ell)-1)*K/(2*ell); %keyboard
 [sn,cn,dn]=ellipj(t,kk); %keyboard

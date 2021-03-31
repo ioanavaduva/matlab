@@ -96,7 +96,7 @@
         
         vec_res(it) = res;
         if it > 1
-        if (vec_res(it) > vec_res(it-1) && vec_res(it) < 1e-8)
+        if (vec_res(it) > vec_res(it-1) && vec_res(it) < 1e-7)
             break
         end
         end

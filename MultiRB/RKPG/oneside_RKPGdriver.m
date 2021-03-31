@@ -7,7 +7,7 @@ addpath(genpath('../../rktoolbox'));
 % Setup
 n = 500; % size of matrix A
 h = 1/n; eps = 1;
-A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
+T = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
 
 % B = A+A';
 % 
@@ -48,7 +48,7 @@ opts.tol=1e-4;
 emax = eigs(A, 1,'LA',opts);
 
 % 8 random poles in the spectral interval
-poles_rand = [70194.8071105534,61045.6219154057,122475.200195771,127224.208005786,29897.7893219326,78357.5139720186,71289.4347736214,103403.761391083]';
+% poles_rand = [70194.8071105534,61045.6219154057,122475.200195771,127224.208005786,29897.7893219326,78357.5139720186,71289.4347736214,103403.761391083]';
 
 % 8 linspace poles in the spectral interval
 poles_linspace = linspace(emin, emax, 8)';

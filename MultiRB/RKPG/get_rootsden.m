@@ -5,9 +5,9 @@ function [roots_denom, extrema] = get_rootsden(k, b)
     poles_Zolo = po(po >= 0);
 
     % % Compute the minimum of Z Problem 3 (by transforming c, the min of Prob 4)
-    K = ellipke(1-1/b^2); %keyboard
-    [sn, cn, dn] = ellipj((0:k)*K/k, 1-1/b^2); %keyboard
-    extrema = b*dn; %keyboard
+    K = ellipke(1-vpa(1/b^2)); %keyboard
+    [sn, cn, dn] = ellipj((0:k)*K/k, 1-vpa(1/b^2)); %keyboard
+    extrema = double(b*dn); %keyboard
     vals = 1-r(extrema); %keyboard
     c = mean( vals(1:2:end) );
     e = eig( [ 2-4/c^2 1 ; -1 0 ] );
@@ -19,6 +19,5 @@ function [roots_denom, extrema] = get_rootsden(k, b)
 
     % Transform Z Problem 4 into Problem 3 using eq. (2) - rearranged in Theorem 2.1
     % (Istace/Thiran paper)and have the denominator given by
-    denom = q.*(1-Zk) - pp.*(1+Zk);
-    roots_denom = roots(denom);
+    roots_denom = q.*(1-Zk) - pp.*(1+Zk);
 end
