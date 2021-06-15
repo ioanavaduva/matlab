@@ -1,4 +1,4 @@
- function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, e_Ap] = RKPG(A, rhs1, rhs2, poles, tol, maxit)
+ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner, Ap, rhs1p] = RKPG(A, rhs1, rhs2, poles, tol, maxit)
 % Rational Krylov Subspace solver using the Petrov-Galerkin orthogonality
 % condition. We currently solve Lyapunov equation XA + AX = rhs1*rhs2 with
 % plan to extend to convection-diffusion matrix equation.
@@ -45,16 +45,18 @@
 %         %%%%%
         
         % choose basis 
+        
         V = get_rk_basis(A, poles(i), V); %keyboard % generate the rational Krylov basis
 %         V = get_poly_basis(A, V); % generate the polynomial (standard) Krylov basis
 %         V = get_ek_basis(A, V);
+
 
         
         % project matrix A and rhs1/2
         Ap = V'*A*V; 
         rhs1p = V'*rhs1;
         rhs2p = V'*rhs2;
-        e_Ap = eig(Ap); %(uncomment for Ritz values)
+%         e_Ap = eig(Ap); %(uncomment for Ritz values)
         % at each iteration plot the Ritz values and the poles
 %         figure(it);
 %         Re = real(e_Ap);

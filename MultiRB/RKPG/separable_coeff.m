@@ -1,4 +1,4 @@
-% n = 1001;
+n = 1001;
 g = 0:1/n:1; 
 gs = 1/(2*n):1/n:1;
 
@@ -8,7 +8,7 @@ a = @(x) sin(x);
 % syms x
 % a = @(x) ((0<x) & (x<0.5)).*1 + ((0.5<x) & (x<1)).*1e+4;
 
-rhs = ones(n-1, 1);
+% rhs = ones(n-1, 1);
 
 % rhs = ((-1).^(0:n-2))'; 
 
@@ -28,17 +28,20 @@ rhs = ones(n-1, 1);
 ag = a(g(2:n));
 ags = a(gs);
 
-D = diag(ag);
-D_inv = diag(sqrt(1./ag));
+% D = sparse(diag(ag));
+D_inv = sparse(diag(sqrt(1./ag)));
 
 h = 1/n;
 T_orig = gallery('tridiag', -ags(2:n-1), ags(1:n-1)+ ags(2:n), -ags(2:n-1))/h^2;
 
+% Tsp = (spdiags([-ags(2:n)' (ags(1:n-1)+ags(2:n))' -ags(2:n)'],-1:1, n-1,
+% n-1))/h^2; not same as T_orig
+
 A = D_inv*T_orig*D_inv; % Scaled version of T 
 
-rhs1 = D_inv*rhs; % Scaled version of rhs
-rhs2 = rhs1;
-% Fd = f*f';
+% rhs1 = D_inv*rhs; % Scaled version of rhs
+% rhs2 = rhs1;
+% % Fd = f*f';
 
 
 

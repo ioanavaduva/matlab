@@ -3,21 +3,18 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 %% Setup Poisson
-n = 500; % size of matrix A 
-h = 1/n; eps = 1;
-A = eps*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
-
+% n = 1000; % size of matrix A 
+% h = 1/n; ep = 1;
+% % A = ep*(diag(2*ones(n, 1)) + diag (-1*ones(n-1, 1), 1) + diag (-1*ones(n-1, 1), -1))/h^2;
+% A = ep*(spdiags([-ones(n, 1) 2*ones(n, 1) -ones(n, 1)],-1:1,n,n))/h^2;
 %% Setup variable diffusion coefficient
 % n = 1001;
 % separable_coeff;
 
-%% Setup graded mesh
-n = 101;
-nonuniform_mesh;
+%% Setup nonuniform mesh
+n = 1000; 
+nonuniform_mesh3;
 
-%% Setup geometric mesh
-% n = 1000; 
-% nonuniform_mesh3;
 %% Other
 % tol = 1e-9;
 maxit = 300;
@@ -108,25 +105,25 @@ maxit = 300;
 % rhs1 = [col1, col2];
 
 %% RHS [poly, ones]
-xtemp = linspace(0,1,n);
-x = repmat(xtemp, 1, n);
-y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
-b = @(x, y) -2.*(6.*x.^2 - 6.*x + 1).*(y-1).^2.*y.^2-2.*(x-1).^2.*x.^2.*(6.*y.^2-6.*y+1);
-rhs = b(x, y)'; 
-rhs11 = reshape(rhs, n, n); 
-col1 = rhs11(:,1);
-
-col2 = ones(n, 1);
-
-rhs = [col1, col2];
-
-%% RHS [poly, cos]
-% xtemp = linspace(0,1,n-1);
-% x = repmat(xtemp, 1, n-1);
+% xtemp = linspace(0,1,n);
+% x = repmat(xtemp, 1, n);
 % y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
 % b = @(x, y) -2.*(6.*x.^2 - 6.*x + 1).*(y-1).^2.*y.^2-2.*(x-1).^2.*x.^2.*(6.*y.^2-6.*y+1);
 % rhs = b(x, y)'; 
-% rhs11 = reshape(rhs, n-1, n-1); 
+% rhs11 = reshape(rhs, n, n); 
+% col1 = rhs11(:,1);
+% 
+% col2 = ones(n, 1);
+% 
+% rhs1 = [col2, col1];
+
+%% RHS [poly, cos]
+% xtemp = linspace(0,1,n);
+% x = repmat(xtemp, 1, n);
+% y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
+% b = @(x, y) -2.*(6.*x.^2 - 6.*x + 1).*(y-1).^2.*y.^2-2.*(x-1).^2.*x.^2.*(6.*y.^2-6.*y+1);
+% rhs = b(x, y)'; 
+% rhs11 = reshape(rhs, n, n); 
 % col1 = rhs11(:,1);
 % 
 % col2 = cos(pi*xtemp)'; 
@@ -168,7 +165,7 @@ rhs = [col1, col2];
 % 
 % col2 = ((-1).^(0:n-1))';
 % 
-% rhs = [col1, col2];
+% rhs1 = [col1, col2];
 
 %% RHS [sin, alt]
 % xtemp = linspace(0,1,n);
@@ -178,8 +175,29 @@ rhs = [col1, col2];
 % 
 % rhs1 = [col1, col2];
 
+%% rhs [ones, cos]
+% col1 = ones(n, 1);
+% xtemp = linspace(0,1,n);
+% col2 = cos(pi*xtemp)'; 
+% rhs = [col1, col2];
+% rhs1=rhs;
+% rhs2=rhs1;
+
+%% rhs [ones, alt]
+col1 = ones(n, 1);
+col2 = ((-1).^(0:n-1))';
+
+rhs1= [col1, col2];
+
+%% rhs [cos, alt]
+% xtemp = linspace(0,1,n);
+% col1 = cos(pi*xtemp)'; 
+% 
+% col2 = ((-1).^(0:n-1))';
+% 
+% rhs = [col1, col2];
 %% rhs factors are the same
-rhs1 = D_inv*rhs; % Scaled version of rhs
+rhs1 = D_inv*rhs1; % Scaled version of rhs
 rhs2 = rhs1;
 
 %% Get smallest and largest eigenvalues
@@ -203,34 +221,38 @@ emax = eigs(A, 1,'largestabs',opts);
 % poles_log = sort(poles_log, 'desc');
 
 %% Get nodes (Sabino thesis)
-% s_nodes = 16;                           % Choose 2 nodes (could vary)
+s_nodes = 16;                           % Choose 2 nodes (could vary)
+tic;
+snew = get_nodes2(emin,emax,s_nodes);      % Use interval for A_1;
+toc;
+s_parameter = sort(snew, 'desc');
+
 % tic;
-% snew = double(get_nodes2(emin,emax,s_nodes));      % Use interval for A_1;
+% param = sabino_approx(emin, emax, 16);
 % toc;
-% s_parameter = sort(snew, 'desc');
 
 %% IRKA shifts
-% m = 8; % number of poles; can change
-% xi = emin + (emax - emin)*rand(1,m);
-% B = rhs1*rhs2';
-% tic;
-% B_hat = tangential_dir(A, B, xi); %keyboard
-% [shifts, its] = irka_shifts_block(A, B, B_hat, xi, 1e-1);
-% shifts = sort(shifts, 'desc');
-% toc;
+m = 16; % number of poles; can change
+xi = emin + (emax - emin)*rand(1,m);
+B = rhs1*rhs2';
+tic;
+B_hat = tangential_dir(A, B, xi); %keyboard
+[shifts, its] = irka_shifts_block(A, B, B_hat, xi, 1e-2);
+shifts = sort(shifts, 'desc');
+toc;
 
 %% Solver
-% tic;
-% [X1, X2, vec_res, it, final_err] = RKPGblock2(A, rhs1, rhs2, shifts, 1e-4, maxit);
-% time = toc;
-% 
-% fprintf('\n Total execution time: %9.4e seconds \n', time)
-% 
-% fprintf('final_err \n')
-% fprintf('\n  %9.4e \n \n', final_err)
+tic;
+[X1, X2, vec_res, it, final_err] = RKPGblock2(A, rhs1, rhs2, s_parameter, 1e-8, maxit);
+time = toc;
+
+fprintf('\n Total execution time: %9.4e seconds \n', time)
+
+fprintf('final_err \n')
+fprintf('\n  %9.4e \n \n', final_err)
 
 %% plot residual v iterations
-% iter = linspace(1, it, it);
-% semilogy(iter, vec_res, 'x');hold on
-% xlabel('Iterations');
-% ylabel('Residual');
+iter = linspace(1, it, it);
+semilogy(iter, vec_res, 'x');hold on
+xlabel('Iterations');
+ylabel('Residual');

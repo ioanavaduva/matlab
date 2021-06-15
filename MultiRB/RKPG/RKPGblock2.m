@@ -1,4 +1,4 @@
-function [X1, X2, vec_res, it, final_err] = RKPGblock2(A, rhs1, rhs2,poles, tol, maxit)
+function [X1, X2, vec_res, it, final_err] = RKPGblock2(A, rhs1, rhs2, poles, tol, maxit)
 % For Beckermann bound need extra ''upper_vec''
     i = 1; j=i;
     res = 1; 
@@ -53,7 +53,7 @@ function [X1, X2, vec_res, it, final_err] = RKPGblock2(A, rhs1, rhs2,poles, tol,
                 break;
             end
             if it > 1
-            if (vec_res(it) > vec_res(it-1) && vec_res(it) < 1e-8)
+            if (vec_res(it) > vec_res(it-1) && vec_res(it) < 1e-7)
                 break
             end
             end

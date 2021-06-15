@@ -2,7 +2,7 @@ addpath(genpath('./gradedMesh'));
 
 
 %% Mesh function
-% n = 1001;
+n = 1001;
 curve = 2; 
 weight = 0.1;
 gmesh = meshfunc(curve, weight);
@@ -42,7 +42,7 @@ D_inv = diag(sqrt(2./(h_l + h_r)));
 
 T_orig = gallery('tridiag',-1./h(2:n-1),(h_l+h_r)./(h_l.*h_r),-1./h(2:n-1));
 A = D_inv*T_orig*D_inv; % Scaled version of T
-% rhs1 = D_s*f_orig; % Scaled version of f
+% rhs1 = D_inv*f_orig; % Scaled version of f
 % 
 % rhs2 = rhs1;
 

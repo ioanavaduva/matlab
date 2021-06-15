@@ -1,8 +1,10 @@
-n=500;
-h = 1/n; eps = 1;
-A = eps*(diag(2*ones(n, 1)) + diag(-1*ones(n-1, 1), 1) + diag(-1*ones(n-1, 1), -1))/h^2;
+% n=1000;
+h = 1/n; ep = 1;
+
+A = ep*(spdiags([-ones(n, 1) 2*ones(n, 1) -ones(n, 1)],-1:1,n,n))/h^2;
+
 % A_rksm = -(eps*(diag(2*ones(n, 1)) + diag(-1*ones(n-1, 1), 1) + diag(-1*ones(n-1, 1), -1))/h^2);
-I = speye(n);
+% I = speye(n);
 
 %% Identity
 % rhs1 = I(:,6); rhs2=rhs1;

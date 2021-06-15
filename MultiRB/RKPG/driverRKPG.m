@@ -4,9 +4,15 @@ clear all;
 addpath(genpath('../../rktoolbox'));
 
 %% 2D Poisson
-% n = 5000; 
+% n = 1000; 
 % poisson_2d;
 
+%% small poisson prob
+% ns=100;
+% hs = 1/ns; eps = 1;
+% A_small = eps*(diag(2*ones(ns, 1)) + diag(-1*ones(ns-1, 1), 1) + diag(-1*ones(ns-1, 1), -1))/hs^2;
+% 
+% rhs1_small = ones(ns, 1);
 %% 2D Variable Diffusion Coefficients
 % n = 1001;
 % separable_coeff;
@@ -36,57 +42,84 @@ nonuniform_mesh3;
 % Xex_mat = reshape(Xex, n, n);
 %%%%
 
+% [Q,D]=eig(A); d = diag(D);
+
+% A = sparse(A);
 tol = 1e-9;
-maxit = 1000;
+maxit = 300;
 
 %% %% Get smallest and largest eigenvalues
 opts.tol=1e-4;
 emin = eigs(A, 1, 'smallestabs', opts);
 emax = eigs(A, 1,'largestabs',opts);
+
+
 % emax_rksm = eigs(A_rksm, 1,'smallestabs',opts);
 % emin_rksm = eigs(A_rksm, 1, 'largestabs', opts);
 
+% emin_small = eigs(A_small, 1, 'smallestabs', opts);
+% emax_small = eigs(A_small, 1,'largestabs',opts);
+
 %% %% Different poles
 %% 8 random poles in the spectral interval
-% poles_rand = emin + rand(1,8)*(emax - emin)';
+poles_rand = emin + rand(1,16)*(emax - emin)';
 
 %% 8 linspace poles in the spectral interval
 % poles_linspace = linspace(emin, emax, 8)';
 
-%% 6 logspace poles
-% tic;
-% poles_log = logspace(log10(emin), log10(emax), 20)';
-% toc;
-% poles_log = sort(poles_log, 'desc');
+%% logspace poles
+tic;
+poles_log = logspace(log10(emin), log10(emax), 16)';
+toc;
+poles_log = sort(poles_log, 'desc');
 
 %% Get nodes (Sabino thesis)
-s_nodes = 8;                           % Choose 2 nodes (could vary)
+s_nodes = 16;                           % Choose 2 nodes (could vary)
 tic;
-snew = double(get_nodes2(emin,emax,s_nodes));      % Use interval for A_1;
+snew = get_nodes2(emin,emax,s_nodes);      % Use interval for A_1;
 toc;
 s_parameter=sort(snew, 'desc');
 
-param = sabino_approx(emin, emax, 8);
-
+% tic; % for geometric mesh only
+% param = sabino_approx(emin, emax, 16);
+% toc;
 %% Zolotarev
 % bb = emax - emin + 1;
 % k = 4;      % number of poles is 2*k
 % tic;
-% [roots_denom, extrema] = get_rootsden(k, bb);
+% [roots_denom, ~] = get_rootsden(k, bb);
 % toc;
 % roots_denom = roots_denom + emin - 1;
 % roots_denom = sort(roots_denom, 'desc');
 % % roots = sort(extrema + emin - 1);
 
 %% IRKA
-% m = 20; % number of poles; can change
-% xi = emin + (emax-emin)*rand(1,m);
-% tic;
-% [shifts, its] = irka_shifts(A, rhs1, xi, 1e-4);
-% toc;
-% shifts = sort(shifts, 'desc');
-% % irka_small_prob_poles;
+m = 16; % number of poles; can change
+xi = emin + (emax-emin)*rand(1,m);
+tic;
+[shifts, its] = irka_shifts(A, rhs1, xi, 1e-2);
+toc;
+shifts = sort(shifts, 'desc');
 
+% tic;
+% [shifts_p, its_p] = irka_shifts_p(A, rhs1, xi, 1e-2);
+% toc;
+% shifts_p = sort(shifts_p, 'desc');
+
+% tic;
+% [shifts_dst, its_dst, pole_norm_dst] = irka_shifts_dst(A, rhs1, xi, 1e-2);
+% toc;
+% shifts_dst = sort(shifts_dst, 'desc');
+
+% xi_small = emin_small + (emax_small-emin_small)*rand(1,m);
+% tic;
+% [shifts_small, its_small, pole_norm_small] = irka_shifts(A_small, rhs1_small, xi_small, 1e-2);
+% toc;
+% shifts_small = sort(shifts_small, 'desc');
+% shifts_3digits = round(shifts.*10)./10;
+% irka_small_prob_poles;
+
+% shifts_combined = [shifts(1:12);shifts_small(13:16)];
 %% Adaptive (Druskin & Simoncini)
 % tic;
 % [Z, nrmrestot, pol] = rksm(A_rksm, I, I, rhs1, maxit, tol, emin_rksm, emax_rksm, 0, 1e-12);
@@ -125,22 +158,28 @@ param = sabino_approx(emin, emax, 8);
 
 %% time & solve using RKPG
 tic;
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, e_Ap] = RKPG(A, rhs1, rhs2, param, 1e-4, maxit);
-%!! for beckermann bound need to add extra 'upper_bound' to outputs
-%!! to check errors need error_vec in outputs and Xex_mat (exact solution in matrix form) in inputs
-%!! plot Ritz values need e_Ap in outputs
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, Ap, rhsp] = RKPG(A, rhs1, rhs2, s_parameter, 1e-8, maxit);
+
+% !! for beckermann bound need to add extra 'upper_bound' to outputs
+% !! to check errors need error_vec in outputs and Xex_mat (exact solution in matrix form) in inputs
+% !! plot Ritz values need e_Ap in outputs
 time = toc;
+
+
 
 fprintf('\n Total execution time: %9.4e seconds \n', time)
 
 fprintf('final_err   avg_inner  \n')
 fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
+% tic;
+% [X1_p, X2_p, final_err_p, vec_res_p, it_p, inner_it_p, avg_inner_p, V_p] = RKPG_p(A, rhs1, rhs2, Q, d, shifts, 1e-8, maxit);
+% toc;
 %% plot residual vs. iterations
-% iter = linspace(1, it, it);
-% semilogy(iter, vec_res, 'h'); hold on
-% xlabel('Iterations');
-% ylabel('Residual');
+iter = linspace(1, it, it);
+semilogy(iter, vec_res, 'p'); hold on
+xlabel('Iterations');
+ylabel('Residual');
 
 %% plot error on top of residuals
 % plot(error_vec, 'o');hold on;
