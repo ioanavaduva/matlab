@@ -34,8 +34,8 @@ A = ep*(spdiags([-ones(n, 1) 2*ones(n, 1) -ones(n, 1)],-1:1,n,n))/h^2;
 % rhs2 = rhs1;
 
 %% Ones
-rhs1 = ones(n, 1); 
-rhs2 = ones(n, 1);
+% rhs1 = ones(n, 1); 
+% rhs2 = ones(n, 1);
 
 %% Random from the standard normal distribution
 % rhs1 = randn(n, 1);
@@ -57,4 +57,4 @@ rhs2 = ones(n, 1);
 % rhs1 = sprand(n,1,0.23); rhs2 = rhs1;
 
 %% Alternate 1&-1
-% rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;
+rhs1 = ((-1).^(0:n-1))'; rhs2 = rhs1;

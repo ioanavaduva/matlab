@@ -115,7 +115,7 @@ maxit = 300;
 % 
 % col2 = ones(n, 1);
 % 
-% rhs1 = [col2, col1];
+% rhs1 = [col1, col2];
 
 %% RHS [poly, cos]
 % xtemp = linspace(0,1,n);
@@ -155,17 +155,17 @@ maxit = 300;
 % rhs1 = [col1, col2];
 
 %% RHS [poly, alt]
-% xtemp = linspace(0,1,n);
-% x = repmat(xtemp, 1, n);
-% y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
-% b = @(x, y) -2.*(6.*x.^2 - 6.*x + 1).*(y-1).^2.*y.^2-2.*(x-1).^2.*x.^2.*(6.*y.^2-6.*y+1);
-% rhs = b(x, y)'; 
-% rhs11 = reshape(rhs, n, n); 
-% col1 = rhs11(:,1);
-% 
-% col2 = ((-1).^(0:n-1))';
-% 
-% rhs1 = [col1, col2];
+% % xtemp = linspace(0,1,n);
+x = repmat(xtemp, 1, n);
+y = reshape(repmat(xtemp, length(xtemp), 1), 1, length(xtemp)^2);
+b = @(x, y) -2.*(6.*x.^2 - 6.*x + 1).*(y-1).^2.*y.^2-2.*(x-1).^2.*x.^2.*(6.*y.^2-6.*y+1);
+rhs = b(x, y)'; 
+rhs11 = reshape(rhs, n, n); 
+col1 = rhs11(:,1);
+
+col2 = ((-1).^(0:n-1))';
+
+rhs1 = [col1, col2];
 
 %% RHS [sin, alt]
 % xtemp = linspace(0,1,n);
@@ -184,10 +184,10 @@ maxit = 300;
 % rhs2=rhs1;
 
 %% rhs [ones, alt]
-col1 = ones(n, 1);
-col2 = ((-1).^(0:n-1))';
-
-rhs1= [col1, col2];
+% col1 = ones(n, 1);
+% col2 = ((-1).^(0:n-1))';
+% 
+% rhs1= [col1, col2];
 
 %% rhs [cos, alt]
 % xtemp = linspace(0,1,n);
@@ -221,29 +221,29 @@ emax = eigs(A, 1,'largestabs',opts);
 % poles_log = sort(poles_log, 'desc');
 
 %% Get nodes (Sabino thesis)
-s_nodes = 16;                           % Choose 2 nodes (could vary)
-tic;
-snew = get_nodes2(emin,emax,s_nodes);      % Use interval for A_1;
-toc;
-s_parameter = sort(snew, 'desc');
-
+% s_nodes = 16;                           % Choose 2 nodes (could vary)
 % tic;
-% param = sabino_approx(emin, emax, 16);
+% snew = get_nodes2(emin,emax,s_nodes);      % Use interval for A_1;
 % toc;
+% s_parameter = sort(snew, 'desc');
 
-%% IRKA shifts
-m = 16; % number of poles; can change
-xi = emin + (emax - emin)*rand(1,m);
-B = rhs1*rhs2';
 tic;
-B_hat = tangential_dir(A, B, xi); %keyboard
-[shifts, its] = irka_shifts_block(A, B, B_hat, xi, 1e-2);
-shifts = sort(shifts, 'desc');
+param = sabino_approx(emin, emax, 16);
 toc;
+param = sort(param, 'desc');
+%% IRKA shifts
+% m = 16; % number of poles; can change
+% xi = emin + (emax - emin)*rand(1,m);
+% B = rhs1*rhs2';
+% tic;
+% B_hat = tangential_dir(A, rhs1, xi); %keyboard
+% [shifts, its] = irka_shifts_block(A, rhs1, B_hat, xi, 1e-2);
+% shifts = sort(shifts, 'desc');
+% toc;
 
 %% Solver
 tic;
-[X1, X2, vec_res, it, final_err] = RKPGblock2(A, rhs1, rhs2, s_parameter, 1e-8, maxit);
+[X1, X2, vec_res, it, final_err] = RKPGblock2(A, rhs1, rhs2, param, 1e-8, maxit);
 time = toc;
 
 fprintf('\n Total execution time: %9.4e seconds \n', time)
@@ -252,7 +252,7 @@ fprintf('final_err \n')
 fprintf('\n  %9.4e \n \n', final_err)
 
 %% plot residual v iterations
-iter = linspace(1, it, it);
-semilogy(iter, vec_res, 'x');hold on
-xlabel('Iterations');
-ylabel('Residual');
+% iter = linspace(1, it, it);
+% semilogy(iter, vec_res, 'x');hold on
+% xlabel('Iterations');
+% ylabel('Residual');
