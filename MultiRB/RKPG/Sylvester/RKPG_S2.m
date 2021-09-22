@@ -24,8 +24,7 @@
         % choose basis 
         V = get_rk_basis(M, poles1(i), V); 
         W = get_rk_basis(N', poles2(i), W); 
-% W = V;
-% V = W;
+
 
         % project matrix A and rhs1/2
         Mp = V'*M*V; 

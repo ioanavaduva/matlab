@@ -17,11 +17,11 @@ function [shifts1, shifts2, it] = irka_shifts2(A, B, rhs1, rhs2, poles1, poles2,
         Ap = V'*A*V; 
         Bp = W'*B*W;
         
-        shifts1 = sort(eig(Ap), 'descend'); %keyboard
+        shifts1 = sort(eig(Ap), 'descend'); 
         shifts2 = sort(eig(Bp), 'descend');
         
-        ch1 = norm(poles1-shifts1)/norm(poles1); % c = max(abs((poles-shifts)./(eps+poles)));
-        ch2 = norm(poles2-shifts2)/norm(poles2);
+        ch1 = norm(poles1-shifts2)/norm(poles1); % c = max(abs((poles-shifts)./(eps+poles)));
+        ch2 = norm(poles2-shifts1)/norm(poles2); 
         
         poles1 = shifts2;
         poles2 = shifts1;
