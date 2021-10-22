@@ -84,7 +84,7 @@ function [X1, X2, final_err, vec_res, it, inner_it, avg_inner] = oneside_RKPG(A,
             break
         end
         end
-    
+    end
     fprintf('\n Total iterations: %d \n\n', it)
     
     final_err = res;

@@ -6,9 +6,9 @@ A = kr_pois(31);
 
 %restriction (RE) and prolongation (II)
 n = 31; 
-k = log2(n+1);
+k = round(log2(n^2+1));
 N = 2^(k-1)-1;
-RE = zeros(N,n);
+% RE = zeros(N,n^2);
 for i = 1:N
     RE(i,2*i-1:2*i+1) = [1 2 1];
 end

@@ -10,7 +10,7 @@ function [x, iter] = Vmg2d_matrix(n, rhs, A, w, maxit, TOL, maxlev)
     A_original = A;
     resC = rhs;
     rst{1} = resC;
-    iter = 0;
+%     iter = 0;
     x = zeros(length(rhs), 1);
     n_orig = n;
     for iter = 1:maxit
@@ -34,7 +34,7 @@ function [x, iter] = Vmg2d_matrix(n, rhs, A, w, maxit, TOL, maxlev)
                 res{L} = resC - AC*x;
                 
                 % generate restriction matrix
-                k = log2(n+1);
+                k = round(log2(n+1));
                 
                 N = 2^(k-1)-1;
 

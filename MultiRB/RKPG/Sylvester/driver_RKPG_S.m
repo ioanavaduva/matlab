@@ -4,7 +4,7 @@ addpath(genpath('../../../rktoolbox'))
 
 n = 1000;
 
-h = 1/n; ep = 0.0083;
+h = 1/n; ep = 0.0167;
 
 A = ep*(spdiags([-ones(n, 1) 2*ones(n, 1) -ones(n, 1)],-1:1,n,n))/(h^2);
 B = spdiags([-ones(n, 1) zeros(n, 1) ones(n, 1)],-1:1,n,n)/(2*h);
@@ -17,15 +17,15 @@ B = spdiags([-ones(n, 1) zeros(n, 1) ones(n, 1)],-1:1,n,n)/(2*h);
 % Y = randn(n); D = diag(rand(n, 1)); N = Y*D*inv(Y);
 
 % convection coefficients
-% xtemp = linspace(0, 1, n);
+xtemp = linspace(0, 1, n);
 % w1 = @(x) 1 + ((x+1).^2)/4;
 % phi = diag(w1(xtemp));
 
-% w1 = @(x) 1 - (2*x + 1).^2;
-% phi = diag(w1(xtemp));
-% 
-% w2 = @(x) 1 - x.^2;
-% psi = diag(w2(xtemp));
+w1 = @(x) 1 - (2*x + 1).^2;
+phi = diag(w1(xtemp));
+
+w2 = @(x) 1 - x.^2;
+psi = diag(w2(xtemp));
 
 % w1 = @(x) -2*(2*x + 1);
 % phi = diag(w1(xtemp));
@@ -33,14 +33,14 @@ B = spdiags([-ones(n, 1) zeros(n, 1) ones(n, 1)],-1:1,n,n)/(2*h);
 % w2 = @(x) x;
 % psi = diag(w2(xtemp));
 
-M = A + B;
-N = A + B';
+% M = A + B;
+% N = A + B';
 
 % M = A + phi*B; 
 % N = A;
 
-% M = A + phi*B;
-% N = A + B*psi;
+M = A + phi*B;
+N = A + B*psi;
 
 rhs1 = ones(n, 1);
 % rhs2 = randn(n, 1);
@@ -49,8 +49,8 @@ rhs2 = rhs1;
 opts.tol = 1e-2;
 opts.p = 30;
 opts.maxit = 10000;
-emin = eigs(M, 1, 'smallestabs', opts);
-emax = eigs(M, 1, 'largestabs',opts);
+% emin = eigs(M, 1, 'smallestabs', opts);
+% emax = eigs(M, 1, 'largestabs',opts);
 % 
 % emin_N = eigs(N, 1, 'smallestabs', opts);
 % emax_N = eigs(N, 1, 'largestabs', opts);
@@ -59,8 +59,8 @@ for j = 1:n
     evi(j) = M(1,1) + 2*sqrt(M(1, 2) * M(2, 1)) * cos(j*pi/(n+1));
 end
 evi = sort(evi, 'desc');
-% emin = min(evi);
-% emax = max(evi);
+emin = min(evi);
+emax = max(evi);
 
 s_nodes = 12;        
 tic;
@@ -115,8 +115,8 @@ fprintf(' Final residual:  %9.4e   \n \n', final_err)
 
 
 %% plot residual vs. iterations
-% iter = linspace(1, it, it);
-% semilogy(iter, vec_res, 'p'); hold on
-% xlabel('Iterations');
-% ylabel('Residual');
+iter = linspace(1, it, it);
+semilogy(iter, vec_res, 'p'); hold on
+xlabel('Iterations');
+ylabel('Residual');
 

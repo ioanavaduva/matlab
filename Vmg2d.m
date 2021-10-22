@@ -15,8 +15,8 @@ function [x, iter] = Vmg2d(n, b, A, w, maxit, TOL, maxlev)
     n_orig = n;
     for iter = 1:maxit
         AC = A_original;
-        n = n_orig;
-        r = b - A*x;
+        n = n_orig; 
+        r = b - A*x; 
         x0 = x;
         resC = b;
         if norm(r) > TOL
@@ -34,10 +34,10 @@ function [x, iter] = Vmg2d(n, b, A, w, maxit, TOL, maxlev)
                 res{L} = resC - AC*x;
                 
                 % generate restriction matrix
-                k = log2(n+1);
+                k = round(log2(n+1));
                 
                 N = 2^(k-1)-1;
-
+    
                 RE = zeros(N,n);        
                 for i = 1:N
                     RE(i,2*i-1:2*i+1) = [1 2 1]; 

@@ -2,10 +2,11 @@
 
 clear all;
 addpath(genpath('../../rktoolbox'));
+addpath(genpath('../../../matlab'));
 
 %% 2D Poisson
-% n = 1000; 
-% poisson_2d;
+n = 1023; 
+poisson_2d;
 
 % B = spdiags([-ones(n, 1) zeros(n, 1) ones(n, 1)],-1:1,n,n)/(2*h);
 % % B = zeros(n, n);
@@ -19,8 +20,8 @@ addpath(genpath('../../rktoolbox'));
 % 
 % rhs1_small = ones(ns, 1);
 %% 2D Variable Diffusion Coefficients
-n = 1001;
-separable_coeff;
+% n = 1001;
+% separable_coeff;
 
 %% Non-uniform Mesh
 % n = 1000;
@@ -38,7 +39,7 @@ separable_coeff;
 %     return
 % end
 
-%% %% Exact solution --- only need to check bounds for the 3 bases & to
+%% Exact solution --- only need to check bounds for the 3 bases & to
 %% compare with 1 sided projection
 % AA = kron(A, speye(n))+kron(speye(n), A);
 % rhs = rhs1*rhs2';
@@ -53,7 +54,7 @@ separable_coeff;
 tol = 1e-9;
 maxit = 300;
 
-%% %% Get smallest and largest eigenvalues
+%% Get smallest and largest eigenvalues
 opts.tol=1e-4;
 emin = eigs(A, 1, 'smallestabs', opts);
 emax = eigs(A, 1,'largestabs',opts);
@@ -73,22 +74,22 @@ emax = eigs(A, 1,'largestabs',opts);
 % poles_linspace = linspace(emin, emax, 8)';
 
 %% logspace poles
-tic;
-poles_log = logspace(log10(emin), log10(emax), 16)';
-toc;
-poles_log = sort(poles_log, 'desc');
+% tic;
+% poles_log = logspace(log10(emin), log10(emax), 16)';
+% toc;
+% poles_log = sort(poles_log, 'desc');
 
 %% Get nodes (Sabino thesis)
-s_nodes = 16;                           % Choose 2 nodes (could vary)
+s_nodes = 12;                           % Choose 2 nodes (could vary)
 tic;
 snew = get_nodes2(emin,emax,s_nodes);      % Use interval for A_1;
 toc;
 s_parameter=sort(snew, 'desc');
 
-tic; % for geometric mesh only
-param = sabino_approx(emin, emax, 16);
-toc;
-param = sort(param, 'desc');
+% tic; % for geometric mesh only
+% param = sabino_approx(emin, emax, 16);
+% toc;
+% param = sort(param, 'desc');
 %% Zolotarev
 % bb = emax - emin + 1;
 % k = 4;      % number of poles is 2*k
@@ -100,12 +101,12 @@ param = sort(param, 'desc');
 % % roots = sort(extrema + emin - 1);
 
 %% IRKA
-m = 16; % number of poles; can change
-xi = emin + (emax-emin)*rand(1,m);
-tic;
-[shifts, its] = irka_shifts(A, rhs1, xi, 1e-2);
-toc;
-shifts = sort(shifts, 'desc');
+% m = 16; % number of poles; can change
+% xi = emin + (emax-emin)*rand(1,m);
+% tic;
+% [shifts, its] = irka_shifts(A, rhs1, xi, 1e-2);
+% toc;
+% shifts = sort(shifts, 'desc');
 
 %% Adaptive (Druskin & Simoncini)
 % tic;
@@ -145,14 +146,12 @@ shifts = sort(shifts, 'desc');
 
 %% time & solve using RKPG
 tic;
-[X1, X2, final_err, vec_res, it, inner_it, avg_inner, Ap, rhsp] = RKPG(A, rhs1, rhs2, shifts, 1e-8, 300);
+[X1, X2, final_err, vec_res, it, inner_it, avg_inner, Ap, rhsp] = RKPG(A, rhs1, rhs2, s_parameter, 1e-8, 300);
 
 % !! for beckermann bound need to add extra 'upper_bound' to outputs
 % !! to check errors need error_vec in outputs and Xex_mat (exact solution in matrix form) in inputs
 % !! plot Ritz values need e_Ap in outputs
 time = toc;
-
-
 
 fprintf('\n Total execution time: %9.4e seconds \n', time)
 
@@ -160,16 +159,29 @@ fprintf('final_err   avg_inner  \n')
 fprintf('\n  %9.4e       %d    \n \n', [final_err, avg_inner])
 
 % tic;
+% [X1_one, X2_one, final_err_one, vec_res_one, it_one, inner_it_one, avg_inner_one] =  oneside_RKPG(A, rhs1, rhs2, s_parameter, 1e-8, 300);
+% time_one = toc;
+% 
+% fprintf('\n Total execution time: %9.4e seconds \n', time_one)
+% 
+% fprintf('final_err   avg_inner  \n')
+% fprintf('\n  %9.4e       %d    \n \n', [final_err_one, avg_inner_one])
+
+
+% tic;
 % [X1_p, X2_p, final_err_p, vec_res_p, it_p, inner_it_p, avg_inner_p, V_p] = RKPG_p(A, rhs1, rhs2, Q, d, shifts, 1e-8, maxit);
 % toc;
 %% plot residual vs. iterations
-% iter = linspace(1, it, it);
-% semilogy(iter, vec_res, 'p'); hold on
-% xlabel('Iterations');
-% ylabel('Residual');
+iter = linspace(1, it, it);
+semilogy(iter, vec_res, 'p'); hold on
 
+% iter_one = linspace(1, it, it);
+% semilogy(iter_one, vec_res_one, 'x'); hold on
+xlabel('Iterations');
+ylabel('Residual');
 %% plot error on top of residuals
 % plot(error_vec, 'o');hold on;
 
 %% plot Beckermann bound on top of residuals
 % semilogy(upper_vec, 'x'); hold off;
+
